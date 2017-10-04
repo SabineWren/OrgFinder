@@ -1,0 +1,3 @@
+[submodule "sc-api-downstream"]
+	path = sc-api-downstream
+	url = https://github.com/SabineWren/sc-api-downstream
