@@ -26,13 +26,13 @@ type resultOrgsGroup    struct {
 }
 type orgInGroup struct {
 	Lang         string//inner query always has null lang on live results
+	Logo         string//used for image file checking
 	Member_count string//not guaranteed to be correct
 	Sid          string//Converted to uppercase before inserting
 	
 	//only used if subquery null
 	Archetype    string
 	Commitment   string
-	Logo         string
 	Recruiting   string
 	Roleplay     string
 	Title        string
@@ -94,10 +94,25 @@ func main(){
 	
 	var pathToApi string = getApiPath()
 	
+	var stmtInsertHistory *sql.Stmt
+	stmtInsertHistory, err = db.Prepare("INSERT INTO tbl_OrgMemberHistory (Organization, ScrapeDate, Size, Main, Affiliate, Hidden) VALUES (?, CURDATE(), ?, ?, ?, ?) ON DUPLICATE KEY UPDATE ScrapeDate = CURDATE(), Size = ?, Main = ?, Affiliate = ?, Hidden = ?")
+	checkError(err)
+	defer stmtInsertHistory.Close()
+	
 	var stmtSelHistory *sql.Stmt
-	stmtSelHistory, err = db.Prepare("SELECT Size, Main, Affiliate, Hidden FROM tbl_OrgMemberHistory WHERE Organization = ? ORDER BY ScrapeDate DESC LIMIT ?")
+	stmtSelHistory, err = db.Prepare("SELECT Size, Main, Affiliate, Hidden FROM tbl_OrgMemberHistory WHERE Organization = ? ORDER BY ScrapeDate DESC LIMIT 1")
 	checkError(err)
 	defer stmtSelHistory.Close()
+	
+	var stmtSelIconURL *sql.Stmt
+	stmtSelIconURL, err = db.Prepare("SELECT Icon FROM tbl_IconURLs WHERE Organization = ?")
+	checkError(err)
+	defer stmtSelIconURL.Close()
+	
+	var stmtSelCustomIcon *sql.Stmt
+	stmtSelCustomIcon, err = db.Prepare("SELECT CustomIcon FROM tbl_Organizations WHERE SID = ?")
+	checkError(err)
+	defer stmtSelCustomIcon.Close()
 	
 	var stmtSelRecent *sql.Stmt
 	stmtSelRecent, err = db.Prepare("SELECT Size, DATEDIFF( CURDATE(), ScrapeDate ) as DaysAgo FROM tbl_OrgMemberHistory WHERE Organization = ? ORDER BY ScrapeDate DESC LIMIT 8")
@@ -109,75 +124,74 @@ func main(){
 	checkError(err)
 	defer stmtUpdateGrowth.Close()
 	
-	var stmtInsertHistory *sql.Stmt
-	stmtInsertHistory, err = db.Prepare("INSERT INTO tbl_OrgMemberHistory (Organization, ScrapeDate, Size, Main, Affiliate, Hidden) VALUES (?, CURDATE(), ?, ?, ?, ?) ON DUPLICATE KEY UPDATE ScrapeDate = CURDATE(), Size = ?, Main = ?, Affiliate = ?, Hidden = ?")
-	checkError(err)
-	defer stmtInsertHistory.Close()
-	
 	// OUTER LOOP (query all orgs):
 	var networkBackoff float64 = 1.0
 	const pageTurn int = 1
-	for orgPage := int(0); orgPage < 1; orgPage += pageTurn {
+	for orgPage := int(0); ; orgPage += pageTurn {
 		var groupQuery     string = makeGroupQueryString(orgPage, pageTurn)
 		var groupResultRaw []byte = queryApi(pathToApi, groupQuery)
 		var groupResult resultOrgsGroup
 		json.Unmarshal(groupResultRaw, &groupResult)
 		
 		if groupResult.Data == nil {
-			if orgPage > 1000 { return }
 			time.Sleep( time.Second * time.Duration(networkBackoff) )
-			networkBackoff *= 2.0
-			if networkBackoff > 900 {
-				panic( errors.New( "Network error -- backoff limit reached at api page: " + strconv.FormatFloat(networkBackoff, 'E', 2, 64) ) )
+			if networkBackoff > 300 {
+				fmt.Println( "backoff limit reached at api page: " + strconv.FormatFloat(networkBackoff, 'E', 2, 64) )
+				break
 			}
+			networkBackoff *= 2.0
 			fmt.Println("Network backoff")
 			orgPage--
 			continue
 		}
 		networkBackoff = 1.0
 		
-		fmt.Println("Implement image file checking")
-		
 		//INNER LOOP (query one Org):
 		for _, orgDataFromGroup := range groupResult.Data {
-			var sid string = strings.ToUpper(orgDataFromGroup.Sid)
-			var expectedSize int
+			var sid             string = strings.ToUpper(orgDataFromGroup.Sid)
+			var expectedSize    int
 			expectedSize, err = strconv.Atoi(orgDataFromGroup.Member_count)
 			checkError(err)
 			
-			var size, main, affil, hidden int = selectSizes(sid, stmtSelHistory, 1)
+			var size, main, affil, hidden int
+			var isIconCustom              bool
+			var previouslySavedIcon       string
+			size, main, affil, hidden, isIconCustom, previouslySavedIcon = selectOrganization(sid, stmtSelCustomIcon, stmtSelHistory, stmtSelIconURL)
+			
 			if size != expectedSize {
-				size, main, affil, hidden = queryMembers(sid, db, pathToApi)
-				//handle case where queryMembers fails
-				if size == 0 {
-					size   = expectedSize
-					main   = 0
-					affil  = 0
-					hidden = expectedSize
-				}
+				size, main, affil, hidden = queryMembers(sid, expectedSize, db, pathToApi)
 				
 				var orgQuery     string = makeOrgQueryString(sid)
 				var orgResultRaw []byte = queryApi(pathToApi, orgQuery)
 				var resultContainer resultOrgContainer
 				json.Unmarshal(orgResultRaw, &resultContainer)
 				
-				var stmtArgsOrgResult validStmtArgs
-				//API can return null, so use default data if needed
-				if resultContainer.Data == (resultOrg{}) {
-					stmtArgsOrgResult = assignArgsOrgDefault(orgDataFromGroup, sid, size, main, affil, hidden)
-				} else {
-					stmtArgsOrgResult = assignArgsOrgResult(resultContainer.Data, orgDataFromGroup.Lang, sid, size, main, affil, hidden)
-				}
+				stmtArgsOrgResult := assignArgsOrgResult(resultContainer.Data, orgDataFromGroup, sid, size, main, affil, hidden)
+				err = insertOrg(stmtArgsOrgResult, db)
+				checkError(err)
 				
-				insertOrg(stmtArgsOrgResult, db)
+				//if org is new, we need to recheck this
+				if stmtArgsOrgResult.customIcon == int8(1) {
+					isIconCustom = true
+				} else {
+					isIconCustom = false
+				}
 			}
 			
-			_, err = stmtInsertHistory.Exec(sid, size, main, affil, hidden, size, main, affil, hidden)
+			if isIconCustom && previouslySavedIcon != orgDataFromGroup.Logo {
+				err = DownloadIcon(sid, orgDataFromGroup.Logo)
+				checkError(err)
+			}
+			
+			_, err := stmtInsertHistory.Exec(sid, size, main, affil, hidden, size, main, affil, hidden)
 			checkError(err)
 			
-			updateGrowthRate(sid, stmtSelRecent, stmtUpdateGrowth)
+			err = updateGrowthRate(sid, stmtSelRecent, stmtUpdateGrowth)
+			checkError(err)
 		}
 	}
+	err = ReclusterTables(db)
+	checkError(err)
 }
 
 func assignArgsOrgDefault(orgDataFromGroup orgInGroup, sid string, size int, main int, affil int, hidden int) validStmtArgs {
@@ -237,7 +251,13 @@ func assignArgsOrgDefault(orgDataFromGroup orgInGroup, sid string, size int, mai
 	return stmtArgs
 }
 
-func assignArgsOrgResult(org resultOrg, lang string, sid string, size int, main int, affil int, hidden int) validStmtArgs {
+
+func assignArgsOrgResult(org resultOrg, orgDataFromGroup orgInGroup, sid string, size int, main int, affil int, hidden int) validStmtArgs {
+	//API can return null for inner query.Data, so use defaults if needed
+	if org == (resultOrg{}) {
+		return assignArgsOrgDefault(orgDataFromGroup, sid, size, main, affil, hidden)
+	}
+	
 	var stmtArgs validStmtArgs
 	
 	stmtArgs.archetype      = org.Archetype
@@ -247,7 +267,7 @@ func assignArgsOrgResult(org resultOrg, lang string, sid string, size int, main 
 	stmtArgs.focusSecondary = org.Secondary_focus
 	stmtArgs.headline       = org.Headline
 	stmtArgs.history        = org.History
-	stmtArgs.language       = lang
+	stmtArgs.language       = orgDataFromGroup.Lang//inner query lang == null due to API bug
 	stmtArgs.manifesto      = org.Manifesto
 	stmtArgs.name           = org.Title
 	if stmtArgs.name == "" {
@@ -301,7 +321,7 @@ func checkError(err error) {
 	}
 }
 
-func executeStatements(stmts map[string]*sql.Stmt, a validStmtArgs) () {
+func executeStatements(stmts map[string]*sql.Stmt, a validStmtArgs) error {
 	var err error
 	
 	var res1 sql.Result
@@ -357,18 +377,17 @@ func executeStatements(stmts map[string]*sql.Stmt, a validStmtArgs) () {
 	checkError(err)
 	
 	_, err = stmts["InsDescription"].Exec(a.spectrumID, a.headline, a.manifesto, a.headline, a.manifesto)
-	checkError(err)
+	return err
 }
 
-func getApiPath( ) string {
+func getApiPath() string {
 	pathToApi, err := os.Getwd()
 	checkError(err)
-	
-	pathToApi = pathToApi + "/../sc_api/index.php"
+	pathToApi += "/../sc-api-downstream/index.php"
 	return pathToApi
 }
 
-func insertOrg(stmtArgs validStmtArgs, db *sql.DB) {
+func insertOrg(stmtArgs validStmtArgs, db *sql.DB) error {
 	//use transaction to ensure serial execution on a single DB connection
 	tx, err := db.Begin()
 	checkError(err)
@@ -390,7 +409,8 @@ func insertOrg(stmtArgs validStmtArgs, db *sql.DB) {
 		}
 	}()
 	
-	executeStatements(stmts, stmtArgs)
+	err = executeStatements(stmts, stmtArgs)
+	return err
 }
 
 func makeGroupQueryString(currentPage int, pageTurn int) string {
@@ -488,22 +508,49 @@ func prepareStatements( tx *sql.Tx ) ( map[string]*sql.Stmt ) {
 
 func queryApi(pathToApi string, groupQuery string) []byte {
 	var apiResult []byte
-	var err error
+	var err       error
+	
 	apiResult, err = exec.Command("php", pathToApi, groupQuery).Output()
-	checkError(err)
+	if err != nil {
+		fmt.Println("Error trying to run this command:")
+		fmt.Println("php " + pathToApi + " " + groupQuery)
+		panic(err)
+	}
+	
 	return apiResult
 }
 
-func selectSizes(sid string, stmtSelHistory *sql.Stmt, limit int) (int, int, int, int) {
+func selectOrganization(sid string, stmtSelCustomIcon *sql.Stmt, stmtSelHistory *sql.Stmt, stmtSelIconURL *sql.Stmt) (int, int, int, int, bool, string) {
 	var size, main, affil, hidden int
+	var customIcon                bool
+	var previouslySavedIcon       string
+	var err                       error
 	
-	var err error = stmtSelHistory.QueryRow(sid, limit).Scan(&size, &main, &affil, &hidden)
+	err = stmtSelCustomIcon.QueryRow(sid).Scan(&customIcon)
 	if err == sql.ErrNoRows {
+		customIcon = false
 	} else if err != nil {
 		panic(err)
 	}
 	
-	return size, main, affil, hidden
+	err = stmtSelHistory.QueryRow(sid).Scan(&size, &main, &affil, &hidden)
+	if err == sql.ErrNoRows {
+		size   = 0
+		main   = 0
+		affil  = 0
+		hidden = 0
+	} else if err != nil {
+		panic(err)
+	}
+	
+	err = stmtSelIconURL.QueryRow(sid).Scan(&previouslySavedIcon)
+	if err == sql.ErrNoRows {
+		previouslySavedIcon = " "
+	} else if err != nil {
+		panic(err)
+	}
+	
+	return size, main, affil, hidden, customIcon, previouslySavedIcon
 }
 
 type resultMembersContainer    struct {
@@ -516,7 +563,7 @@ type resultMember struct {
 	Type       string
 	Visibility string
 }
-func queryMembers(sid string, db *sql.DB, pathToApi string) (int, int, int, int) {
+func queryMembers(sid string, expectedSize int, db *sql.DB, pathToApi string) (int, int, int, int) {
 	var size, main, affil, hidden int = 0, 0, 0, 0
 	var pageTurn int = 1
 	for currentPage := int(0); ; currentPage += pageTurn {
@@ -544,6 +591,14 @@ func queryMembers(sid string, db *sql.DB, pathToApi string) (int, int, int, int)
 		}
 	}
 	
+	//handle case where query fails
+	if size == 0 {
+		size   = expectedSize
+		main   = 0
+		affil  = 0
+		hidden = expectedSize
+	}
+	
 	return size, main, affil, hidden
 }
 
@@ -551,7 +606,7 @@ type scrape struct {
 	size    int
 	daysAgo int
 }
-func updateGrowthRate(sid string, stmtSelRecent *sql.Stmt, stmtUpdateGrowth *sql.Stmt) {
+func updateGrowthRate(sid string, stmtSelRecent *sql.Stmt, stmtUpdateGrowth *sql.Stmt) error {
 	rows, err := stmtSelRecent.Query(sid)
 	checkError(err)
 	defer rows.Close()
@@ -582,6 +637,5 @@ func updateGrowthRate(sid string, stmtSelRecent *sql.Stmt, stmtUpdateGrowth *sql
 	var growthRate float32 = float32( float64(newestScrape.size - oldestScrape.size)/7.0 )
 	
 	_, err = stmtUpdateGrowth.Exec(growthRate, sid)
-	checkError(err)
+	return err
 }
-
