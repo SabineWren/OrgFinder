@@ -149,10 +149,13 @@ func main(){
 			size, main, affil, hidden, previouslySavedIcon = selectOrganization(sid, stmtSelHistory, stmtSelIconURL)
 			
 			if size != expectedSize || previouslySavedIcon != "" && previouslySavedIcon != orgDataFromGroup.Logo {
-				size, main, affil, hidden, err = queryMembers(sid, expectedSize, db, pathToApi)
-				if err != nil {
-					fmt.Println( err.Error() )
-					continue
+				fmt.Println("Inserting SID: " + sid)
+				if size != expectedSize {
+					size, main, affil, hidden, err = queryMembers(sid, expectedSize, db, pathToApi)
+					if err != nil {
+						fmt.Println( err.Error() )
+						continue
+					}
 				}
 				
 				var org resultOrg
