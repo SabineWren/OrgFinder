@@ -91,10 +91,5 @@ func ReclusterTables(db *sql.DB) error {
 		return err
 	}
 	
-	_, err = db.Exec("ALTER TABLE tbl_GrowthRate ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
-	
 	return nil
 }

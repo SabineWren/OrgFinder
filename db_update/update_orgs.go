@@ -24,21 +24,19 @@ import   "time"
 type resultOrgsGroup    struct {
 	Data []orgInGroup
 }
+/* orgInGroup.Logo has url ending in avatar/<sid>.<png/jpg>
+ * inner query returns logo/ <sid>.<png/jpg>
+ * the logo/ link has a higher quality image
+ * however, we use avatar/ so it's easier to check if it changed
+**/
 type orgInGroup struct {
 	Lang         string//inner query always has null lang on live results
 	Logo         string//used for image file checking
 	Member_count string//not guaranteed to be correct
 	Sid          string//Converted to uppercase before inserting
-	
-	//only used if subquery null
-	Archetype    string
-	Commitment   string
-	Recruiting   string
-	Roleplay     string
-	Title        string
 }
 
-//sometimes valid orgs return data: null
+
 type resultOrgContainer struct {
 	Data resultOrg
 }
@@ -109,11 +107,6 @@ func main(){
 	checkError(err)
 	defer stmtSelIconURL.Close()
 	
-	var stmtSelCustomIcon *sql.Stmt
-	stmtSelCustomIcon, err = db.Prepare("SELECT CustomIcon FROM tbl_Organizations WHERE SID = ?")
-	checkError(err)
-	defer stmtSelCustomIcon.Close()
-	
 	var stmtSelRecent *sql.Stmt
 	stmtSelRecent, err = db.Prepare("SELECT Size, DATEDIFF( CURDATE(), ScrapeDate ) as DaysAgo FROM tbl_OrgMemberHistory WHERE Organization = ? ORDER BY ScrapeDate DESC LIMIT 8")
 	checkError(err)
@@ -126,9 +119,8 @@ func main(){
 	
 	// OUTER LOOP (query all orgs):
 	var networkBackoff float64 = 1.0
-	const pageTurn int = 1
-	for orgPage := int(0); ; orgPage += pageTurn {
-		var groupQuery     string = makeGroupQueryString(orgPage, pageTurn)
+	for orgPage := int(1); ; orgPage++ {
+		var groupQuery     string = makeGroupQueryString(orgPage)
 		var groupResultRaw []byte = queryApi(pathToApi, groupQuery)
 		var groupResult resultOrgsGroup
 		json.Unmarshal(groupResultRaw, &groupResult)
@@ -139,8 +131,7 @@ func main(){
 				fmt.Println( "backoff limit reached at api page: " + strconv.FormatFloat(networkBackoff, 'E', 2, 64) )
 				break
 			}
-			networkBackoff *= 2.0
-			fmt.Println("Network backoff")
+			networkBackoff *= 4.0
 			orgPage--
 			continue
 		}
@@ -154,33 +145,31 @@ func main(){
 			checkError(err)
 			
 			var size, main, affil, hidden int
-			var isIconCustom              bool
 			var previouslySavedIcon       string
-			size, main, affil, hidden, isIconCustom, previouslySavedIcon = selectOrganization(sid, stmtSelCustomIcon, stmtSelHistory, stmtSelIconURL)
+			size, main, affil, hidden, previouslySavedIcon = selectOrganization(sid, stmtSelHistory, stmtSelIconURL)
 			
-			if size != expectedSize {
-				size, main, affil, hidden = queryMembers(sid, expectedSize, db, pathToApi)
+			if size != expectedSize || previouslySavedIcon != "" && previouslySavedIcon != orgDataFromGroup.Logo {
+				size, main, affil, hidden, err = queryMembers(sid, expectedSize, db, pathToApi)
+				if err != nil {
+					fmt.Println( err.Error() )
+					continue
+				}
 				
-				var orgQuery     string = makeOrgQueryString(sid)
-				var orgResultRaw []byte = queryApi(pathToApi, orgQuery)
-				var resultContainer resultOrgContainer
-				json.Unmarshal(orgResultRaw, &resultContainer)
+				var org resultOrg
+				org, err = queryOrg(sid, pathToApi)
+				if err != nil {
+					fmt.Println( err.Error() )
+					continue
+				}
 				
-				stmtArgsOrgResult := assignArgsOrgResult(resultContainer.Data, orgDataFromGroup, sid, size, main, affil, hidden)
+				stmtArgsOrgResult := assignArgsOrgResult(org, orgDataFromGroup, sid, size, main, affil, hidden)
 				err = insertOrg(stmtArgsOrgResult, db)
 				checkError(err)
 				
-				//if org is new, we need to recheck this
-				if stmtArgsOrgResult.customIcon == int8(1) {
-					isIconCustom = true
-				} else {
-					isIconCustom = false
+				if stmtArgsOrgResult.customIcon == int8(1) && previouslySavedIcon != orgDataFromGroup.Logo {
+					err = DownloadIcon(sid, orgDataFromGroup.Logo)
+					checkError(err)
 				}
-			}
-			
-			if isIconCustom && previouslySavedIcon != orgDataFromGroup.Logo {
-				err = DownloadIcon(sid, orgDataFromGroup.Logo)
-				checkError(err)
 			}
 			
 			_, err := stmtInsertHistory.Exec(sid, size, main, affil, hidden, size, main, affil, hidden)
@@ -194,70 +183,7 @@ func main(){
 	checkError(err)
 }
 
-func assignArgsOrgDefault(orgDataFromGroup orgInGroup, sid string, size int, main int, affil int, hidden int) validStmtArgs {
-	var stmtArgs validStmtArgs
-	
-	stmtArgs.archetype      = orgDataFromGroup.Archetype
-	stmtArgs.charter        = "[API returned null]"
-	stmtArgs.commitment     = orgDataFromGroup.Commitment
-	stmtArgs.focusPrimary   = "Social"//default
-	stmtArgs.focusSecondary = "Social"//default
-	stmtArgs.headline       = "[API returned null]"
-	stmtArgs.history        = "[API returned null]"
-	stmtArgs.language       = orgDataFromGroup.Lang
-	stmtArgs.manifesto      = "[API returned null]"
-	stmtArgs.name           = orgDataFromGroup.Title
-	if stmtArgs.name == "" {
-		stmtArgs.name = " "//db does not currently accept null names, but spaces are ok
-	}
-	stmtArgs.spectrumID     = sid
-	stmtArgs.size           = size
-	stmtArgs.sizeMain       = main
-	stmtArgs.sizeAffil      = affil
-	stmtArgs.sizeHidden     = hidden
-	
-	const urlOrganization string = "http://robertsspaceindustries.com/rsi/static/images/organization/defaults/logo/generic.jpg"
-	const urlCorporation  string = "http://robertsspaceindustries.com/rsi/static/images/organization/defaults/logo/corp.jpg"
-	const urlPMC          string = "http://robertsspaceindustries.com/rsi/static/images/organization/defaults/logo/pmc.jpg"
-	const urlFaith        string = "http://robertsspaceindustries.com/rsi/static/images/organization/defaults/logo/faith.jpg"
-	const urlSyndicate    string = "http://robertsspaceindustries.com/rsi/static/images/organization/defaults/logo/syndicate.jpg"
-	switch orgDataFromGroup.Logo {
-	case urlOrganization, urlCorporation, urlPMC, urlFaith, urlSyndicate:
-		stmtArgs.customIcon = int8(0)
-		stmtArgs.iconURL    = ""
-	default:
-		stmtArgs.customIcon = int8(1)
-		stmtArgs.iconURL    = orgDataFromGroup.Logo
-	}
-	
-	switch orgDataFromGroup.Recruiting {
-	case "Yes":
-		stmtArgs.recruitment = true
-	case "No":
-		stmtArgs.recruitment = false
-	default:
-		panic( errors.New("query for individual org does not yield valid recruitment Yes/No") )
-	}
-	
-	switch orgDataFromGroup.Roleplay {
-	case "Yes":
-		stmtArgs.roleplay = true
-	case "No":
-		stmtArgs.roleplay = false
-	default:
-		panic( errors.New("query for individual org does not yield valid roleplay Yes/No") )
-	}
-	
-	return stmtArgs
-}
-
-
 func assignArgsOrgResult(org resultOrg, orgDataFromGroup orgInGroup, sid string, size int, main int, affil int, hidden int) validStmtArgs {
-	//API can return null for inner query.Data, so use defaults if needed
-	if org == (resultOrg{}) {
-		return assignArgsOrgDefault(orgDataFromGroup, sid, size, main, affil, hidden)
-	}
-	
 	var stmtArgs validStmtArgs
 	
 	stmtArgs.archetype      = org.Archetype
@@ -290,7 +216,7 @@ func assignArgsOrgResult(org resultOrg, orgDataFromGroup orgInGroup, sid string,
 		stmtArgs.iconURL    = ""
 	default:
 		stmtArgs.customIcon = int8(1)
-		stmtArgs.iconURL    = org.Logo
+		stmtArgs.iconURL    = orgDataFromGroup.Logo
 	}
 	
 	switch org.Recruiting {
@@ -324,21 +250,16 @@ func checkError(err error) {
 func executeStatements(stmts map[string]*sql.Stmt, a validStmtArgs) error {
 	var err error
 	
-	var res1 sql.Result
-	var rowsAffected int64
-	res1, err = stmts["InsOrg"].Exec(a.spectrumID, a.name, a.size, a.sizeMain, a.customIcon, a.name, a.size, a.sizeMain, a.customIcon)
+	_, err = stmts["InsOrg"].Exec(a.spectrumID, a.name, a.size, a.sizeMain, a.customIcon, a.name, a.size, a.sizeMain, a.customIcon)
 	checkError(err)
-	rowsAffected, err = res1.RowsAffected()
-	checkError(err)
-	if rowsAffected == int64(0) {
-		panic(( "Failed to insert into tbl_Organizations SID:" + a.spectrumID + " Name: " + a.name + " Size: " + strconv.Itoa(a.size) + " Main: " + strconv.Itoa(a.sizeMain) + " customIcon: " + strconv.Itoa(int(a.customIcon)) ))
-	}
 	
 	_, err = stmts["InsDate"].Exec(a.spectrumID, a.size, a.sizeMain, a.sizeAffil, a.sizeHidden, a.size, a.sizeMain, a.sizeAffil, a.sizeHidden)
 	checkError(err)
 	
-	_, err = stmts["InsIconURL"].Exec(a.spectrumID, a.iconURL, a.iconURL)
-	checkError(err)
+	if a.iconURL != "" {
+		_, err = stmts["InsIconURL"].Exec(a.spectrumID, a.iconURL, a.iconURL)
+		checkError(err)
+	}
 	
 	_, err = stmts["InsCommitment"].Exec(a.spectrumID, a.commitment, a.commitment)
 	checkError(err)
@@ -413,21 +334,21 @@ func insertOrg(stmtArgs validStmtArgs, db *sql.DB) error {
 	return err
 }
 
-func makeGroupQueryString(currentPage int, pageTurn int) string {
+func makeGroupQueryString(currentPage int) string {
 	var query string
 	query  = "api_source=live&system=organizations&action=all_organizations&source=rsi"
 	query += "&start_page=" + strconv.Itoa(currentPage)
-	query += "&end_page=" + strconv.Itoa(currentPage+pageTurn)
+	query += "&end_page=" + strconv.Itoa(currentPage)
 	query += "&items_per_page=1&sort_method=&sort_direction=ascending&expedite=0&format=raw"
 	return query
 }
 
-func makeMemberQueryString(sid string, currentPage int, pageTurn int) string {
+func makeMemberQueryString(sid string, currentPage int) string {
 	var query string
 	query  = "api_source=live&system=organizations&action=organization_members"
-	query += "&target_id" + sid
+	query += "&target_id=" + sid
 	query += "&start_page=" + strconv.Itoa(currentPage)
-	query += "&end_page=" + strconv.Itoa(currentPage+pageTurn)
+	query += "&end_page=" + strconv.Itoa(currentPage)
 	query += "&items_per_page=1&sort_method=&sort_direction=ascending&expedite=0&format=raw"
 	return query
 }
@@ -520,18 +441,10 @@ func queryApi(pathToApi string, groupQuery string) []byte {
 	return apiResult
 }
 
-func selectOrganization(sid string, stmtSelCustomIcon *sql.Stmt, stmtSelHistory *sql.Stmt, stmtSelIconURL *sql.Stmt) (int, int, int, int, bool, string) {
+func selectOrganization(sid string, stmtSelHistory *sql.Stmt, stmtSelIconURL *sql.Stmt) (int, int, int, int, string) {
 	var size, main, affil, hidden int
-	var customIcon                bool
 	var previouslySavedIcon       string
 	var err                       error
-	
-	err = stmtSelCustomIcon.QueryRow(sid).Scan(&customIcon)
-	if err == sql.ErrNoRows {
-		customIcon = false
-	} else if err != nil {
-		panic(err)
-	}
 	
 	err = stmtSelHistory.QueryRow(sid).Scan(&size, &main, &affil, &hidden)
 	if err == sql.ErrNoRows {
@@ -545,12 +458,12 @@ func selectOrganization(sid string, stmtSelCustomIcon *sql.Stmt, stmtSelHistory 
 	
 	err = stmtSelIconURL.QueryRow(sid).Scan(&previouslySavedIcon)
 	if err == sql.ErrNoRows {
-		previouslySavedIcon = " "
+		previouslySavedIcon = ""
 	} else if err != nil {
 		panic(err)
 	}
 	
-	return size, main, affil, hidden, customIcon, previouslySavedIcon
+	return size, main, affil, hidden, previouslySavedIcon
 }
 
 type resultMembersContainer    struct {
@@ -563,57 +476,79 @@ type resultMember struct {
 	Type       string
 	Visibility string
 }
-func queryMembers(sid string, expectedSize int, db *sql.DB, pathToApi string) (int, int, int, int) {
+func queryMembers(sid string, expectedSize int, db *sql.DB, pathToApi string) (int, int, int, int, error) {
+	var backoff float64 = 1.0
 	var size, main, affil, hidden int = 0, 0, 0, 0
-	var pageTurn int = 1
-	for currentPage := int(0); ; currentPage += pageTurn {
-		var query string = makeMemberQueryString(sid, currentPage, pageTurn)
+	for currentPage := int(1); ; currentPage++ {
+		var query string = makeMemberQueryString(sid, currentPage)
 		var pageResultRaw []byte = queryApi(pathToApi, query)
 		var resultContainer resultMembersContainer
 		json.Unmarshal(pageResultRaw, &resultContainer)
+		
+		//RSI webpage often has the total size off-by-one
+		//However, if a query fails while summing members, we get the wrong size
+		//Here we ensure all members are scraped (success) or none (skip org)
+		//keep backoff short for the orgs that are off-by-one
 		if resultContainer.Data == nil {
-			break
+			if size == expectedSize { return size, main, affil, hidden, nil }//done
+			if backoff > 5.0 {
+				if (size+1) == expectedSize { return size, main, affil, hidden, nil }//RSI's off-by-one error
+				if (size-1) == expectedSize { return size, main, affil, hidden, nil }//RSI's off-by-one error
+				return 0, 0, 0, 0, errors.New("Cannot sum member sizes for SID: " + sid)
+			}
+			time.Sleep( time.Second * time.Duration(backoff) )
+			backoff *= 4.0
+			currentPage--
+			continue
 		}
 		
 		var currentMember resultMember
 		for _, currentMember = range resultContainer.Data{
 			size++
-			switch currentMember.Type {
-			case "affiliate":
-				affil++
-			case "main":
-				main++
+			switch currentMember.Visibility {
+			case "visible":
+				if currentMember.Type == "affiliate" {
+					affil++
+				} else if currentMember.Type == "main" {
+					main++
+				}
 			case "hidden", "redacted":
 				hidden++
 			default:
-				panic( errors.New("Error -- org: " + sid + " has unknown type: " + currentMember.Type) )
+				panic( errors.New("Error -- Member: " + currentMember.Handle + " in org: " + sid + " has unknown type: " + currentMember.Type) )
 			}
 		}
 	}
-	
-	//handle case where query fails
-	if size == 0 {
-		size   = expectedSize
-		main   = 0
-		affil  = 0
-		hidden = expectedSize
-	}
-	
-	return size, main, affil, hidden
+	return size, main, affil, hidden, nil
 }
 
-type scrape struct {
-	size    int
-	daysAgo int
+func queryOrg(sid string, pathToApi string) (resultOrg, error) {
+	var orgQuery     string = makeOrgQueryString(sid)
+	var orgResultRaw []byte = queryApi(pathToApi, orgQuery)
+	var resultContainer resultOrgContainer
+	json.Unmarshal(orgResultRaw, &resultContainer)
+	
+	if resultContainer.Data == (resultOrg{}) {
+		//try once more
+		time.Sleep(time.Second)
+		orgResultRaw = queryApi(pathToApi, orgQuery)
+		json.Unmarshal(orgResultRaw, &resultContainer)
+		
+		if resultContainer.Data == (resultOrg{}) {
+			return resultContainer.Data, errors.New("cannot query org: " + sid + " (API returned null)")
+		}
+	}
+	return resultContainer.Data, nil
 }
+
 func updateGrowthRate(sid string, stmtSelRecent *sql.Stmt, stmtUpdateGrowth *sql.Stmt) error {
 	rows, err := stmtSelRecent.Query(sid)
 	checkError(err)
 	defer rows.Close()
 	
-	var scrapes []scrape = make([]scrape, 0)
+	var scrapes []Scrape = make([]Scrape, 0)
 	for rows.Next() {
-		var currentScrape scrape
+		var currentScrape Scrape
 		err = rows.Scan(&currentScrape.size, &currentScrape.daysAgo)
 		checkError(err)
 		scrapes = append(scrapes, currentScrape)
@@ -621,20 +556,8 @@ func updateGrowthRate(sid string, stmtSelRecent *sql.Stmt, stmtUpdateGrowth *sql
 	err = rows.Err()
 	checkError(err)
 	
-	if len(scrapes) == 0 {
-		panic( errors.New("Error -- Org:" + sid + "has no history, yet it exists in the DB") )
-	}
-	
-	var oldestScrape scrape = scrapes[0]
-	var newestScrape scrape = scrapes[0]
-	
-	for _, currentScrape := range scrapes {
-		if currentScrape.daysAgo > oldestScrape.daysAgo && oldestScrape.daysAgo <= 7 {
-			oldestScrape = currentScrape
-		}
-	}
-	
-	var growthRate float32 = float32( float64(newestScrape.size - oldestScrape.size)/7.0 )
+	growthRate, err := CalculateGrowth(scrapes, sid)
+	checkError(err)
 	
 	_, err = stmtUpdateGrowth.Exec(growthRate, sid)
 	return err
