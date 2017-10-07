@@ -1,0 +1,86 @@
+{
+    "data": {
+        "sid": "avocado",
+        "title": "Evocati - NDA",
+        "logo": "http:\/\/robertsspaceindustries.com\/media\/kjcz5umie01t7r\/logo\/AVOCADO-Logo.jpg",
+        "member_count": "914",
+        "recruiting": "Yes",
+        "archetype": "Faith",
+        "commitment": "Hardcore",
+        "roleplay": "Yes",
+        "lang": null,
+        "primary_focus": "Exploration",
+        "primary_image": "http:\/\/robertsspaceindustries.com\/media\/i07k1bkmcjnmpr\/icon\/Exploration.png",
+        "secondary_focus": "Engineering",
+        "secondary_image": "http:\/\/robertsspaceindustries.com\/media\/wlgjee4z43hhdr\/icon\/Engineering.png",
+        "banner": "http:\/\/robertsspaceindustries.com\/rsi\/static\/images\/organization\/defaults\/banner\/faith.jpg",
+        "headline": "<p>Git gud.<\/p>",
+        "history": "<p>Our esteemed leaders have summoned a conclave to put into writing the foundation of our Faith. Please come back soon to learn more about our community.<\/p>",
+        "manifesto": "<p>Our esteemed leaders have summoned a conclave to put into writing the foundation of our Faith. Please come back soon to learn more about our community.<\/p>",
+        "charter": "<p>Our esteemed leaders have summoned a conclave to put into writing the foundation of our Faith. Please come back soon to learn more about our community.<\/p>",
+        "cover_image": null,
+        "cover_video": "player.vimeo.com\/video\/{$video_id}?wmode=transparent",
+        "date_added": null,
+        "last_scrape_date": null
+    },
+    "request_stats": {
+        "request_ip": "1",
+        "timestamp": 1,
+        "items_returned": 22,
+        "query_status": "success",
+        "input_query": {
+            "system": "organizations",
+            "action": "single_organization",
+            "data_source": null,
+            "target_id": "avocado",
+            "api_source": "live",
+            "pagination": {
+                "start_page": 1,
+                "end_page": 1,
+                "items_per_page": 1,
+                "sort_method": "alphabetic",
+                "sort_direction": "ascending"
+            },
+            "date_range": {
+                "start_date": 0,
+                "end_date": 1
+            },
+            "expedite": "0"
+        },
+        "resolved_query": {
+            "system": "organizations",
+            "action": "single_organization",
+            "data_source": null,
+            "target_id": "avocado",
+            "api_source": "live",
+            "pagination": {
+                "start_page": 1,
+                "end_page": 1,
+                "items_per_page": 1,
+                "sort_method": "alphabetic",
+                "sort_direction": "ascending"
+            },
+            "date_range": {
+                "start_date": 0,
+                "end_date": 1
+            },
+            "expedite": "0"
+        },
+        "performance": {
+            "network_io_time": 0.41307806968689,
+            "processing_time": 0.08263087272644,
+            "total_time": 0.49571084976196,
+            "handler_chain": [
+                {
+                    "name": "RSIOrgScraper",
+                    "children": [
+                        {
+                            "name": "RSIOrgCacher",
+                            "children": null
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

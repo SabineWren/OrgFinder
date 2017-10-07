@@ -1,0 +1,86 @@
+{
+    "data": {
+        "sid": "ovni",
+        "title": "L’Ordre des Vétérans Navigateurs Interstellaire",
+        "logo": "http:\/\/robertsspaceindustries.com\/media\/gdnha6gjtp5y2r\/logo\/OVNI-Logo.png",
+        "member_count": "3",
+        "recruiting": "Yes",
+        "archetype": "Organization",
+        "commitment": "Regular",
+        "roleplay": "Yes",
+        "lang": null,
+        "primary_focus": "Trading",
+        "primary_image": "http:\/\/robertsspaceindustries.com\/media\/svml2z3iniikjr\/icon\/Trade.png",
+        "secondary_focus": "Resources",
+        "secondary_image": "http:\/\/robertsspaceindustries.com\/media\/z2431c754d5yhr\/icon\/Resources.png",
+        "banner": "http:\/\/robertsspaceindustries.com\/media\/6dsmyf5dq2t82r\/banner\/OVNI-Banner.png",
+        "headline": "<p>N\u2019h\u00e9site pas \u00e0 rejoindre l\u2019Elite des Baroudeurs de l\u2019Espace !<br \/>\nForum en pr\u00e9paration.<br \/>\nActivation du discord le 7 octobre 2947.<\/p>",
+        "history": "<p>En 2947, les plus valeureux pilotes de la Galaxie d\u00e9cid\u00e8rent de se regrouper pour former une organisation polyvalente.<br \/>\nAdepte du professionnalisme ; elle f\u00fbt tr\u00e8s vite reconnue au sein de l\u2019UEE et pris\u00e9e par tous les marchands de la galaxie pour ces prix attractifs et \u00e7a perspicacit\u00e9. <\/p>",
+        "manifesto": "<p>Page Under Construction. Please check back soon!<\/p>",
+        "charter": "<p>Page Under Construction. Please check back soon!<\/p>",
+        "cover_image": null,
+        "cover_video": "player.vimeo.com\/video\/{$video_id}?wmode=transparent",
+        "date_added": null,
+        "last_scrape_date": null
+    },
+    "request_stats": {
+        "request_ip": "1",
+        "timestamp": 1,
+        "items_returned": 22,
+        "query_status": "success",
+        "input_query": {
+            "system": "organizations",
+            "action": "single_organization",
+            "data_source": null,
+            "target_id": "ovni",
+            "api_source": "live",
+            "pagination": {
+                "start_page": 1,
+                "end_page": 1,
+                "items_per_page": 1,
+                "sort_method": "alphabetic",
+                "sort_direction": "ascending"
+            },
+            "date_range": {
+                "start_date": 0,
+                "end_date": 1
+            },
+            "expedite": "0"
+        },
+        "resolved_query": {
+            "system": "organizations",
+            "action": "single_organization",
+            "data_source": null,
+            "target_id": "ovni",
+            "api_source": "live",
+            "pagination": {
+                "start_page": 1,
+                "end_page": 1,
+                "items_per_page": 1,
+                "sort_method": "alphabetic",
+                "sort_direction": "ascending"
+            },
+            "date_range": {
+                "start_date": 0,
+                "end_date": 1
+            },
+            "expedite": "0"
+        },
+        "performance": {
+            "network_io_time": 0.60066103935242,
+            "processing_time": 0.082147121429443,
+            "total_time": 0.68281006813049,
+            "handler_chain": [
+                {
+                    "name": "RSIOrgScraper",
+                    "children": [
+                        {
+                            "name": "RSIOrgCacher",
+                            "children": null
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,58 @@
+{
+    "data": null,
+    "request_stats": {
+        "request_ip": "1",
+        "timestamp": 1,
+        "items_returned": 0,
+        "query_status": "failed",
+        "input_query": {
+            "system": "organizations",
+            "action": "single_organization",
+            "data_source": null,
+            "target_id": "shoshinsha",
+            "api_source": "live",
+            "pagination": {
+                "start_page": 1,
+                "end_page": 1,
+                "items_per_page": 1,
+                "sort_method": "alphabetic",
+                "sort_direction": "ascending"
+            },
+            "date_range": {
+                "start_date": 0,
+                "end_date": 1
+            },
+            "expedite": "0"
+        },
+        "resolved_query": {
+            "system": "organizations",
+            "action": "single_organization",
+            "data_source": null,
+            "target_id": "shoshinsha",
+            "api_source": "live",
+            "pagination": {
+                "start_page": 1,
+                "end_page": 1,
+                "items_per_page": 1,
+                "sort_method": "alphabetic",
+                "sort_direction": "ascending"
+            },
+            "date_range": {
+                "start_date": 0,
+                "end_date": 1
+            },
+            "expedite": "0"
+        },
+        "performance": {
+            "network_io_time": 0.30923199653625,
+            "processing_time": 0.081357955932617,
+            "total_time": 0.3905930519104,
+            "handler_chain": [
+                {
+                    "name": "RSIOrgScraper",
+                    "children": null
+                }
+            ]
+        }
+    }
+}
