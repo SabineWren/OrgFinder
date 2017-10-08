@@ -16,6 +16,7 @@ import   "html"
 import   "os"
 import   "os/exec"
 import   "strconv"
+import   "strings"
 
 type ResultOrgContainer struct {
 	Data ResultOrg
@@ -83,6 +84,45 @@ func ParseQueryOrg(sid string, dataRaw []byte) (ResultOrg, error) {
 	return resultContainer.Data, nil
 }
 
+type ResultOrgsGroup struct {
+	Data []OrgInGroup
+}
+/* OrgInGroup.Logo has url ending in avatar/<sid>.<png/jpg>
+ * inner query returns logo/ <sid>.<png/jpg>
+ * the logo/ link has a higher quality image
+ * however, we use avatar/ so it's easier to check if it changed
+**/
+type OrgInGroup struct {
+	Lang         string//inner query always has null lang on live results
+	Logo         string//used for image file checking
+	Member_count string//not guaranteed to be correct
+	Sid          string//Converted to uppercase before inserting
+}
+func cleanString(in string) string {
+	in = html.UnescapeString(in)
+	in = strings.Replace(in, `\/`, "/", -1)
+	return in
+}
+func ParseQueryOrgs(groupResultRaw []byte) ([]OrgInGroup, error) {
+	var groupResult ResultOrgsGroup
+	var err error = json.Unmarshal(groupResultRaw, &groupResult)
+	if err != nil {
+		panic(err)
+	}
+	if groupResult.Data == nil {
+		return groupResult.Data, errors.New("Org group query returned null")
+	}
+	
+	for k, _ := range groupResult.Data {
+		groupResult.Data[k].Lang         = cleanString(groupResult.Data[k].Lang)
+		groupResult.Data[k].Logo         = cleanString(groupResult.Data[k].Logo)
+		groupResult.Data[k].Member_count = cleanString(groupResult.Data[k].Member_count)
+		groupResult.Data[k].Sid          = cleanString(groupResult.Data[k].Sid)
+	}
+	
+	return groupResult.Data, nil
+}
+
 func QueryApi(groupQuery string) []byte {
 	var apiResult []byte
 	var err       error
@@ -94,5 +134,5 @@ func QueryApi(groupQuery string) []byte {
 		panic(err)
 	}
 	
-	return []byte( html.UnescapeString(string(apiResult)) )
+	return apiResult
 }

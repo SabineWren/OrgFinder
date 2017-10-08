@@ -14,7 +14,7 @@
         "secondary_focus": "Trading",
         "secondary_image": "http:\/\/robertsspaceindustries.com\/media\/svml2z3iniikjr\/icon\/Trade.png",
         "banner": "http:\/\/robertsspaceindustries.com\/media\/rsga1xqpk7oc5r\/banner\/SNSANGNIM-Banner.jpg",
-        "headline": "<p>2\uc911\ub300 \uc2e0\ubcd1 \ubaa8\uc9d1\uc911 (2CO 81mm)<\/p>\n\n<p>\ud574\uc0c1 \ubc29\uc704\ub300, \ubaa9\ud3ec \ud574\uad70 \uacbd\ube44\ubd80\uc758 \uc9c1\uc18d\uc73c\ub85c…\ud574\uc0c1\ubc29\uc704\ub300 \uc804\ub0a8\uc9c0\ubd80 \ubd80\ub300\uc7a5<br \/>\n\uc774\ub807\uac8c \ud574\uac00\uc9c0\uace0 \uc81c\uac00 \uc800\uc758 \uc120\ubc15\uc778\uc6d0\uc744 \ub3d9\uc6d0\ud574\uc11c \uacf5\ube44\ub97c \ud1a0\ubc8c…<br \/>\n\uc77c\uc120\uc5d0\uc11c \uc2f8\uc6e0\uc2b5\ub2c8\ub2e4.<\/p>\n\n<p>\uac00\uc785 \ud6c4 Redacted\ub85c \uc124\uc815\ud574\ub3c4 \uc0c1\uad00\uc5c6\uc74c<br \/>\n\ud65c\ub3d9\uc548\ud574\ub3c4 \uc0c1\uad00\uc5c6\uc74c<\/p>",
+        "headline": "<p>2\uc911\ub300 \uc2e0\ubcd1 \ubaa8\uc9d1\uc911 (2CO 81mm)<\/p>\n\n<p>\ud574\uc0c1 \ubc29\uc704\ub300, \ubaa9\ud3ec \ud574\uad70 \uacbd\ube44\ubd80\uc758 \uc9c1\uc18d\uc73c\ub85c&#8230;\ud574\uc0c1\ubc29\uc704\ub300 \uc804\ub0a8\uc9c0\ubd80 \ubd80\ub300\uc7a5<br \/>\n\uc774\ub807\uac8c \ud574\uac00\uc9c0\uace0 \uc81c\uac00 \uc800\uc758 \uc120\ubc15\uc778\uc6d0\uc744 \ub3d9\uc6d0\ud574\uc11c \uacf5\ube44\ub97c \ud1a0\ubc8c&#8230;<br \/>\n\uc77c\uc120\uc5d0\uc11c \uc2f8\uc6e0\uc2b5\ub2c8\ub2e4.<\/p>\n\n<p>\uac00\uc785 \ud6c4 Redacted\ub85c \uc124\uc815\ud574\ub3c4 \uc0c1\uad00\uc5c6\uc74c<br \/>\n\ud65c\ub3d9\uc548\ud574\ub3c4 \uc0c1\uad00\uc5c6\uc74c<\/p>",
         "history": "<p>Our esteemed leaders have summoned a conclave to put into writing the foundation of our Faith. Please come back soon to learn more about our community.<\/p>",
         "manifesto": "<p>Our esteemed leaders have summoned a conclave to put into writing the foundation of our Faith. Please come back soon to learn more about our community.<\/p>",
         "charter": "<p>Our esteemed leaders have summoned a conclave to put into writing the foundation of our Faith. Please come back soon to learn more about our community.<\/p>",
@@ -62,14 +62,14 @@
             },
             "date_range": {
                 "start_date": 0,
-                "end_date": 1
+                "end_date": 1507482011
             },
             "expedite": "0"
         },
         "performance": {
-            "network_io_time": 0.31770396232605,
-            "processing_time": 0.093737125396729,
-            "total_time": 0.41144394874573,
+            "network_io_time": 0.35552406311035,
+            "processing_time": 0.083356857299805,
+            "total_time": 0.43888282775879,
             "handler_chain": [
                 {
                     "name": "RSIOrgScraper",

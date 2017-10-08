@@ -1,11 +1,11 @@
 {
     "data": {
         "sid": "ovni",
-        "title": "L’Ordre des Vétérans Navigateurs Interstellaire",
+        "title": "L&rsquo;Ordre des V&eacute;t&eacute;rans Navigateurs Interstellaire",
         "logo": "http:\/\/robertsspaceindustries.com\/media\/gdnha6gjtp5y2r\/logo\/OVNI-Logo.png",
         "member_count": "3",
         "recruiting": "Yes",
-        "archetype": "Organization",
+        "archetype": "Corporation",
         "commitment": "Regular",
         "roleplay": "Yes",
         "lang": null,
@@ -62,14 +62,14 @@
             },
             "date_range": {
                 "start_date": 0,
-                "end_date": 1
+                "end_date": 1507481897
             },
             "expedite": "0"
         },
         "performance": {
-            "network_io_time": 0.60066103935242,
-            "processing_time": 0.082147121429443,
-            "total_time": 0.68281006813049,
+            "network_io_time": 0.37034296989441,
+            "processing_time": 0.082281112670898,
+            "total_time": 0.45262598991394,
             "handler_chain": [
                 {
                     "name": "RSIOrgScraper",

@@ -44,9 +44,9 @@
             "expedite": "0"
         },
         "performance": {
-            "network_io_time": 0.30923199653625,
-            "processing_time": 0.081357955932617,
-            "total_time": 0.3905930519104,
+            "network_io_time": 0.35371804237366,
+            "processing_time": 0.079936027526855,
+            "total_time": 0.43365597724915,
             "handler_chain": [
                 {
                     "name": "RSIOrgScraper",

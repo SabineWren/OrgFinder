@@ -11,11 +11,9 @@
 package main
 
 import   "errors"
-import   "strings"
 
 func CombineOrgData(org ResultOrg, orgDataFromGroup OrgInGroup, sid string, size int, main int, affil int, hidden int) ValidStmtArgs {
 	var stmtArgs ValidStmtArgs
-	var iconParsedURL string = strings.Replace(orgDataFromGroup.Logo, `\`, "", -1)
 	
 	stmtArgs.archetype      = org.Archetype
 	stmtArgs.charter        = org.Charter
@@ -41,13 +39,14 @@ func CombineOrgData(org ResultOrg, orgDataFromGroup OrgInGroup, sid string, size
 	const urlPMC          string = "http://robertsspaceindustries.com/rsi/static/images/organization/defaults/logo/pmc.jpg"
 	const urlFaith        string = "http://robertsspaceindustries.com/rsi/static/images/organization/defaults/logo/faith.jpg"
 	const urlSyndicate    string = "http://robertsspaceindustries.com/rsi/static/images/organization/defaults/logo/syndicate.jpg"
-	switch iconParsedURL {
+	
+	switch orgDataFromGroup.Logo {
 	case urlOrganization, urlCorporation, urlPMC, urlFaith, urlSyndicate:
 		stmtArgs.customIcon = int8(0)
 		stmtArgs.iconURL    = ""
 	default:
 		stmtArgs.customIcon = int8(1)
-		stmtArgs.iconURL    = iconParsedURL
+		stmtArgs.iconURL    = orgDataFromGroup.Logo
 	}
 	
 	switch org.Recruiting {

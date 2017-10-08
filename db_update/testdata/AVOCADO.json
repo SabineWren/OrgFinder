@@ -3,7 +3,7 @@
         "sid": "avocado",
         "title": "Evocati - NDA",
         "logo": "http:\/\/robertsspaceindustries.com\/media\/kjcz5umie01t7r\/logo\/AVOCADO-Logo.jpg",
-        "member_count": "914",
+        "member_count": "920",
         "recruiting": "Yes",
         "archetype": "Faith",
         "commitment": "Hardcore",
@@ -67,9 +67,9 @@
             "expedite": "0"
         },
         "performance": {
-            "network_io_time": 0.41307806968689,
-            "processing_time": 0.08263087272644,
-            "total_time": 0.49571084976196,
+            "network_io_time": 0.31039595603943,
+            "processing_time": 0.10802292823792,
+            "total_time": 0.41842293739319,
             "handler_chain": [
                 {
                     "name": "RSIOrgScraper",

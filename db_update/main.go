@@ -20,21 +20,6 @@ import   "strconv"
 import   "strings"
 import   "time"
 
-type ResultOrgsGroup    struct {
-	Data []OrgInGroup
-}
-/* OrgInGroup.Logo has url ending in avatar/<sid>.<png/jpg>
- * inner query returns logo/ <sid>.<png/jpg>
- * the logo/ link has a higher quality image
- * however, we use avatar/ so it's easier to check if it changed
-**/
-type OrgInGroup struct {
-	Lang         string//inner query always has null lang on live results
-	Logo         string//used for image file checking
-	Member_count string//not guaranteed to be correct
-	Sid          string//Converted to uppercase before inserting
-}
-
 type ValidStmtArgs struct {
 	archetype      string
 	charter        string
@@ -95,10 +80,11 @@ func main(){
 	for orgPage := int(1); ; orgPage++ {
 		var groupQuery     string = MakeGroupQueryString(orgPage)
 		var groupResultRaw []byte = QueryApi(groupQuery)
-		var groupResult ResultOrgsGroup
-		json.Unmarshal(groupResultRaw, &groupResult)
 		
-		if groupResult.Data == nil {
+		var groupResultSlice []OrgInGroup
+		groupResultSlice, err = ParseQueryOrgs(groupResultRaw)
+		
+		if err != nil {
 			time.Sleep( time.Second * time.Duration(networkBackoff) )
 			if networkBackoff > 60 {
 				fmt.Println( "backoff limit reached at api page: " + strconv.FormatFloat(networkBackoff, 'E', 2, 64) )
@@ -111,7 +97,7 @@ func main(){
 		networkBackoff = 1.0
 		
 		//INNER LOOP (query one Org):
-		for _, orgDataFromGroup := range groupResult.Data {
+		for _, orgDataFromGroup := range groupResultSlice {
 			var sid             string = strings.ToUpper(orgDataFromGroup.Sid)
 			var expectedSize    int
 			expectedSize, err = strconv.Atoi(orgDataFromGroup.Member_count)
