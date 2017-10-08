@@ -40,6 +40,12 @@ type ResultOrg struct {
 	Title           string
 }
 
+func cleanString(in string) string {
+	in = html.UnescapeString(in)
+	in = strings.Replace(in, `\/`, "/", -1)
+	return in
+}
+
 func getApiPath() string {
 	pathToApi, err := os.Getwd()
 	checkError(err)
@@ -81,6 +87,23 @@ func ParseQueryOrg(sid string, dataRaw []byte) (ResultOrg, error) {
 		return resultContainer.Data, errors.New("query org: " + sid + " returned null")
 	}
 	
+	resultContainer.Data.Archetype       = cleanString(resultContainer.Data.Archetype)
+	//resultContainer.Data.Banner          string//unused
+	resultContainer.Data.Charter         = cleanString(resultContainer.Data.Charter)
+	//resultContainer.Data.Cover_image     string//unused
+	//resultContainer.Data.Cover_video     string//unused
+	resultContainer.Data.Commitment      = cleanString(resultContainer.Data.Commitment)
+	resultContainer.Data.Headline        = cleanString(resultContainer.Data.Headline)
+	resultContainer.Data.History         = cleanString(resultContainer.Data.History)
+	resultContainer.Data.Logo            = cleanString(resultContainer.Data.Logo)
+	resultContainer.Data.Manifesto       = cleanString(resultContainer.Data.Manifesto)
+	resultContainer.Data.Member_count    = cleanString(resultContainer.Data.Member_count)
+	resultContainer.Data.Primary_focus   = cleanString(resultContainer.Data.Primary_focus)
+	resultContainer.Data.Recruiting      = cleanString(resultContainer.Data.Recruiting)
+	resultContainer.Data.Roleplay        = cleanString(resultContainer.Data.Roleplay)
+	resultContainer.Data.Secondary_focus = cleanString(resultContainer.Data.Secondary_focus)
+	resultContainer.Data.Title           = cleanString(resultContainer.Data.Title)
+	
 	return resultContainer.Data, nil
 }
 
@@ -97,11 +120,6 @@ type OrgInGroup struct {
 	Logo         string//used for image file checking
 	Member_count string//not guaranteed to be correct
 	Sid          string//Converted to uppercase before inserting
-}
-func cleanString(in string) string {
-	in = html.UnescapeString(in)
-	in = strings.Replace(in, `\/`, "/", -1)
-	return in
 }
 func ParseQueryOrgs(groupResultRaw []byte) ([]OrgInGroup, error) {
 	var groupResult ResultOrgsGroup
