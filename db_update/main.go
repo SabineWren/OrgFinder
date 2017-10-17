@@ -177,10 +177,10 @@ func executeStatements(stmts map[string]*sql.Stmt, a ValidStmtArgs) error {
 	checkError(err)
 	
 	if a.recruitment {
-		_, err = stmts["InsFull"].Exec(a.spectrumID, a.spectrumID)
+		_, err = stmts["DelFull"].Exec(a.spectrumID)
 		checkError(err)
 	} else {
-		_, err = stmts["DelFull"].Exec(a.spectrumID)
+		_, err = stmts["InsFull"].Exec(a.spectrumID, a.spectrumID)
 		checkError(err)
 	}
 	

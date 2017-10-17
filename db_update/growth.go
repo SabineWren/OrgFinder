@@ -41,6 +41,5 @@ func CalculateGrowth(scrapes []Scrape, sid string) (float32, error) {
 			oldestScrape = currentScrape
 		}
 	}
-	var growthRate float32 = float32(newestScrape.size - oldestScrape.size)
-	return growthRate, nil
+	return float32(newestScrape.size - oldestScrape.size), nil
 }
