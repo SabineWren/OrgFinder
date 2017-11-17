@@ -1,9 +1,12 @@
 CODE QUALITY
 - continue refactoring main file
 - handle API backoff in a single function
+- remove slash replacement (already decoding)
 
 TESTS + BUGFIXES
 - attempt running scraper twice before failing
+- log ALL failed scrapes
+- identify unscraped images and re-attempt scraping
 - chop long words in org descriptions (and add it to automated testing)
 
 FEATURES

@@ -8,9 +8,10 @@
 	
 	@license-end
 */
-package main
+package lib_db_update_query_API
 
 import   "errors"
+import   "fmt"
 import   "io/ioutil"
 import   "strconv"
 import   "testing"
@@ -90,8 +91,6 @@ func TestQueryOrg(t * testing.T) {
 	
 	var resultRaw   []byte
 	var expectedRaw []byte
-	var result      string
-	var expected    string
 	var resOrg      ResultOrg
 	var expOrg      ResultOrg
 	
@@ -116,16 +115,17 @@ func TestQueryOrg(t * testing.T) {
 		
 		pass, err = compareOrgs(expOrg, resOrg)
 		if err != nil {
-			err1 := ioutil.WriteFile("testdata/logs/expected" + strconv.Itoa(k), []byte(expected), 0644)
+			expOrgStr := fmt.Sprintf("%v", expOrg)
+			err1 := ioutil.WriteFile("testdata/logs/expected" + strconv.Itoa(k), []byte(expOrgStr), 0644)
 			if err1 != nil { panic(err) }
-			err1  = ioutil.WriteFile("testdata/logs/result"   + strconv.Itoa(k), []byte(result),   0644)
+			resOrgStr := fmt.Sprintf("%v", resOrg)
+			err1  = ioutil.WriteFile("testdata/logs/result"   + strconv.Itoa(k), []byte(resOrgStr), 0644)
 			if err1 != nil { panic(err) }
 			t.Error(err.Error())
 		} else if !pass {
 			t.Error()
 		}
 	}
-	
 	
 	var sid string = "SHOSHINSHA"
 	filename  = "testdata/" + sid + ".json"

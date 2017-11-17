@@ -13,7 +13,7 @@ package main
 import   "errors"
 
 type Scrape struct {
-	size    int
+	scrapedSize    int
 	daysAgo int
 }
 
@@ -27,8 +27,8 @@ func CalculateGrowth(scrapes []Scrape, sid string) (float32, error) {
 	
 	const timespan int = 7// 7 gives weekly growth, 365 yearly, etc.
 	
-	var oldestScrape Scrape = Scrape{size: 0, daysAgo: 0}
-	var newestScrape Scrape = Scrape{size: 0, daysAgo: 10}
+	var oldestScrape Scrape = Scrape{scrapedSize: 0, daysAgo: 0}
+	var newestScrape Scrape = Scrape{scrapedSize: 0, daysAgo: 10}
 	
 	for _, currentScrape := range scrapes {
 		if currentScrape.daysAgo < newestScrape.daysAgo {
@@ -41,5 +41,5 @@ func CalculateGrowth(scrapes []Scrape, sid string) (float32, error) {
 			oldestScrape = currentScrape
 		}
 	}
-	return float32(newestScrape.size - oldestScrape.size), nil
+	return float32(newestScrape.scrapedSize - oldestScrape.scrapedSize), nil
 }

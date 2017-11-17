@@ -20,30 +20,11 @@ import   "strconv"
 import   "strings"
 import   "time"
 
-type ValidStmtArgs struct {
-	archetype      string
-	charter        string
-	commitment     string
-	customIcon     int8//MySQL boolean aliases to TINYINT
-	focusPrimary   string
-	focusSecondary string
-	headline       string
-	history        string
-	iconURL        string
-	language       string
-	manifesto      string
-	name           string
-	recruitment    bool//for conditional logic
-	roleplay       bool//for conditional logic
-	size           int
-	sizeMain       int
-	sizeAffil      int
-	sizeHidden     int
-	spectrumID     string
-}
+import qapi  "../lib_db_update_query_API"
+import input "../lib_input"
 
 func main(){
-	var username, dbname, dbpassword string = parseArgs( os.Args[1:] )
+	var username, dbname, dbpassword string = input.ParseArgs( os.Args[1:] )
 	var db *sql.DB
 	var err error
 	db, err = sql.Open("mysql", username + ":" + dbpassword + "@/" + dbname)
@@ -78,11 +59,11 @@ func main(){
 	// OUTER LOOP (query all orgs):
 	var networkBackoff float64 = 1.0
 	for orgPage := int(1); ; orgPage++ {
-		var groupQuery     string = MakeGroupQueryString(orgPage)
-		var groupResultRaw []byte = QueryApi(groupQuery)
+		var groupQuery     string = qapi.MakeGroupQueryString(orgPage)
+		var groupResultRaw []byte = qapi.QueryApi(groupQuery)
 		
-		var groupResultSlice []OrgInGroup
-		groupResultSlice, err = ParseQueryOrgs(groupResultRaw)
+		var groupResultSlice []qapi.OrgInGroup
+		groupResultSlice, err = qapi.ParseQueryOrgs(groupResultRaw)
 		
 		if err != nil {
 			time.Sleep( time.Second * time.Duration(networkBackoff) )
@@ -117,25 +98,25 @@ func main(){
 				}
 				
 				var dataRaw []byte
-				var org ResultOrg
+				var org qapi.ResultOrg
 				//REFACTOR: PASS PARSING FUNCTION AS ARG TO GENERIC PARSING FUNC WITH ERROR CONTROL
-				dataRaw = QueryApi(MakeOrgQueryString(sid))
-				org, err = ParseQueryOrg(sid, dataRaw)
+				dataRaw = qapi.QueryApi(qapi.MakeOrgQueryString(sid))
+				org, err = qapi.ParseQueryOrg(sid, dataRaw)
 				if err != nil {//try again
 					time.Sleep( time.Second )
-					dataRaw = QueryApi(MakeOrgQueryString(sid))
-					org, err = ParseQueryOrg(sid, dataRaw)
+					dataRaw = qapi.QueryApi(qapi.MakeOrgQueryString(sid))
+					org, err = qapi.ParseQueryOrg(sid, dataRaw)
 				}
 				if err != nil {//skip org
 					fmt.Println( err.Error() )
 					continue
 				}
 				
-				stmtArgsOrgResult := CombineOrgData(org, orgDataFromGroup, sid, size, main, affil, hidden)
+				stmtArgsOrgResult := qapi.CombineOrgData(org, orgDataFromGroup, sid, size, main, affil, hidden)
 				err = insertOrg(stmtArgsOrgResult, db)
 				checkError(err)
 				
-				if stmtArgsOrgResult.customIcon == int8(1) && previouslySavedIcon != orgDataFromGroup.Logo {
+				if stmtArgsOrgResult.CustomIcon == int8(1) && previouslySavedIcon != orgDataFromGroup.Logo {
 					err = DownloadIcon(sid, orgDataFromGroup.Logo)
 					checkError(err)
 				}
@@ -159,61 +140,61 @@ func checkError(err error) {
 	}
 }
 
-func executeStatements(stmts map[string]*sql.Stmt, a ValidStmtArgs) error {
+func executeStatements(stmts map[string]*sql.Stmt, a qapi.ValidStmtArgs) error {
 	var err error
 	
-	_, err = stmts["InsOrg"].Exec(a.spectrumID, a.name, a.size, a.sizeMain, a.customIcon, a.name, a.size, a.sizeMain, a.customIcon)
+	_, err = stmts["InsOrg"].Exec(a.SpectrumID, a.Name, a.Size, a.SizeMain, a.CustomIcon, a.Name, a.Size, a.SizeMain, a.CustomIcon)
 	checkError(err)
 	
-	_, err = stmts["InsDate"].Exec(a.spectrumID, a.size, a.sizeMain, a.sizeAffil, a.sizeHidden, a.size, a.sizeMain, a.sizeAffil, a.sizeHidden)
+	_, err = stmts["InsDate"].Exec(a.SpectrumID, a.Size, a.SizeMain, a.SizeAffil, a.SizeHidden, a.Size, a.SizeMain, a.SizeAffil, a.SizeHidden)
 	checkError(err)
 	
-	if a.iconURL != "" {
-		_, err = stmts["InsIconURL"].Exec(a.spectrumID, a.iconURL, a.iconURL)
+	if a.IconURL != "" {
+		_, err = stmts["InsIconURL"].Exec(a.SpectrumID, a.IconURL, a.IconURL)
 		checkError(err)
 	}
 	
-	_, err = stmts["InsCommitment"].Exec(a.spectrumID, a.commitment, a.commitment)
+	_, err = stmts["InsCommitment"].Exec(a.SpectrumID, a.Commitment, a.Commitment)
 	checkError(err)
 	
-	if a.recruitment {
-		_, err = stmts["DelFull"].Exec(a.spectrumID)
+	if a.Recruitment {
+		_, err = stmts["DelFull"].Exec(a.SpectrumID)
 		checkError(err)
 	} else {
-		_, err = stmts["InsFull"].Exec(a.spectrumID, a.spectrumID)
+		_, err = stmts["InsFull"].Exec(a.SpectrumID, a.SpectrumID)
 		checkError(err)
 	}
 	
-	_, err = stmts["InsFocusPrimary"].Exec(a.focusPrimary, a.spectrumID, a.focusPrimary)
+	_, err = stmts["InsFocusPrimary"].Exec(a.FocusPrimary, a.SpectrumID, a.FocusPrimary)
 	checkError(err)
-	_, err = stmts["InsFocusSecondary"].Exec(a.focusSecondary, a.spectrumID, a.focusSecondary)
+	_, err = stmts["InsFocusSecondary"].Exec(a.FocusSecondary, a.SpectrumID, a.FocusSecondary)
 	checkError(err)
-	_, err = stmts["InsFocusBoth"].Exec(a.focusPrimary, a.focusSecondary, a.spectrumID, a.focusPrimary, a.focusSecondary)
-	checkError(err)
-	
-	_, err = stmts["InsArchetype"].Exec(a.spectrumID, a.archetype, a.archetype)
-	checkError(err)
-	_, err = stmts["InsArchetypeMatView"].Exec(a.archetype, a.spectrumID, a.archetype)
+	_, err = stmts["InsFocusBoth"].Exec(a.FocusPrimary, a.FocusSecondary, a.SpectrumID, a.FocusPrimary, a.FocusSecondary)
 	checkError(err)
 	
-	if a.roleplay {
-		_, err = stmts["InsRoleplay"].Exec(a.spectrumID, a.spectrumID)
+	_, err = stmts["InsArchetype"].Exec(a.SpectrumID, a.Archetype, a.Archetype)
+	checkError(err)
+	_, err = stmts["InsArchetypeMatView"].Exec(a.Archetype, a.SpectrumID, a.Archetype)
+	checkError(err)
+	
+	if a.Roleplay {
+		_, err = stmts["InsRoleplay"].Exec(a.SpectrumID, a.SpectrumID)
 		checkError(err)
 	} else {
-		_, err = stmts["DelRoleplay"].Exec(a.spectrumID)
+		_, err = stmts["DelRoleplay"].Exec(a.SpectrumID)
 		checkError(err)
 	}
 
-	_, err = stmts["InsLanguage"].Exec(a.spectrumID, a.language, a.language)
+	_, err = stmts["InsLanguage"].Exec(a.SpectrumID, a.Language, a.Language)
 	checkError(err)
-	_, err = stmts["InsLanguageMatView"].Exec(a.language, a.spectrumID, a.language)
+	_, err = stmts["InsLanguageMatView"].Exec(a.Language, a.SpectrumID, a.Language)
 	checkError(err)
 	
-	_, err = stmts["InsDescription"].Exec(a.spectrumID, a.headline, a.manifesto, a.headline, a.manifesto)
+	_, err = stmts["InsDescription"].Exec(a.SpectrumID, a.Headline, a.Manifesto, a.Headline, a.Manifesto)
 	return err
 }
 
-func insertOrg(stmtArgs ValidStmtArgs, db *sql.DB) error {
+func insertOrg(stmtArgs qapi.ValidStmtArgs, db *sql.DB) error {
 	//use transaction to ensure serial execution on a single DB connection
 	tx, err := db.Begin()
 	checkError(err)
@@ -237,15 +218,6 @@ func insertOrg(stmtArgs ValidStmtArgs, db *sql.DB) error {
 	
 	err = executeStatements(stmts, stmtArgs)
 	return err
-}
-
-func parseArgs(args []string) (string, string, string) {
-	if len(args) != 3 {
-		fmt.Println("Expected three args: username, dbname, and dbpassword. Received:")
-		fmt.Println(args)
-		os.Exit(1)
-	}
-	return args[0], args[1], args[2]
 }
 
 func prepareStatements( tx *sql.Tx ) ( map[string]*sql.Stmt ) {
@@ -345,8 +317,8 @@ func queryMembers(sid string, expectedSize int, db *sql.DB) (int, int, int, int,
 	var backoff float64 = 1.0
 	var size, main, affil, hidden int = 0, 0, 0, 0
 	for currentPage := int(1); ; currentPage++ {
-		var query string = MakeMemberQueryString(sid, currentPage)
-		var pageResultRaw []byte = QueryApi(query)
+		var query string = qapi.MakeMemberQueryString(sid, currentPage)
+		var pageResultRaw []byte = qapi.QueryApi(query)
 		var resultContainer resultMembersContainer
 		json.Unmarshal(pageResultRaw, &resultContainer)
 		
@@ -397,7 +369,7 @@ func updateGrowthRate(sid string, stmtSelRecent *sql.Stmt, stmtUpdateGrowth *sql
 	var scrapes []Scrape = make([]Scrape, 0)
 	for rows.Next() {
 		var currentScrape Scrape
-		err = rows.Scan(&currentScrape.size, &currentScrape.daysAgo)
+		err = rows.Scan(&currentScrape.scrapedSize, &currentScrape.daysAgo)
 		checkError(err)
 		scrapes = append(scrapes, currentScrape)
 	}

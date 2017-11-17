@@ -8,7 +8,7 @@
 	
 	@license-end
 */
-package main
+package lib_db_update_query_API
 
 import   "encoding/json"
 import   "errors"
@@ -48,7 +48,7 @@ func cleanString(in string) string {
 
 func getApiPath() string {
 	pathToApi, err := os.Getwd()
-	checkError(err)
+	if err != nil { panic(err) }
 	pathToApi += "/../sc-api-downstream/index.php"
 	return pathToApi
 }
