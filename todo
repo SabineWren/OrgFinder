@@ -1,16 +1,21 @@
-CODE QUALITY
-- continue refactoring main file
-- handle API backoff in a single function
-- remove slash replacement (already decoding)
+PRIORITY
+- implement func deleteOrgIcon(org string) error
+- implement func isOrgDisbanded(org string) bool
 
-TESTS + BUGFIXES
-- attempt running scraper twice before failing
-- log ALL failed scrapes
+TESTS (also priority)
+- delete_test.go
+
+CODE QUALITY
+- is package strings really needed for backslash replacement in queryapi? possibly remove it
+- handle API backoff in a single function
+- revisit handling and logging of failed API queries (intelligently re-query and log)
+- continue refactoring main file
+
+BUGFIXES
 - identify unscraped images and re-attempt scraping
 - chop long words in org descriptions (and add it to automated testing)
 
 FEATURES
 - remove redundant org history rows
-- add org+logo deletion script
 - insert history+charter
 - expand search query to include history+charter
