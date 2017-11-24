@@ -15,6 +15,8 @@ import   "database/sql"
 import   "fmt"
 import _ "github.com/go-sql-driver/mysql"
 import   "os"
+import   "os/exec"
+import   "strings"
 
 import input "../lib_input"
 
@@ -28,7 +30,7 @@ func main() {
 	
 	var orgs []string = getNotUpdatedOrgs(db)
 	for _, org := range orgs{
-		if isOrgDisbanded(org) {
+		if !doesOrgExist(org) {
 			err = deleteOrgFromDB(db, org)
 			if err != nil { panic(err) }
 			fmt.Println("deleted org: " + org)
@@ -116,7 +118,27 @@ func getNotUpdatedOrgs(db *sql.DB) []string {
 	return orgs
 }
 
-func isOrgDisbanded(org string) bool {
-	//see if org page returns error 404 on RSI
-	return false
+//if org doesn't exist on RSI, then org page returns error 404
+func doesOrgExist(org string) bool {
+	var url string = "https://robertsspaceindustries.com/orgs/" + org
+	var responseRaw []byte
+	var err error
+	responseRaw, err = exec.Command("curl", "--head", url).Output()
+	if err != nil { panic(err) }
+
+	var response       string = string(responseRaw[:])
+	var headerLines  []string = strings.Split(response, "\n")
+	var responseCode   string = headerLines[0]
+	responseCode = responseCode[:len(responseCode)-1]//remove carriage return
+	
+	switch responseCode {
+	case "HTTP/1.1 200 OK":
+		return true
+	case "HTTP/1.1 404 Not Found":
+		return false
+	default:
+		fmt.Println("URL: " + url)
+		fmt.Println("Response code: " + responseCode)
+	}
+	return true
 }

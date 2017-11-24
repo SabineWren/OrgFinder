@@ -1,6 +1,5 @@
 PRIORITY
 - implement func deleteOrgIcon(org string) error
-- implement func isOrgDisbanded(org string) bool
 
 TESTS (also priority)
 - delete_test.go

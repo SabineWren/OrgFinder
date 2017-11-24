@@ -16,18 +16,18 @@ package main
 import   "strconv"
 import   "testing"
 
-func TestIsOrgDisbanded(t *testing.T) {
+func TestDoesOrgExist(t *testing.T) {
 	var org string
 	var expect, result bool
 	
 	org    = "AOTW"
 	expect = true
-	result = isOrgDisbanded(org)
+	result = doesOrgExist(org)
 	if result != expect { t.Error("sid: " + org + ", expect: " + strconv.FormatBool(expect) + ", result: " + strconv.FormatBool(result)) }
 	
 	org    = "AOTWAOTW"
 	expect = false
-	result = isOrgDisbanded(org)
+	result = doesOrgExist(org)
 	if result != expect { t.Error("sid: " + org + ", expect: " + strconv.FormatBool(expect) + ", result: " + strconv.FormatBool(result)) }
 }
 
