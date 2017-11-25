@@ -21,10 +21,9 @@ import   "strings"
 import   "time"
 
 import qapi  "../lib_db_update_query_API"
-import input "../lib_input"
 
 func main(){
-	var username, dbname, dbpassword string = input.ParseArgs( os.Args[1:] )
+	var username, dbname, dbpassword string = parseArgs( os.Args[1:] )
 	var db *sql.DB
 	var err error
 	db, err = sql.Open("mysql", username + ":" + dbpassword + "@/" + dbname)
@@ -220,6 +219,15 @@ func insertOrg(stmtArgs qapi.ValidStmtArgs, db *sql.DB) error {
 	return err
 }
 
+func parseArgs(args []string) (string, string, string) {
+	if len(args) != 3 {
+		fmt.Println("Expected three args: username, dbname, and dbpassword. Received:")
+		fmt.Println(args)
+		os.Exit(1)
+	}
+	return args[0], args[1], args[2]
+}
+
 func prepareStatements( tx *sql.Tx ) ( map[string]*sql.Stmt ) {
 	var stmts map[string]*sql.Stmt = make( map[string]*sql.Stmt )
 	var err error
@@ -278,31 +286,6 @@ func prepareStatements( tx *sql.Tx ) ( map[string]*sql.Stmt ) {
 	return stmts
 }
 
-func selectOrganization(sid string, stmtSelHistory *sql.Stmt, stmtSelIconURL *sql.Stmt) (int, int, int, int, string) {
-	var size, main, affil, hidden int
-	var previouslySavedIcon       string
-	var err                       error
-	
-	err = stmtSelHistory.QueryRow(sid).Scan(&size, &main, &affil, &hidden)
-	if err == sql.ErrNoRows {
-		size   = 0
-		main   = 0
-		affil  = 0
-		hidden = 0
-	} else if err != nil {
-		panic(err)
-	}
-	
-	err = stmtSelIconURL.QueryRow(sid).Scan(&previouslySavedIcon)
-	if err == sql.ErrNoRows {
-		previouslySavedIcon = ""
-	} else if err != nil {
-		panic(err)
-	}
-	
-	return size, main, affil, hidden, previouslySavedIcon
-}
-
 type resultMembersContainer    struct {
 	Data []resultMember
 }
@@ -359,6 +342,31 @@ func queryMembers(sid string, expectedSize int, db *sql.DB) (int, int, int, int,
 		}
 	}
 	return size, main, affil, hidden, nil
+}
+
+func selectOrganization(sid string, stmtSelHistory *sql.Stmt, stmtSelIconURL *sql.Stmt) (int, int, int, int, string) {
+	var size, main, affil, hidden int
+	var previouslySavedIcon       string
+	var err                       error
+	
+	err = stmtSelHistory.QueryRow(sid).Scan(&size, &main, &affil, &hidden)
+	if err == sql.ErrNoRows {
+		size   = 0
+		main   = 0
+		affil  = 0
+		hidden = 0
+	} else if err != nil {
+		panic(err)
+	}
+	
+	err = stmtSelIconURL.QueryRow(sid).Scan(&previouslySavedIcon)
+	if err == sql.ErrNoRows {
+		previouslySavedIcon = ""
+	} else if err != nil {
+		panic(err)
+	}
+	
+	return size, main, affil, hidden, previouslySavedIcon
 }
 
 func updateGrowthRate(sid string, stmtSelRecent *sql.Stmt, stmtUpdateGrowth *sql.Stmt) error {

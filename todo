@@ -8,7 +8,9 @@ CODE QUALITY
 - is package strings really needed for backslash replacement in queryapi? possibly remove it
 - handle API backoff in a single function
 - revisit handling and logging of failed API queries (intelligently re-query and log)
-- continue refactoring main file
+REFACTOR MAIN FILE
+- func queryMembers
+- func main
 
 BUGFIXES
 - identify unscraped images and re-attempt scraping

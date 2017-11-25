@@ -18,10 +18,8 @@ import   "os"
 import   "os/exec"
 import   "strings"
 
-import input "../lib_input"
-
 func main() {
-	var username, dbname, dbpassword string = input.ParseArgs( os.Args[1:] )
+	var username, dbname, dbpassword string = parseArgs( os.Args[1:] )
 	var db *sql.DB
 	var err error
 	db, err = sql.Open("mysql", username + ":" + dbpassword + "@/" + dbname)
@@ -101,23 +99,6 @@ func deleteOrgIcon(org string) error {
 	return nil
 }
 
-func getNotUpdatedOrgs(db *sql.DB) []string {
-	rows, err := db.Query("SELECT Organization as SID, DATEDIFF( curdate(), ScrapeDate ) as scrape FROM tbl_OrgMemberHistory GROUP BY SID HAVING MAX(ScrapeDate) AND scrape > 0")
-	if err != nil { panic(err) }
-	defer rows.Close()
-	
-	var orgs []string = make([]string, 0)
-	var org string
-	for rows.Next() {
-		err = rows.Scan(&org)
-		if err != nil { panic(err) }
-		orgs = append(orgs, org)
-	}
-	err = rows.Err()
-	if err != nil { panic(err) }
-	return orgs
-}
-
 //if org doesn't exist on RSI, then org page returns error 404
 func doesOrgExist(org string) bool {
 	var url string = "https://robertsspaceindustries.com/orgs/" + org
@@ -141,4 +122,30 @@ func doesOrgExist(org string) bool {
 		fmt.Println("Response code: " + responseCode)
 	}
 	return true
+}
+
+func getNotUpdatedOrgs(db *sql.DB) []string {
+	rows, err := db.Query("SELECT Organization as SID, DATEDIFF( curdate(), ScrapeDate ) as scrape FROM tbl_OrgMemberHistory GROUP BY SID HAVING MAX(ScrapeDate) AND scrape > 0")
+	if err != nil { panic(err) }
+	defer rows.Close()
+	
+	var orgs []string = make([]string, 0)
+	var org string
+	for rows.Next() {
+		err = rows.Scan(&org)
+		if err != nil { panic(err) }
+		orgs = append(orgs, org)
+	}
+	err = rows.Err()
+	if err != nil { panic(err) }
+	return orgs
+}
+
+func parseArgs(args []string) (string, string, string) {
+	if len(args) != 3 {
+		fmt.Println("Expected three args: username, dbname, and dbpassword. Received:")
+		fmt.Println(args)
+		os.Exit(1)
+	}
+	return args[0], args[1], args[2]
 }
