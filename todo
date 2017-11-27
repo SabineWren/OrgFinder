@@ -10,7 +10,6 @@ TESTS
 - test main.go inserts using the testdb (possibly some overlap with delete.go, whose tests insert into testdb)
 
 BUGFIXES
-- identify unscraped images and re-attempt scraping
 - chop long words in org descriptions (and add it to automated testing)
 
 FEATURES

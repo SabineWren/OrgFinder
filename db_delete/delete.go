@@ -31,10 +31,10 @@ func main() {
 			err = deleteOrgFromDB(db, org)
 			if err != nil { panic(err) }
 			fmt.Println("deleted org: " + org)
-			err = deleteOrgIcon(org, "../../org_icons_fullsize")
-			if err != nil { panic(err) }
-			err = deleteOrgIcon(org, "../../org_icons")
-			if err != nil { panic(err) }
+			err = deleteOrgIcon(org, "../../org_icons_fullsize/")
+			if err != nil { fmt.Println( err.Error() ) }
+			err = deleteOrgIcon(org, "../../org_icons/")
+			if err != nil { fmt.Println( err.Error() ) }
 		} else {
 			fmt.Println("org '" + org + "' still exists but did not update")
 		}
@@ -124,7 +124,13 @@ func doesOrgExist(org string) bool {
 }
 
 func getNotUpdatedOrgs(db *sql.DB) []string {
-	rows, err := db.Query("SELECT Organization FROM tbl_OrgMemberHistory WHERE DATEDIFF(CURDATE(), ScrapeDate) > 0 GROUP BY Organization HAVING MAX(ScrapeDate)")
+	rows, err := db.Query(`SELECT SID from (
+		SELECT Organization as SID, DATEDIFF( curdate(), ScrapeDate ) as daysSinceScrape
+		FROM tbl_OrgMemberHistory
+		GROUP BY SID
+		HAVING MAX(ScrapeDate) AND daysSinceScrape > 0
+	) as T;`)
+	
 	if err != nil { panic(err) }
 	defer rows.Close()
 	

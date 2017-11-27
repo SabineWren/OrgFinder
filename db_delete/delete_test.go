@@ -128,7 +128,7 @@ func TestGetNotUpdatedOrgs(t *testing.T) {
 	err = deleteOrgFromDB(db, org)
 	if err != nil { panic(err) }
 	updatedTrueFalse[org] = false
-	insertTestOrg(db, org, "DATE_SUB( CURDATE(), INTERVAL 1 DAY )")
+	insertTestOrg(db, org, "DATE_SUB( CURDATE(), INTERVAL 3 DAY )")
 	
 	org = "UPDATED"
 	err = deleteOrgFromDB(db, org)
