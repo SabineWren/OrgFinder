@@ -26,15 +26,16 @@ func main() {
 	defer db.Close()
 	
 	var orgs []string = getNotUpdatedOrgs(db)
+	var success bool
 	for _, org := range orgs{
 		if !doesOrgExist(org) {
 			err = deleteOrgFromDB(db, org)
 			if err != nil { panic(err) }
 			fmt.Println("deleted org: " + org)
-			err = deleteOrgIcon(org, "../../org_icons_fullsize/")
-			if err != nil { fmt.Println( err.Error() ) }
-			err = deleteOrgIcon(org, "../../org_icons/")
-			if err != nil { fmt.Println( err.Error() ) }
+			success, err = deleteOrgIcon(org, "../../org_icons_fullsize/")
+			if success == false { fmt.Println(err.Error()) }
+			success, err = deleteOrgIcon(org, "../../org_icons/")
+			if success == false { fmt.Println(err.Error()) }
 		} else {
 			fmt.Println("org '" + org + "' still exists but did not update")
 		}
@@ -93,9 +94,18 @@ func deleteOrgFromDB(db *sql.DB, org string) (err error) {
 	return err//see defer
 }
 
-func deleteOrgIcon(org string, path string) error {
-	err := os.Remove(path + org)
-	return err
+func deleteOrgIcon(org string, path string) (bool, error) {
+	var isPathError bool
+	var err error
+	var pathErr *os.PathError
+	
+	err = os.Remove(path + org)
+	if err == nil { return true, err }
+	
+	pathErr, isPathError = err.(*os.PathError)
+	if isPathError && pathErr.Err.Error() == "no such file or directory" { return true, err }
+	
+	return false, err
 }
 
 //if org doesn't exist on RSI, then org page returns error 404

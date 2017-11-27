@@ -95,14 +95,18 @@ func TestDeleteOrgFromDB(t *testing.T) {
 
 
 func TestDeleteOrgIcon(t *testing.T) {
-	var org string	
+	var org string
+	var success bool
 	var err error
 	var isPathError bool
+	var pathErr *os.PathError
 	
 	org = "TEST_FILE_NOT_EXIST"
-	err = deleteOrgIcon(org, "./")
-	_, isPathError = err.(*os.PathError)
+	success, err = deleteOrgIcon(org, "./")
+	if !success { t.Error("Deletion failed for file: " + org) }
+	pathErr, isPathError = err.(*os.PathError)
 	if !isPathError { t.Error("Expected path error for file: " + org + ", Received: " + err.Error()) }
+	if pathErr.Err.Error() != "no such file or directory" { t.Error("wrong error message: " + pathErr.Err.Error()) }
 	
 	org = "TEST_FILE_EXIST"
 	var fp *os.File
@@ -112,7 +116,8 @@ func TestDeleteOrgIcon(t *testing.T) {
 	err = fp.Close()
 	if err != nil { t.Error( "attempted to close file: " + org + ", " + err.Error() ) }
 	
-	err = deleteOrgIcon(org, "./")
+	success, err = deleteOrgIcon(org, "./")
+	if !success { t.Error("Deletion failed for file: " + org) }
 	_, isPathError = err.(*os.PathError)
 	if isPathError { t.Error("Expected to delete file: " + org + ", Received: " + err.Error()) }
 }
