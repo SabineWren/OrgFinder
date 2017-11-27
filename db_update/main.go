@@ -312,10 +312,9 @@ func queryMembers(sid string, expectedSize int, db *sql.DB) (int, int, int, int,
 		if resultContainer.Data == nil {
 			if size == expectedSize { return size, main, affil, hidden, nil }//done
 			if backoff > 7.0 {
-				if (size+1) == expectedSize { return size, main, affil, hidden, nil }//RSI's off-by-one error
-				if (size-1) == expectedSize { return size, main, affil, hidden, nil }//RSI's off-by-one error
-				if (size+2) == expectedSize { return size, main, affil, hidden, nil }//AVOCADO consistently off-by-two
-				if (size-2) == expectedSize { return size, main, affil, hidden, nil }
+				if size >= expectedSize {//RSI often lists the size one smaller; AVOCADO consistently more than one
+					return size, main, affil, hidden, nil
+				}
 				return 0, 0, 0, 0, errors.New("Cannot sum members SID: " + sid + " Sum: " + strconv.Itoa(size) + " Expected: " + strconv.Itoa(expectedSize))
 			}
 			time.Sleep( time.Second * time.Duration(backoff) )
