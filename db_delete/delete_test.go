@@ -10,8 +10,8 @@
 */
 package main
 
-//import   "database/sql"
-//import _ "github.com/go-sql-driver/mysql"
+import   "database/sql"
+import _ "github.com/go-sql-driver/mysql"
 //import   "os"
 import   "strconv"
 import   "testing"
@@ -31,11 +31,47 @@ func TestDoesOrgExist(t *testing.T) {
 	if result != expect { t.Error("sid: " + org + ", expect: " + strconv.FormatBool(expect) + ", result: " + strconv.FormatBool(result)) }
 }
 
-/*
+
 func TestDeleteOrgFromDB(t *testing.T) {
-	deleteOrgFromDB(db *sql.DB, org string) error
+	db, err := sql.Open("mysql", "tester" + ":" + "test" + "@/" + "testdb")
+	if err != nil { panic(err) }
+	defer db.Close()
+	
+	var result bool
+	
+	//Preconditions
+	var org1 string = "ORGSID1"
+	result = doesOrgHaveData(db, org1)
+	if result == true { t.Error("pre-existing test data for org sid: " + org1) }
+	//
+	var org2 string = "ORGSID2"
+	result = doesOrgHaveData(db, org2)
+	if result == true { t.Error("pre-existing test data for org sid: " + org2) }
+	
+	//INSERT
+	err = insertTestOrg(db, org1)
+	if err != nil { panic(err) }
+	result = doesOrgHaveData(db, org1)
+	if result == false { t.Error("failed to insert test data for org sid: " + org1) }
+	//
+	err = insertTestOrg(db, org2)
+	if err != nil { panic(err) }
+	result = doesOrgHaveData(db, org2)
+	if result == false { t.Error("failed to insert test data for org sid: " + org2) }
+	
+	//DELETE
+	err = deleteOrgFromDB(db, org1)
+	if err != nil { panic(err) }
+	result = doesOrgHaveData(db, org1)
+	if result == true { t.Error("failed to delete test data for org sid: " + org1) }
+	//
+	err = deleteOrgFromDB(db, org2)
+	if err != nil { panic(err) }
+	result = doesOrgHaveData(db, org2)
+	if result == true { t.Error("failed to delete test data for org sid: " + org2) }
 }
 
+/*
 func TestDeleteOrgIcon(t *testing.T) {
 	deleteOrgIcon(org string) error
 }
@@ -43,3 +79,81 @@ func TestDeleteOrgIcon(t *testing.T) {
 func TestGetNotUpdatedOrgs(t *testing.T) {
 	getNotUpdatedOrgs(db *sql.DB) []string
 */
+
+func doesOrgHaveData(db *sql.DB, org string) bool {
+	var err error
+	var value string
+	err = db.QueryRow("SELECT SID FROM tbl_Organizations WHERE SID = ?",                      org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT Organization FROM tbl_OrgMemberHistory WHERE Organization = ?", org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT Organization FROM tbl_IconURLs WHERE Organization = ?",         org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT Organization FROM tbl_Commits WHERE Organization = ?",          org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT Organization FROM tbl_FullOrgs WHERE Organization = ?",         org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT Organization FROM tbl_PrimaryFocus WHERE Organization = ?",     org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT Organization FROM tbl_SecondaryFocus WHERE Organization = ?",   org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT Organization FROM tbl_Performs WHERE Organization = ?",         org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT Organization FROM tbl_OrgArchetypes WHERE Organization = ?",    org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT Organization FROM tbl_FilterArchetypes WHERE Organization = ?", org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT Organization FROM tbl_RolePlayOrgs WHERE Organization = ?",     org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT Organization FROM tbl_OrgFluencies WHERE Organization = ?",     org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT Organization FROM tbl_FilterFluencies WHERE Organization = ?" , org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	err = db.QueryRow("SELECT SID FROM tbl_OrgDescription WHERE SID = ?",                     org).Scan(&value)
+	if err == nil { return true } else if err != sql.ErrNoRows { panic(err) }
+	return false
+}
+
+func insertTestOrg(db *sql.DB, org string) (err error) {
+	var tx *sql.Tx
+	tx, err = db.Begin()
+	if err != nil { return err }
+	defer func() {
+		r := recover()
+		if r != nil {
+			tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+	err = tx.QueryRow("INSERT INTO tbl_Organizations    (SID, Name, Size, Main, CustomIcon) VALUES (?, 'orgName', 20, 10, 0)", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_OrgMemberHistory (Organization, ScrapeDate, Size, Main, Affiliate, Hidden) VALUES (?, CURDATE(), 20, 10, 8, 2)", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_IconURLs         (Organization, Icon) VALUES (?, 'example.com/someurl')", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_Commits          (Organization, Commitment) VALUES (?, 'Hardcore')", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_FullOrgs         (Organization) VALUES (?)", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_PrimaryFocus     (PrimaryFocus, Organization) VALUES ('Resources', ?)", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_SecondaryFocus(SecondaryFocus, Organization) VALUES ('Exploration', ?)", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_Performs(Organization, PrimaryFocus, SecondaryFocus) VALUES (?, 'Resources', 'Exploration')", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_OrgArchetypes(Organization, Archetype) VALUES (?, 'Corporation')", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_FilterArchetypes(Archetype, Organization) VALUES ('Corporation', ?)", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_RolePlayOrgs(Organization) VALUES (?)", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_OrgFluencies(Organization, Language) VALUES (?, 'English')", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_FilterFluencies(Language, Organization) VALUES ('English', ?)", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	err = tx.QueryRow("INSERT INTO tbl_OrgDescription(SID, Headline, Manifesto) VALUES(?, 'We do stuff!', 'we are an org blah blah blah')", org).Scan()
+	if err != sql.ErrNoRows { panic(err) }
+	
+	return err//see defer
+}

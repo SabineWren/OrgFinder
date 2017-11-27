@@ -53,7 +53,6 @@ func deleteOrgFromDB(db *sql.DB, org string) (err error) {
 			err = tx.Commit()
 		}
 	}()
-	
 	_, err = tx.Exec("DELETE FROM tbl_Cog              WHERE SID = ?", org)
 	if err != nil { panic(err) }
 	_, err = tx.Exec("DELETE FROM tbl_OPPF             WHERE SID = ?", org)

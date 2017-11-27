@@ -1,8 +1,7 @@
 PRIORITY
-- implement func deleteOrgIcon(org string) error
-
-TESTS (also priority)
-- delete_test.go
+- test getNotUpdatedOrgs
+- implement deleteOrgIcon
+- test      deleteOrgIcon
 
 CODE QUALITY
 - is package strings really needed for backslash replacement in queryapi? possibly remove it

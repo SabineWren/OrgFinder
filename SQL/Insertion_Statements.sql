@@ -24,7 +24,7 @@ INSERT INTO tbl_Activities(Activity) VALUES
 ('Trading'), 
 ('Transport');
 
--- degragment to cluster on indexes
+-- defragment clustering on indexes
 ALTER TABLE tbl_Countries ENGINE=INNODB;
 ALTER TABLE tbl_Commitments ENGINE=INNODB;
 ALTER TABLE tbl_Archetypes ENGINE=INNODB;
