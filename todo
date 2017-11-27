@@ -1,5 +1,4 @@
 PRIORITY
-- test getNotUpdatedOrgs
 - implement deleteOrgIcon
 - test      deleteOrgIcon
 
@@ -10,6 +9,9 @@ CODE QUALITY
 REFACTOR MAIN FILE
 - func queryMembers
 - func main
+
+TESTS
+- test main.go inserts using the testdb (possibly some overlap with delete.go, whose tests insert into testdb)
 
 BUGFIXES
 - identify unscraped images and re-attempt scraping

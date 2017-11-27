@@ -124,7 +124,7 @@ func doesOrgExist(org string) bool {
 }
 
 func getNotUpdatedOrgs(db *sql.DB) []string {
-	rows, err := db.Query("SELECT Organization as SID, DATEDIFF( curdate(), ScrapeDate ) as scrape FROM tbl_OrgMemberHistory GROUP BY SID HAVING MAX(ScrapeDate) AND scrape > 0")
+	rows, err := db.Query("SELECT Organization FROM tbl_OrgMemberHistory WHERE DATEDIFF(CURDATE(), ScrapeDate) > 0 GROUP BY Organization HAVING MAX(ScrapeDate)")
 	if err != nil { panic(err) }
 	defer rows.Close()
 	

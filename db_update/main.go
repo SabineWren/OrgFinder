@@ -286,7 +286,7 @@ func prepareStatements( tx *sql.Tx ) ( map[string]*sql.Stmt ) {
 	return stmts
 }
 
-type resultMembersContainer    struct {
+type resultMembersContainer struct {
 	Data []resultMember
 }
 type resultMember struct {

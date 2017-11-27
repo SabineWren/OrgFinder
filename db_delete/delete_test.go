@@ -12,7 +12,7 @@ package main
 
 import   "database/sql"
 import _ "github.com/go-sql-driver/mysql"
-//import   "os"
+import   "os"
 import   "strconv"
 import   "testing"
 
@@ -41,44 +41,95 @@ func TestDeleteOrgFromDB(t *testing.T) {
 	
 	//Preconditions
 	var org1 string = "ORGSID1"
+	err = deleteOrgFromDB(db, org1)
+	if err != nil { panic(err) }
 	result = doesOrgHaveData(db, org1)
-	if result == true { t.Error("pre-existing test data for org sid: " + org1) }
+	if result == true {
+		t.Error("pre-existing test data for org sid: " + org1)
+		os.Exit(1)
+	}
 	//
 	var org2 string = "ORGSID2"
+	err = deleteOrgFromDB(db, org2)
+	if err != nil { panic(err) }
 	result = doesOrgHaveData(db, org2)
-	if result == true { t.Error("pre-existing test data for org sid: " + org2) }
+	if result == true {
+		t.Error("pre-existing test data for org sid: " + org2)
+		os.Exit(1)
+	}
 	
 	//INSERT
-	err = insertTestOrg(db, org1)
+	err = insertTestOrg(db, org1, "CURDATE()")
 	if err != nil { panic(err) }
 	result = doesOrgHaveData(db, org1)
-	if result == false { t.Error("failed to insert test data for org sid: " + org1) }
+	if result == false {
+		t.Error("failed to insert test data for org sid: " + org1)
+		os.Exit(1)
+	}
 	//
-	err = insertTestOrg(db, org2)
+	err = insertTestOrg(db, org2, "CURDATE()")
 	if err != nil { panic(err) }
 	result = doesOrgHaveData(db, org2)
-	if result == false { t.Error("failed to insert test data for org sid: " + org2) }
+	if result == false {
+		t.Error("failed to insert test data for org sid: " + org2)
+		os.Exit(1)
+	}
 	
 	//DELETE
 	err = deleteOrgFromDB(db, org1)
 	if err != nil { panic(err) }
 	result = doesOrgHaveData(db, org1)
-	if result == true { t.Error("failed to delete test data for org sid: " + org1) }
+	if result == true {
+		t.Error("failed to delete test data for org sid: " + org1)
+		os.Exit(1)
+	}
 	//
 	err = deleteOrgFromDB(db, org2)
 	if err != nil { panic(err) }
 	result = doesOrgHaveData(db, org2)
-	if result == true { t.Error("failed to delete test data for org sid: " + org2) }
+	if result == true {
+		t.Error("failed to delete test data for org sid: " + org2)
+		os.Exit(1)
+	}
 }
 
 /*
 func TestDeleteOrgIcon(t *testing.T) {
 	deleteOrgIcon(org string) error
-}
+}*/
 
 func TestGetNotUpdatedOrgs(t *testing.T) {
-	getNotUpdatedOrgs(db *sql.DB) []string
-*/
+	db, err := sql.Open("mysql", "tester" + ":" + "test" + "@/" + "testdb")
+	if err != nil { panic(err) }
+	defer db.Close()
+	var org string;
+	var updatedTrueFalse map[string]bool = make( map[string]bool )
+	
+	org = "NOTUPDATED"
+	err = deleteOrgFromDB(db, org)
+	if err != nil { panic(err) }
+	updatedTrueFalse[org] = false
+	insertTestOrg(db, org, "DATE_SUB( CURDATE(), INTERVAL 1 DAY )")
+	
+	org = "UPDATED"
+	err = deleteOrgFromDB(db, org)
+	if err != nil { panic(err) }
+	updatedTrueFalse[org] = true
+	insertTestOrg(db, org, "CURDATE()")
+	 
+	var notUpdatedOrgs []string = getNotUpdatedOrgs(db)
+	for _, org := range notUpdatedOrgs {
+		err = deleteOrgFromDB(db, org)
+		if err != nil { panic(err) }
+		if updatedTrueFalse[org] == true { t.Error("org sid: " + org + " wrongly reported as updated") }
+		updatedTrueFalse[org] = true//mark as checked
+	}
+	
+	var value bool
+	for org, value = range updatedTrueFalse {
+		if value == false { t.Error("org sid: " + org + " wrongly reported as NOT updated") }
+	}
+}
 
 func doesOrgHaveData(db *sql.DB, org string) bool {
 	var err error
@@ -114,7 +165,7 @@ func doesOrgHaveData(db *sql.DB, org string) bool {
 	return false
 }
 
-func insertTestOrg(db *sql.DB, org string) (err error) {
+func insertTestOrg(db *sql.DB, org string, date string) (err error) {
 	var tx *sql.Tx
 	tx, err = db.Begin()
 	if err != nil { return err }
@@ -128,7 +179,7 @@ func insertTestOrg(db *sql.DB, org string) (err error) {
 	}()
 	err = tx.QueryRow("INSERT INTO tbl_Organizations    (SID, Name, Size, Main, CustomIcon) VALUES (?, 'orgName', 20, 10, 0)", org).Scan()
 	if err != sql.ErrNoRows { panic(err) }
-	err = tx.QueryRow("INSERT INTO tbl_OrgMemberHistory (Organization, ScrapeDate, Size, Main, Affiliate, Hidden) VALUES (?, CURDATE(), 20, 10, 8, 2)", org).Scan()
+	err = tx.QueryRow("INSERT INTO tbl_OrgMemberHistory (Organization, ScrapeDate, Size, Main, Affiliate, Hidden) VALUES (?, " + date + ", 20, 10, 8, 2)", org).Scan()
 	if err != sql.ErrNoRows { panic(err) }
 	err = tx.QueryRow("INSERT INTO tbl_IconURLs         (Organization, Icon) VALUES (?, 'example.com/someurl')", org).Scan()
 	if err != sql.ErrNoRows { panic(err) }
