@@ -11,7 +11,6 @@
 package main
 
 import   "database/sql"
-//import   "errors"
 import   "fmt"
 import _ "github.com/go-sql-driver/mysql"
 import   "os"
@@ -32,12 +31,13 @@ func main() {
 			err = deleteOrgFromDB(db, org)
 			if err != nil { panic(err) }
 			fmt.Println("deleted org: " + org)
-			err = deleteOrgIcon(org)
+			err = deleteOrgIcon(org, "../../org_icons_fullsize")
+			if err != nil { panic(err) }
+			err = deleteOrgIcon(org, "../../org_icons")
 			if err != nil { panic(err) }
 		} else {
 			fmt.Println("org '" + org + "' still exists but did not update")
 		}
-		break//temporary; get one working before looping
 	}
 }
 
@@ -93,9 +93,9 @@ func deleteOrgFromDB(db *sql.DB, org string) (err error) {
 	return err//see defer
 }
 
-func deleteOrgIcon(org string) error {
-	fmt.Println("IMPLEMENT DELETE ICON")
-	return nil
+func deleteOrgIcon(org string, path string) error {
+	err := os.Remove(path + org)
+	return err
 }
 
 //if org doesn't exist on RSI, then org page returns error 404

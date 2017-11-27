@@ -1,7 +1,3 @@
-PRIORITY
-- implement deleteOrgIcon
-- test      deleteOrgIcon
-
 CODE QUALITY
 - is package strings really needed for backslash replacement in queryapi? possibly remove it
 - handle API backoff in a single function

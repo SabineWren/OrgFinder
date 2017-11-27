@@ -93,10 +93,29 @@ func TestDeleteOrgFromDB(t *testing.T) {
 	}
 }
 
-/*
+
 func TestDeleteOrgIcon(t *testing.T) {
-	deleteOrgIcon(org string) error
-}*/
+	var org string	
+	var err error
+	var isPathError bool
+	
+	org = "TEST_FILE_NOT_EXIST"
+	err = deleteOrgIcon(org, "./")
+	_, isPathError = err.(*os.PathError)
+	if !isPathError { t.Error("Expected path error for file: " + org + ", Received: " + err.Error()) }
+	
+	org = "TEST_FILE_EXIST"
+	var fp *os.File
+	fp, err = os.Create("./" + org)
+	_, isPathError = err.(*os.PathError)
+	if isPathError { t.Error("Expected to create file: " + org + ", Received: " + err.Error()) }
+	err = fp.Close()
+	if err != nil { t.Error( "attempted to close file: " + org + ", " + err.Error() ) }
+	
+	err = deleteOrgIcon(org, "./")
+	_, isPathError = err.(*os.PathError)
+	if isPathError { t.Error("Expected to delete file: " + org + ", Received: " + err.Error()) }
+}
 
 func TestGetNotUpdatedOrgs(t *testing.T) {
 	db, err := sql.Open("mysql", "tester" + ":" + "test" + "@/" + "testdb")
@@ -119,8 +138,6 @@ func TestGetNotUpdatedOrgs(t *testing.T) {
 	 
 	var notUpdatedOrgs []string = getNotUpdatedOrgs(db)
 	for _, org := range notUpdatedOrgs {
-		err = deleteOrgFromDB(db, org)
-		if err != nil { panic(err) }
 		if updatedTrueFalse[org] == true { t.Error("org sid: " + org + " wrongly reported as updated") }
 		updatedTrueFalse[org] = true//mark as checked
 	}
@@ -128,6 +145,8 @@ func TestGetNotUpdatedOrgs(t *testing.T) {
 	var value bool
 	for org, value = range updatedTrueFalse {
 		if value == false { t.Error("org sid: " + org + " wrongly reported as NOT updated") }
+		err = deleteOrgFromDB(db, org)
+		if err != nil { panic(err) }
 	}
 }
 
