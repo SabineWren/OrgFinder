@@ -1,0 +1,12 @@
+[
+	{"Size":20, "Main":10, "Affil":8, "Hidden":2},
+	{"Size":19, "Main": 9, "Affil":8, "Hidden":2},
+	{"Size":16, "Main": 9, "Affil":5, "Hidden":2},
+	{"Size":14, "Main": 9, "Affil":4, "Hidden":1},
+	{"Size":13, "Main": 8, "Affil":4, "Hidden":1},
+	{"Size":12, "Main": 8, "Affil":4, "Hidden":0},
+	{"Size": 9, "Main": 7, "Affil":2, "Hidden":0},
+	{"Size": 8, "Main": 6, "Affil":2, "Hidden":0},
+	{"Size": 5, "Main": 3, "Affil":2, "Hidden":0},
+	{"Size": 3, "Main": 2, "Affil":1, "Hidden":0}
+]

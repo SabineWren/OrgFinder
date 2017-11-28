@@ -18,10 +18,10 @@ import   "os/exec"
 import   "strings"
 
 type scrape struct {
-	size   int
-	main   int
-	affil  int
-	hidden int
+	Size   int
+	Main   int
+	Affil  int
+	Hidden int
 }
 
 func main() {
@@ -52,7 +52,7 @@ func compressHistoryDeltaGo(goLimiter chan int, db *sql.DB, org string) {
 	<- goLimiter
 }
 func compressHistoryDelta(db *sql.DB) (err error) {
-	goLimiter := make(chan int, 50)
+	goLimiter := make(chan int, 4)
 	var orgs []string
 	orgs, err = getAllOrgs(db)
 	if err != nil { return }
@@ -89,7 +89,7 @@ func getOrgHistory(db *sql.DB, org string) (scrapes []scrape, err error) {
 	scrapes = make([]scrape, 0)
 	for rows.Next() {
 		var s scrape
-		err = rows.Scan(&s.size, &s.main, &s.affil, &s.hidden)
+		err = rows.Scan(&s.Size, &s.Main, &s.Affil, &s.Hidden)
 		if err != nil { return }
 		scrapes = append(scrapes, s)
 	}
