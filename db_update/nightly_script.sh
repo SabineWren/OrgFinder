@@ -2,10 +2,11 @@
 cd /var/www/html/OrgFinder/db_update
 pwd
 echo Running OrgFinder update $(date).
-db_update <db_username> <db_name> <password> &&
+./db_update <db_username> <db_name> <password> &&
 echo Finished OrgFinder update AT $(date).
-#php5 /var/www/html/OrgFinderDeprecated/dbPop/delete_orgs.php <db_username> <password> &&
-#echo Finished Deleting orgs AT $(date).
+cd ../db_delete
+./db_delete <db_username> <db_name> <password> &&
+echo Finished Deleting orgs AT $(date).
 mogrify -path /var/www/html/org_icons -filter Triangle -define filter:support=2 -thumbnail 50 -unsharp 0.25x0.08+8.3+0.045 -dither None -posterize 136 -quality 82 -define jpeg:fancy-upsampling=off -define png:compression-filter=5 -define png:compression-level=9 -define png:compression-strategy=1 -define png:exclude-chunk=all -interlace none -colorspace sRGB /var/www/html/org_icons_new/* &&
 mv /var/www/html/org_icons_new/* /var/www/html/org_icons_fullsize/
 echo FINISHED AT $(date)

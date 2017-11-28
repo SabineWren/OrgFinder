@@ -17,6 +17,13 @@ import   "os"
 import   "os/exec"
 import   "strings"
 
+type scrape struct {
+	size   int
+	main   int
+	affil  int
+	hidden int
+}
+
 func main() {
 	var username, dbname, dbpassword string = parseArgs( os.Args[1:] )
 	var db *sql.DB
@@ -25,13 +32,70 @@ func main() {
 	if err != nil { panic(err) }
 	defer db.Close()
 	
-	var orgs []string = getNotUpdatedOrgs(db)
+	err = deleteExpiredOrgs(db)
+	if err != nil { panic(err) }
+	
+	err = compressHistoryDelta(db)
+	if err != nil { panic(err) }
+	
+	err = ReclusterTables(db)
+	if err != nil { panic(err) }
+}
+
+func compressHistoryDelta(db *sql.DB) (err error) {
+	var orgs []string
+	orgs, err = getAllOrgs(db)
+	for _, org := range orgs {
+		var scrapes []scrape
+		scrapes, err = getOrgHistory(db, org)
+		if err != nil { return }
+		err = compressOrgHistory(db, org, scrapes)
+		if err != nil { return }
+	}
+	return
+}
+
+func compressOrgHistory(db *sql.DB, org string, scrapes []scrape) (err error) {
+	var a, b, c scrape
+	var i int
+	if len(scrapes) < 3 { return }//interpolation requires a midpoint
+	
+	i = len(scrapes)-1
+	for a = scrapes[i]; i >= 2; i-- {
+		b = scrapes[i-1]
+		c = scrapes[i-2]
+		if a == b && b == c {
+			err = removeScrape(db, org, i-1)
+			if err != nil { return }
+		} else { a = b }
+	}
+	return
+}
+
+func getOrgHistory(db *sql.DB, org string) (scrapes []scrape, err error) {
+	var rows *sql.Rows
+	rows, err = db.Query("SELECT Size, Main, Affiliate, Hidden FROM tbl_OrgMemberHistory WHERE Organization = ? ORDER BY ScrapeDate ASC", org)
+	if err != nil { return }
+	defer rows.Close()
+	
+	scrapes = make([]scrape, 0)
+	for rows.Next() {
+		var s scrape
+		err = rows.Scan(&s.size, &s.main, &s.affil, &s.hidden)
+		if err != nil { return }
+		scrapes = append(scrapes, s)
+	}
+	return
+}
+
+func deleteExpiredOrgs(db *sql.DB) (err error) {
+	var orgs []string
+	orgs, err = getNotUpdatedOrgs(db)
 	var success bool
 	for _, org := range orgs{
 		if !doesOrgExist(org) {
 			err = deleteOrgFromDB(db, org)
-			if err != nil { panic(err) }
-			fmt.Println("deleted org: " + org)
+			if err != nil { return }
 			success, err = deleteOrgIcon(org, "../../org_icons_fullsize/")
 			if success == false { fmt.Println(err.Error()) }
 			success, err = deleteOrgIcon(org, "../../org_icons/")
@@ -40,6 +104,7 @@ func main() {
 			fmt.Println("org '" + org + "' still exists but did not update")
 		}
 	}
+	return
 }
 
 func deleteOrgFromDB(db *sql.DB, org string) (err error) {
@@ -48,11 +113,7 @@ func deleteOrgFromDB(db *sql.DB, org string) (err error) {
 	if err != nil { return err }
 	defer func() {
 		r := recover()
-		if r != nil {
-			tx.Rollback()
-		} else {
-			err = tx.Commit()
-		}
+		if r != nil { tx.Rollback() } else { err = tx.Commit() }
 	}()
 	_, err = tx.Exec("DELETE FROM tbl_Cog              WHERE SID = ?", org)
 	if err != nil { panic(err) }
@@ -90,8 +151,7 @@ func deleteOrgFromDB(db *sql.DB, org string) (err error) {
 	if err != nil { panic(err) }
 	_, err = tx.Exec("DELETE FROM tbl_Organizations    where SID = ?", org)
 	if err != nil { panic(err) }
-	
-	return err//see defer
+	return
 }
 
 func deleteOrgIcon(org string, path string) (bool, error) {
@@ -133,27 +193,43 @@ func doesOrgExist(org string) bool {
 	return true
 }
 
-func getNotUpdatedOrgs(db *sql.DB) []string {
-	rows, err := db.Query(`SELECT SID from (
+func getAllOrgs(db *sql.DB) (orgs []string, err error) {
+	orgs = make([]string, 0)
+	rows, err := db.Query("SELECT SID FROM tbl_Organizations")
+	if err != nil { return }
+	defer rows.Close()
+	
+	var org string
+	for rows.Next() {
+		err = rows.Scan(&org)
+		if err != nil { return }
+		orgs = append(orgs, org)
+	}
+	return
+}
+
+func getNotUpdatedOrgs(db *sql.DB) (orgs []string, err error) {
+	orgs = make([]string, 0)
+	
+	var rows *sql.Rows
+	rows, err = db.Query(`SELECT SID from (
 		SELECT Organization as SID, DATEDIFF( curdate(), ScrapeDate ) as daysSinceScrape
 		FROM tbl_OrgMemberHistory
 		GROUP BY SID
 		HAVING MAX(ScrapeDate) AND daysSinceScrape > 0
 	) as T;`)
-	
-	if err != nil { panic(err) }
+	if err != nil { return }
 	defer rows.Close()
 	
-	var orgs []string = make([]string, 0)
 	var org string
 	for rows.Next() {
 		err = rows.Scan(&org)
-		if err != nil { panic(err) }
+		if err != nil { return }
 		orgs = append(orgs, org)
 	}
 	err = rows.Err()
-	if err != nil { panic(err) }
-	return orgs
+	if err != nil { return }
+	return
 }
 
 func parseArgs(args []string) (string, string, string) {
@@ -163,4 +239,12 @@ func parseArgs(args []string) (string, string, string) {
 		os.Exit(1)
 	}
 	return args[0], args[1], args[2]
+}
+
+func removeScrape(db *sql.DB, org string, daysAgo int) error {
+	_, err := db.Exec(
+		`DELETE FROM tbl_OrgMemberHistory WHERE Organization = ?
+		AND ScrapeDate = DATE_SUB(CURDATE(), INTERVAL ? DAY)`,
+	org, daysAgo)
+	return err
 }

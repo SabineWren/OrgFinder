@@ -128,8 +128,6 @@ func main(){
 			checkError(err)
 		}
 	}
-	err = ReclusterTables(db)
-	checkError(err)
 }
 
 func checkError(err error) {

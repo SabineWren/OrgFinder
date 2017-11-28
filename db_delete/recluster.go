@@ -17,79 +17,47 @@ func ReclusterTables(db *sql.DB) error {
 	var err error
 	
 	_, err = db.Exec("ALTER TABLE tbl_Organizations ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_Performs ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_PrimaryFocus ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_SecondaryFocus ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_OrgMemberHistory ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_IconURLs ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_Commits ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_RolePlayOrgs ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_OrgArchetypes ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_FilterArchetypes ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_FullOrgs ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_ExclusiveOrgs ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_OrgFluencies ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_FilterFluencies ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 	
 	_, err = db.Exec("ALTER TABLE tbl_OrgDescription ENGINE=INNODB")
-	if err != nil {
-		return err
-	}
-	
-	return nil
+	return err
 }
