@@ -42,15 +42,23 @@ func main() {
 	if err != nil { panic(err) }
 }
 
+func compressHistoryDeltaGo(goLimiter chan int, db *sql.DB, org string) {
+	var err error
+	var scrapes []scrape
+	scrapes, err = getOrgHistory(db, org)
+	if err != nil { panic(err) }
+	err = compressOrgHistory(db, org, scrapes)
+	if err != nil { panic(err) }
+	<- goLimiter
+}
 func compressHistoryDelta(db *sql.DB) (err error) {
+	goLimiter := make(chan int, 50)
 	var orgs []string
 	orgs, err = getAllOrgs(db)
+	if err != nil { return }
 	for _, org := range orgs {
-		var scrapes []scrape
-		scrapes, err = getOrgHistory(db, org)
-		if err != nil { return }
-		err = compressOrgHistory(db, org, scrapes)
-		if err != nil { return }
+		goLimiter <- 1
+		go compressHistoryDeltaGo(goLimiter, db, org)
 	}
 	return
 }
@@ -241,10 +249,10 @@ func parseArgs(args []string) (string, string, string) {
 	return args[0], args[1], args[2]
 }
 
-func removeScrape(db *sql.DB, org string, daysAgo int) error {
-	_, err := db.Exec(
+func removeScrape(db *sql.DB, org string, daysAgo int) (err error) {
+	_, err = db.Exec(
 		`DELETE FROM tbl_OrgMemberHistory WHERE Organization = ?
 		AND ScrapeDate = DATE_SUB(CURDATE(), INTERVAL ? DAY)`,
 	org, daysAgo)
-	return err
+	return
 }

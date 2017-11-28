@@ -49,8 +49,7 @@ func TestCompressOrgHistory(t *testing.T) {
 	result, err = getOrgHistory(db, org)
 	if !compareScrapes(expect, result) { t.Error("failed to insert test history for org: " + org) }
 	
-	err = compressOrgHistory(db, org, expect)
-	if err != nil { panic(err) }
+	compressOrgHistory(db, org, expect)
 	
 	result, err = getOrgHistory(db, org)
 	if !compareScrapes(expect, result) { t.Error("bad delta compression for org: " + org) }
@@ -83,8 +82,7 @@ func TestCompressOrgHistory(t *testing.T) {
 	result, err = getOrgHistory(db, org)
 	if !compareScrapes(expect, result) { t.Error("failed to insert test history for org: " + org) }
 	
-	err = compressOrgHistory(db, org, expect)
-	if err != nil { panic(err) }
+	compressOrgHistory(db, org, expect)
 	
 	expect = []scrape{
 		scrape{size:20, main:10, affil:10, hidden:0},
@@ -126,8 +124,7 @@ func TestCompressOrgHistory(t *testing.T) {
 	result, err = getOrgHistory(db, org)
 	if !compareScrapes(expect, result) { t.Error("failed to insert test history for org: " + org) }
 	
-	err = compressOrgHistory(db, org, expect)
-	if err != nil { panic(err) }
+	compressOrgHistory(db, org, expect)
 	
 	expect = []scrape{
 		scrape{size:20, main:11, affil: 9, hidden:0},
@@ -560,8 +557,7 @@ func TestCompressOrgHistory(t *testing.T) {
 	result, err = getOrgHistory(db, org)
 	if !compareScrapes(expect, result) { t.Error("failed to insert test history for org: " + org) }
 	
-	err = compressOrgHistory(db, org, expect)
-	if err != nil { panic(err) }
+	compressOrgHistory(db, org, expect)
 	
 	expect = []scrape{
 		scrape{size:42,main:42,affil:0,hidden:0},
