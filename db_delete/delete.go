@@ -2,6 +2,7 @@
 	@license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt
 	
 	Copyright (C) 2017 SabineWren
+	https://github.com/SabineWren
 	
 	GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 	https://www.gnu.org/licenses/agpl-3.0.html
@@ -18,10 +19,18 @@ import   "os/exec"
 import   "strings"
 
 type scrape struct {
-	Size   int
-	Main   int
-	Affil  int
-	Hidden int
+	Size    int
+	Main    int
+	Affil   int
+	Hidden  int
+	DaysAgo int
+}
+func (a scrape) equals(b scrape) bool {
+	if a.Size   != b.Size   { return false }
+	if a.Main   != b.Main   { return false }
+	if a.Affil  != b.Affil  { return false }
+	if a.Hidden != b.Hidden { return false }
+	return true
 }
 
 func main() {
@@ -72,26 +81,10 @@ func compressOrgHistory(db *sql.DB, org string, scrapes []scrape) (err error) {
 	for a = scrapes[i]; i >= 2; i-- {
 		b = scrapes[i-1]
 		c = scrapes[i-2]
-		if a == b && b == c {
-			err = removeScrape(db, org, i-1)
+		if a.equals(b) && b.equals(c) {
+			err = removeScrape(db, org, b.DaysAgo)
 			if err != nil { return }
 		} else { a = b }
-	}
-	return
-}
-
-func getOrgHistory(db *sql.DB, org string) (scrapes []scrape, err error) {
-	var rows *sql.Rows
-	rows, err = db.Query("SELECT Size, Main, Affiliate, Hidden FROM tbl_OrgMemberHistory WHERE Organization = ? ORDER BY ScrapeDate ASC", org)
-	if err != nil { return }
-	defer rows.Close()
-	
-	scrapes = make([]scrape, 0)
-	for rows.Next() {
-		var s scrape
-		err = rows.Scan(&s.Size, &s.Main, &s.Affil, &s.Hidden)
-		if err != nil { return }
-		scrapes = append(scrapes, s)
 	}
 	return
 }
@@ -221,7 +214,7 @@ func getNotUpdatedOrgs(db *sql.DB) (orgs []string, err error) {
 	
 	var rows *sql.Rows
 	rows, err = db.Query(`SELECT SID from (
-		SELECT Organization as SID, DATEDIFF( curdate(), ScrapeDate ) as daysSinceScrape
+		SELECT Organization as SID, DATEDIFF( CURDATE(), ScrapeDate ) as daysSinceScrape
 		FROM tbl_OrgMemberHistory
 		GROUP BY SID
 		HAVING MAX(ScrapeDate) AND daysSinceScrape > 0
@@ -237,6 +230,22 @@ func getNotUpdatedOrgs(db *sql.DB) (orgs []string, err error) {
 	}
 	err = rows.Err()
 	if err != nil { return }
+	return
+}
+
+func getOrgHistory(db *sql.DB, org string) (scrapes []scrape, err error) {
+	var rows *sql.Rows
+	rows, err = db.Query("SELECT Size, Main, Affiliate, Hidden, DATEDIFF( CURDATE(), ScrapeDate ) as DaysAgo FROM tbl_OrgMemberHistory WHERE Organization = ? ORDER BY ScrapeDate ASC", org)
+	if err != nil { return }
+	defer rows.Close()
+	
+	scrapes = make([]scrape, 0)
+	for rows.Next() {
+		var s scrape
+		err = rows.Scan(&s.Size, &s.Main, &s.Affil, &s.Hidden, &s.DaysAgo)
+		if err != nil { return }
+		scrapes = append(scrapes, s)
+	}
 	return
 }
 

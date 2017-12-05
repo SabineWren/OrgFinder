@@ -13,6 +13,6 @@ BUGFIXES
 - chop long words in org descriptions (and add it to automated testing)
 
 FEATURES
-- remove redundant org history rows
+***- prevent running deletion script if the update failed
 - insert history+charter
 - expand search query to include history+charter

@@ -2,6 +2,7 @@
 	@license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt
 	
 	Copyright (C) 2017 SabineWren
+	https://github.com/SabineWren
 	
 	GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 	https://www.gnu.org/licenses/agpl-3.0.html
@@ -13,31 +14,13 @@ package main
 import   "database/sql"
 import   "encoding/json"
 import   "errors"
+import   "fmt"
 import _ "github.com/go-sql-driver/mysql"
 import   "io/ioutil"
 import   "os"
 import   "strconv"
 import   "testing"
 
-func parseHistoryFile(org string, isInput bool) ([]scrape, error) {
-	var rawInput []byte
-	var err error
-	var scrapes []scrape = make([]scrape, 0)
-	
-	if isInput  { rawInput, err  = ioutil.ReadFile("./testdata/" + org + "_input.json") }
-	if !isInput { rawInput, err  = ioutil.ReadFile("./testdata/" + org + "_expect.json")}
-	if err != nil { return scrapes, err }
-	
-	err = json.Unmarshal(rawInput, &scrapes)
-	if err != nil { return scrapes, err }
-	
-	if len(scrapes) == 0 {
-		err = errors.New("unable to parse file for org: " + org) 
-		return scrapes, err 
-	}
-	
-	return scrapes, nil
-}
 func TestCompressOrgHistory(t *testing.T) {
 	db, err := sql.Open("mysql", "tester" + ":" + "test" + "@/" + "testdb")
 	if err != nil { panic(err) }
@@ -50,25 +33,31 @@ func TestCompressOrgHistory(t *testing.T) {
 	for _, org = range orgs {
 		expect, err = parseHistoryFile(org, true)
 		if err != nil { panic(err) }
-	
+		
 		err = deleteOrgFromDB(db, org)
 		if err != nil { panic(err) }
-		insertTestOrg(db, org, "CURDATE()", expect[0])
-		for i, s := range expect[1:] {
-			insertTestHistory(db, org, i+1, s)
+		insertTestOrg(db, org, expect[0])
+		for _, s := range expect[1:] {
+			insertTestHistory(db, org, s)
 		}
-	
+		
 		result, err = getOrgHistory(db, org)
+		if err != nil { panic(err) }
 		if !compareScrapes(expect, result) { t.Error("failed to insert test history for org: " + org) }
-	
+		
 		compressOrgHistory(db, org, expect)
-	
+		
 		expect, err = parseHistoryFile(org, false)
 		if err != nil { panic(err) }
-	
+		
 		result, err = getOrgHistory(db, org)
-		if !compareScrapes(expect, result) { t.Error("bad delta compression for org: " + org) }
-	
+		if !compareScrapes(expect, result) {
+			resStrLog := fmt.Sprintf("%+v", result)
+			err  = ioutil.WriteFile("testdata/logs/result_" + org + ".json", []byte(resStrLog), 0644)
+			if err != nil { panic(err) }
+			t.Error("logging bad delta compression for org: " + org)
+		}
+		
 		err = deleteOrgFromDB(db, org)
 		if err != nil { panic(err) }
 	}
@@ -117,16 +106,16 @@ func TestDeleteOrgFromDB(t *testing.T) {
 	}
 	
 	//INSERT
-	insertTestOrg(db, org1, "CURDATE()", scrape{Size: 3, Main: 2, Affil:1, Hidden:0})
-	insertTestHistory(db, org1, 1, scrape{Size: 3, Main: 2, Affil:1, Hidden:0})
+	insertTestOrg(db, org1, scrape{Size: 3, Main: 2, Affil:1, Hidden:0, DaysAgo:0})
+	insertTestHistory(db, org1, scrape{Size: 3, Main: 2, Affil:1, Hidden:0, DaysAgo:1})
 	result = doesOrgHaveData(db, org1)
 	if result == false {
 		t.Error("failed to insert test data for org sid: " + org1)
 		os.Exit(1)
 	}
 	//
-	insertTestOrg(db, org2, "CURDATE()", scrape{Size: 5, Main: 3, Affil:1, Hidden:1})
-	insertTestHistory(db, org2, 2, scrape{Size: 5, Main: 3, Affil:1, Hidden:1})
+	insertTestOrg(db, org2, scrape{Size: 5, Main: 3, Affil:1, Hidden:1, DaysAgo:0})
+	insertTestHistory(db, org2, scrape{Size: 5, Main: 3, Affil:1, Hidden:1, DaysAgo:2})
 	result = doesOrgHaveData(db, org2)
 	if result == false {
 		t.Error("failed to insert test data for org sid: " + org2)
@@ -191,13 +180,13 @@ func TestGetNotUpdatedOrgs(t *testing.T) {
 	err = deleteOrgFromDB(db, org)
 	if err != nil { panic(err) }
 	updatedTrueFalse[org] = false
-	insertTestOrg(db, org, "DATE_SUB( CURDATE(), INTERVAL 3 DAY )", scrape{Size:20, Main:10, Affil:8, Hidden:2})
+	insertTestOrg(db, org, scrape{Size:20, Main:10, Affil:8, Hidden:2, DaysAgo:3})
 	
 	org = "UPDATED"
 	err = deleteOrgFromDB(db, org)
 	if err != nil { panic(err) }
 	updatedTrueFalse[org] = true
-	insertTestOrg(db, org, "CURDATE()", scrape{Size:10, Main:5, Affil:5, Hidden:0})
+	insertTestOrg(db, org, scrape{Size:10, Main:5, Affil:5, Hidden:0, DaysAgo:0})
 	 
 	var notUpdatedOrgs []string
 	notUpdatedOrgs, err = getNotUpdatedOrgs(db)
@@ -226,7 +215,7 @@ func TestGetAllOrgs(t *testing.T) {
 		if err != nil { panic(err) }
 	}
 	for _, org := range orgsExpect {
-		insertTestOrg(db, org, "CURDATE()", scrape{Size:30, Main:20, Affil:9, Hidden:1})
+		insertTestOrg(db, org, scrape{Size:30, Main:20, Affil:9, Hidden:1, DaysAgo:0})
 	}
 	
 	var orgsResult []string
@@ -244,15 +233,23 @@ func TestGetAllOrgs(t *testing.T) {
 	}
 }
 
-func compareScrapes(forward, reverse []scrape) bool {
-	if len(forward) != len(reverse) { return false }
+
+func compareScrapes(a, b []scrape) bool {
+	if len(a) != len(b) { return false }
 	
-	for i, _ := range forward {
-		if forward[i] != reverse[len(reverse)-1-i] { return false }
+	if compareScrapesReversed(a, b) { return true }
+	
+	for i, _ := range a {
+		if a[i] != b[i] { return false }
 	}
 	return true
 }
-
+func compareScrapesReversed(forward, reverse []scrape) bool {
+	for i, _ := range forward {
+		if forward[i] != reverse[len(forward)-i-1] { return false }
+	}
+	return true
+}
 func doesOrgHaveData(db *sql.DB, org string) bool {
 	var err error
 	var value string
@@ -287,16 +284,16 @@ func doesOrgHaveData(db *sql.DB, org string) bool {
 	return false
 }
 
-func insertTestHistory(db *sql.DB, org string, daysAgo int, s scrape){
+func insertTestHistory(db *sql.DB, org string, s scrape){
 	_, err := db.Exec(`
 		INSERT INTO tbl_OrgMemberHistory (Organization, ScrapeDate, Size, Main, Affiliate, Hidden)
-		VALUES (?, DATE_SUB(CURDATE(), INTERVAL ` + strconv.Itoa(daysAgo) + ` DAY), ?, ?, ?, ?)`,
+		VALUES (?, DATE_SUB(CURDATE(), INTERVAL ` + strconv.Itoa(s.DaysAgo) + ` DAY), ?, ?, ?, ?)`,
 		org, s.Size, s.Main, s.Affil, s.Hidden,
 	)
 	if err != nil { panic(err) }
 }
 
-func insertTestOrg(db *sql.DB, org string, date string, s scrape) {
+func insertTestOrg(db *sql.DB, org string, s scrape) {
 	tx, err := db.Begin()
 	if err != nil { panic(err) }
 	defer func() {
@@ -317,7 +314,7 @@ func insertTestOrg(db *sql.DB, org string, date string, s scrape) {
 	
 	_, err = tx.Exec(`
 		INSERT INTO tbl_OrgMemberHistory (Organization, ScrapeDate, Size, Main, Affiliate, Hidden)
-		VALUES (?, ` + date + ", ?, ?, ?, ?)",
+		VALUES (?, DATE_SUB(CURDATE(), INTERVAL ` + strconv.Itoa(s.DaysAgo) + ` DAY), ?, ?, ?, ?)`,
 		org, s.Size, s.Main, s.Affil, s.Hidden,
 	)
 	if err != nil { panic(err) }
@@ -346,4 +343,23 @@ func insertTestOrg(db *sql.DB, org string, date string, s scrape) {
 	if err != nil { panic(err) }
 	_, err = tx.Exec("INSERT INTO tbl_OrgDescription(SID, Headline, Manifesto) VALUES(?, 'We do stuff!', 'we are an org blah blah blah')", org)
 	if err != nil { panic(err) }
+}
+
+func parseHistoryFile(org string, isInput bool) (scrapes []scrape, err error) {
+	var rawInput []byte
+	scrapes = make([]scrape, 0)
+	
+	if isInput  { rawInput, err  = ioutil.ReadFile("./testdata/" + org + "_input.json") }
+	if !isInput { rawInput, err  = ioutil.ReadFile("./testdata/" + org + "_expect.json")}
+	if err != nil { return scrapes, err }
+	
+	err = json.Unmarshal(rawInput, &scrapes)
+	if err != nil { return scrapes, err }
+	
+	if len(scrapes) == 0 {
+		err = errors.New("unable to parse file for org: " + org) 
+		return scrapes, err 
+	}
+	
+	return scrapes, nil
 }
