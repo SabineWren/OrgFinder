@@ -41,13 +41,13 @@ func main() {
 	if err != nil { panic(err) }
 	defer db.Close()
 	
-	err = deleteExpiredOrgs(db)
+	//err = deleteExpiredOrgs(db)
 	if err != nil { panic(err) }
 	
 	err = compressHistoryDelta(db)
 	if err != nil { panic(err) }
 	
-	err = ReclusterTables(db)
+	//err = ReclusterTables(db)
 	if err != nil { panic(err) }
 }
 
@@ -89,14 +89,14 @@ func compressOrgHistory(db *sql.DB, org string, scrapes []scrape) (err error) {
 	return
 }
 
-func deleteExpiredOrgs(db *sql.DB) (err error) {
+func deleteExpiredOrgs(db *sql.DB) error {
 	var orgs []string
 	orgs, err = getNotUpdatedOrgs(db)
 	var success bool
 	for _, org := range orgs{
 		if !doesOrgExist(org) {
 			err = deleteOrgFromDB(db, org)
-			if err != nil { return }
+			if err != nil { return err }
 			success, err = deleteOrgIcon(org, "../../org_icons_fullsize/")
 			if success == false { fmt.Println(err.Error()) }
 			success, err = deleteOrgIcon(org, "../../org_icons/")
@@ -105,7 +105,7 @@ func deleteExpiredOrgs(db *sql.DB) (err error) {
 			fmt.Println("org '" + org + "' still exists but did not update")
 		}
 	}
-	return
+	return nil
 }
 
 func deleteOrgFromDB(db *sql.DB, org string) (err error) {
