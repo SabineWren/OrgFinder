@@ -2,7 +2,7 @@
 
 window.onload = () => init();
 
-let addTab = function(orgName){
+let createTab = function(orgName){
 	let newTab = document.createElement("div");
 	newTab.classList.add("tab");
 	newTab.innerHTML = orgName;
@@ -22,7 +22,7 @@ let createChart = async function(chartContainer, orgSID){
 	return chartContainer;
 };
 
-let createChartTemplate = function(){
+let createChartContainer = function(){
 	let chartContainer = document.createElement("div");
 	chartContainer.classList.add("chart-container");
 	return chartContainer;
@@ -44,14 +44,13 @@ let onclickFactoryClose = function(keyElement, valueElement){
 };
 
 let addTabAndChart = async function (orgSID, orgName) {
-	let tabHolder = document.getElementById("tab-holder");
-	let tab = addTab(orgName);
-	tabHolder.appendChild(tab);
+	let tab = createTab(orgName);
+	document.getElementById("tab-holder").appendChild(tab);
 	
-	let chartHolder = document.getElementById("chart-holder");
-	let chartContainer = createChartTemplate();
+	let chartContainer = createChartContainer();
+	document.getElementById("chart-holder").appendChild(chartContainer);
+	
 	//the container MUST first be loaded in the DOM for its size to be non-zero
-	chartHolder.appendChild(chartContainer);
 	await createChart(chartContainer, orgSID);
 	
 	let closeIcon = createCloseIcon(tab, chartContainer);
