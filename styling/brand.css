@@ -1,0 +1,33 @@
+:root {
+	/* Official AotW colours */
+	--colour-brand-black:  #000000;
+	--colour-brand-grey:   #787878;
+	--colour-brand-orange: #ff3000;
+	--colour-brand-white:  #ffffff;
+	
+	/* Unapproved brand colours */
+	--colour-border: #404040;
+	--colour-brand-turquoise-10:        rgb(  0,  18,  22);
+	--colour-brand-turquoise-20:        rgb( 16,  40,  48);
+	--colour-orange-static:             rgb(229, 138,   5);
+	--colour-orange-interactive:        rgb(198, 176, 137);
+	--colour-orange-interactive-glow:   rgb(255, 118,  17);
+	--colour-orange-interact-highlight: rgb(254, 250, 231);
+	
+	/* Other colours */
+	--colour-border: var(--colour-orange-interactive);
+	
+	--colour-affil:  rgb(  0, 170,   0);
+	--colour-main:   var(--colour-orange-static);
+	--colour-hidden: rgb(200,   0,   0);
+	--colour-size:   rgb(205, 205, 205);
+	
+	/* Sizing */
+	--size-border: 1px;
+	--size-tab-height: 30px;
+	--size-tab-padding-vert: 0.3em;
+	--size-tab-padding-right: 2em;
+	--size-tab-padding-left: 0.6em;
+	--size-tab-close-icon: 1.7em;
+	--size-width-min: 500px;
+}

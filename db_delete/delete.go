@@ -90,6 +90,7 @@ func compressOrgHistory(db *sql.DB, org string, scrapes []scrape) (err error) {
 }
 
 func deleteExpiredOrgs(db *sql.DB) error {
+	var err error
 	var orgs []string
 	orgs, err = getNotUpdatedOrgs(db)
 	var success bool
@@ -214,10 +215,10 @@ func getNotUpdatedOrgs(db *sql.DB) (orgs []string, err error) {
 	
 	var rows *sql.Rows
 	rows, err = db.Query(`SELECT SID from (
-		SELECT Organization as SID, DATEDIFF( CURDATE(), ScrapeDate ) as daysSinceScrape
+		SELECT Organization as SID, DATEDIFF( CURDATE(), MAX(ScrapeDate) ) as daysSinceScrape
 		FROM tbl_OrgMemberHistory
 		GROUP BY SID
-		HAVING MAX(ScrapeDate) AND daysSinceScrape > 0
+		HAVING daysSinceScrape > 0
 	) as T;`)
 	if err != nil { return }
 	defer rows.Close()

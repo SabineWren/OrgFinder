@@ -1,0 +1,52 @@
+.line {
+	fill: none;
+}
+.line.line-affil {
+	stroke: var(--colour-affil);
+	stroke-width: 2px;
+}
+.line.line-hidden {
+	stroke: var(--colour-hidden);
+	stroke-width: 1px;
+}
+.line.line-main {
+	stroke: var(--colour-main);
+	stroke-width: 4px;
+}
+.line.line-size {
+	stroke: var(--colour-size);
+	stroke-width: 8px;
+}
+
+.chart-label.line-affil {
+	fill: var(--colour-affil);
+}
+.chart-label.line-hidden {
+	fill: var(--colour-hidden);
+}
+.chart-label.line-main {
+	fill: var(--colour-main);
+}
+.chart-label.line-size {
+	fill: var(--colour-size);
+}
+	
+.chart text {
+	fill: white;
+	font: 16px sans-serif;
+	text-anchor: start;
+}
+
+.chart-container {
+	display: inline-block;
+	width: 50%;
+	height: 25em;
+}
+
+.chart-container svg {
+	width: 100%;
+}
+
+g.y-axis text {
+	text-anchor: end;
+}

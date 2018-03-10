@@ -1,0 +1,14 @@
+charts:
+- add zoom using mousewheel
+- add org name
+- hyperlink name+sid
+- style hyperlinks to be obvious
+
+- add close option + icon
+
+- make charts more responsive for screen width
+
+- add size detail on mouseover
+
+- fix date labelling for recent orgs (maybe use days of week)
+- make chart domain dynamic

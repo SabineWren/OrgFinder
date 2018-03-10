@@ -1,11 +1,11 @@
 #!/bin/bash
 cd /var/www/html/OrgFinder/db_update
-go build &&
+/usr/local/go/bin/go build &&
 ./db_update <db_username> <db_name> <password> &&
 cd ../db_delete
-go build &&
+/usr/local/go/bin/go build &&
 ./db_delete <db_username> <db_name> <password> &&
-mogrify -path /var/www/html/org_icons -filter Triangle -define filter:support=2 -thumbnail 50 -unsharp 0.25x0.08+8.3+0.045 -dither None -posterize 136 -quality 82 -define jpeg:fancy-upsampling=off -define png:compression-filter=5 -define png:compression-level=9 -define png:compression-strategy=1 -define png:exclude-chunk=all -interlace none -colorspace sRGB /var/www/html/org_icons_new/* &&
+mogrify -path /var/www/html/org_icons -filter Triangle -define filter:support=2 -thumbnail 50 -unsharp 0.25x0.08+8.3+0.045 -dither None -posterize 136 -quality 82 -define jpeg:fancy-upsampling=off -define png:compression-filter=5 -define png:compression-level=9 -define png:compression-strategy=1 -define png:exclude-chunk=all -interlace none -colorspace sRGB /var/www/html/org_icons_new/*
 mv /var/www/html/org_icons_new/* /var/www/html/org_icons_fullsize/
 echo FINISHED AT $(date)
 echo ''
