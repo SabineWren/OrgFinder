@@ -9,7 +9,7 @@ let addTab = function(orgName){
 	return newTab;
 };
 
-let createChart = async function(chartHolder, orgSID){
+let createChart = async function(chartContainer, orgSID){
 	let response = await fetchSizeHistory(orgSID);
 	let data = await response.data;
 	if(!response.success) {
@@ -17,13 +17,14 @@ let createChart = async function(chartHolder, orgSID){
 		console.log("request failed: " + response.error);
 	}
 	
-	//we set the size of the svg using the size of its container
-	//the container MUST first be loaded in the DOM for its size to be non-zero
-	let chartContainer = document.createElement("div");
-	chartContainer.classList.add("chart-container");
-	chartHolder.appendChild(chartContainer);
 	let newChart = drawChartLine(chartContainer, data, orgSID);
 	newChart.classList.add("chart");
+	return chartContainer;
+};
+
+let createChartTemplate = function(){
+	let chartContainer = document.createElement("div");
+	chartContainer.classList.add("chart-container");
 	return chartContainer;
 };
 
@@ -44,14 +45,17 @@ let onclickFactoryClose = function(keyElement, valueElement){
 
 let addTabAndChart = async function (orgSID, orgName) {
 	let tabHolder = document.getElementById("tab-holder");
-	let chartHolder = document.getElementById("chart-holder");
-	
 	let tab = addTab(orgName);
-	let chartContainer = await createChart(chartHolder, orgSID);
-	let closeIcon = createCloseIcon(tab, chartContainer);
-	
-	tab.appendChild(closeIcon);
 	tabHolder.appendChild(tab);
+	
+	let chartHolder = document.getElementById("chart-holder");
+	let chartContainer = createChartTemplate();
+	//the container MUST first be loaded in the DOM for its size to be non-zero
+	chartHolder.appendChild(chartContainer);
+	await createChart(chartContainer, orgSID);
+	
+	let closeIcon = createCloseIcon(tab, chartContainer);
+	tab.appendChild(closeIcon);
 };
 
 let init = function () {
