@@ -10,7 +10,12 @@ let addTab = function(orgName){
 };
 
 let createChart = async function(chartHolder, orgSID){
-	let data = await fetchSizeHistory(orgSID);
+	let response = await fetchSizeHistory(orgSID);
+	let data = await response.data;
+	if(!response.success) {
+		data = [];
+		console.log("request failed: " + response.error);
+	}
 	
 	//we set the size of the svg using the size of its container
 	//the container MUST first be loaded in the DOM for its size to be non-zero

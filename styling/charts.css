@@ -11,11 +11,11 @@
 }
 .line.line-main {
 	stroke: var(--colour-main);
-	stroke-width: 4px;
+	stroke-width: 3px;
 }
 .line.line-size {
 	stroke: var(--colour-size);
-	stroke-width: 8px;
+	stroke-width: 4px;
 }
 
 .chart-label.line-affil {
@@ -37,10 +37,16 @@
 	text-anchor: start;
 }
 
+#chart-holder {
+	display: flex;
+	flex-wrap: wrap;
+}
+
 .chart-container {
 	display: inline-block;
+	min-width: 500px;
+	max-width: 100em;
 	width: 50%;
-	height: 25em;
 }
 
 .chart-container svg {
