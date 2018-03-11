@@ -5,7 +5,7 @@ body {
 	background-color: var(--colour-brand-turquoise-10);
 }
 
-body div#tab-holder {
+body div.tabs {
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: center;
@@ -17,7 +17,7 @@ body div#tab-holder {
 	background-color: var(--tab-holder-background);
 }
 
-body div#tab-holder .tab {
+body div.tabs .tab {
 	display: inline-block;
 	position: relative;
 	overflow: hidden;
@@ -34,7 +34,7 @@ body div#tab-holder .tab {
 	font-size: 1.1em;
 }
 /* add actual border because we're already using border for spacing */
-body div#tab-holder .tab::before {
+body div.tabs .tab::before {
 	box-sizing: border-box;
 	position: absolute;
 	content: "";
@@ -46,7 +46,7 @@ body div#tab-holder .tab::before {
 	z-index: 1;
 }
 /* add close tab icon */
-body div#tab-holder .tab .close-icon {
+body div.tabs .tab .close-icon {
 	position: absolute;
 	content: "";
 	top: var(--size-border);

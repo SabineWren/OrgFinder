@@ -8,7 +8,14 @@
 	<link rel="stylesheet" type="text/css" href="/styling/charts.css">
 </head>
 <body>
-	<div id="tab-holder"></div>
+	<div id="filter-holder" class="tabs">
+		<input id="recruiting" type="checkbox">
+		<label for="recruiting">Recruiting</label>
+		<input id="roleplay" type="checkbox">
+		<label for="roleplay">Roleplay</label>
+	</div>
+	<div id="tab-holder-results" class="tabs"></div>
+	<div id="tab-holder-charts" class="tabs"></div>
 	<div id="chart-holder"></div>
 
 	<script src="/d3/d3.min.js"></script>
