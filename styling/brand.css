@@ -12,10 +12,10 @@
 	--colour-orange-static:             rgb(229, 138,   5);
 	--colour-orange-interactive:        rgb(198, 176, 137);
 	--colour-orange-interactive-glow:   rgb(255, 118,  17);
-	--colour-orange-interact-highlight: rgb(254, 250, 231);
+	--colour-orange-hovered:            rgb(254, 250, 231);
 	
 	/* Other colours */
-	--colour-border: var(--colour-orange-interactive);
+	--colour-border: var(--colour-orange-static);
 	
 	--colour-affil:  rgb(  0, 170,   0);
 	--colour-main:   var(--colour-orange-static);
@@ -24,10 +24,12 @@
 	
 	/* Sizing */
 	--size-border: 1px;
-	--size-tab-height: 30px;
+	--size-close-icon: 1.5em;
+	--size-tab-height: 1.5em;
 	--size-tab-padding-vert: 0.3em;
-	--size-tab-padding-right: 2em;
-	--size-tab-padding-left: 0.6em;
-	--size-tab-close-icon: 1.7em;
+	--size-tab-padding-horiz: 0.6em;
 	--size-width-min: 500px;
+	
+	/* Fonts */
+	--font-size-tab: 1em;
 }

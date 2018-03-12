@@ -23,17 +23,15 @@ body div.tabs .tab {
 	overflow: hidden;
 	line-height: var(--size-tab-height);
 	height: var(--size-tab-height);
-	padding: var(--size-tab-padding-vert);
-	padding-right: var(--size-tab-padding-right);
-	padding-left: var(--size-tab-padding-left);
-	/* ADHOC MARGIN -- repurposing the BORDER to create flexbox item spacing */
+	padding: var(--size-tab-padding-vert) var(--size-tab-padding-horiz);
+	padding-right: calc(var(--size-close-icon) + var(--size-tab-padding-horiz));
+	/* ADHOC MARGIN by using border to create flexbox item spacing */
 	border: solid var(--size-tab-padding-vert) var(--tab-holder-background);
 	background: var(--colour-brand-turquoise-10);
-	color: white;
 	font-weight: bold;
-	font-size: 1.1em;
+	font-size: var(--font-size-tab);
 }
-/* add actual border because we're already using border for spacing */
+/* ADHOC BORDER because we're already using border for spacing */
 body div.tabs .tab::before {
 	box-sizing: border-box;
 	position: absolute;
@@ -45,14 +43,4 @@ body div.tabs .tab::before {
 	height: 100%;
 	z-index: 1;
 }
-/* add close tab icon */
-body div.tabs .tab .close-icon {
-	position: absolute;
-	content: "";
-	top: var(--size-border);
-	right: var(--size-border);
-	width: var(--size-tab-close-icon);
-	height: var(--size-tab-close-icon);
-	padding: var(--size-tab-padding-vert);
-	z-index: 2;
-}
+

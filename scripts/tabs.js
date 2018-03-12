@@ -2,14 +2,14 @@
 
 window.onload = () => init();
 
-let addCell = function(text){
+let addCell = function(text) {
 	let td = document.createElement("td");
 	td.innerHTML = text;
 	this.appendChild(td);
 	return this;
 };
 
-let addChart = async function(chartContainer, orgSID){
+let addChart = async function(chartContainer, orgSID) {
 	let response = await fetchSizeHistory(orgSID);
 	let data = await parseResponse(response);
 	
@@ -18,8 +18,8 @@ let addChart = async function(chartContainer, orgSID){
 	return chartContainer;
 };
 
-let addResults = async function(){
-	let tab = createTab("Default Listing");
+let addResults = async function() {
+	let tab = createTab("Default Listing", "DEFAULT_ID");
 	document.getElementById("tab-holder-results").appendChild(tab);
 	
 	let resultsContainer = createResultsContainer();
@@ -31,9 +31,8 @@ let addResults = async function(){
 	loadList(resultsContainer, data);
 };
 
-let addRow = function(data){
+let addRow = function(data) {
 	let row = document.createElement("tr");
-	
 	row.addCell = addCell;
 	
 	row.addCell(data.Archetype)
@@ -50,58 +49,66 @@ let addRow = function(data){
 	this.appendChild(row);
 };
 
-let addTabAndChart = async function (orgSID, orgName) {
-	let tab = createTab(orgName);
+let addDetails = async function (orgSID, orgName) {
+	let tab = createTab(orgName, orgSID);
 	document.getElementById("tab-holder-charts").appendChild(tab);
 	
-	let chartContainer = createChartContainer();
+	let chartContainer = createChartContainer(orgSID);
 	document.getElementById("chart-holder").appendChild(chartContainer);
-	
 	//the container MUST first be loaded in the DOM for its size to be non-zero
-	await addChart(chartContainer, orgSID);
+	addChart(chartContainer, orgSID);
 	
-	let closeIcon = createCloseIcon(tab, chartContainer);
-	tab.appendChild(closeIcon);
+	let onClick = onClickCloseFactory(tab, [chartContainer]);
+	
+	let iconCloseTab = createCloseIcon(onClick);
+	tab.appendChild(iconCloseTab);
+	
+	let iconCloseChart = createCloseIcon(onClick);
+	chartContainer.appendChild(iconCloseChart);
 };
 
-let createChartContainer = function(){
+let createChartContainer = function(id) {
 	let chartContainer = document.createElement("div");
 	chartContainer.classList.add("chart-container");
+	chartContainer.id = "chart-" + id;
 	return chartContainer;
 };
 
-let createResultsContainer = function(){
+let createResultsContainer = function(id) {
 	let resultsContainer = document.createElement("table");
+	resultsContainer.id = "results-" + id;
 	return resultsContainer;
 };
 
-let createCloseIcon = function(keyElement, valueElement){
+let createCloseIcon = function(onClick) {
 	let closeIcon = document.createElement("div");
 	closeIcon.classList.add("close-icon");
-	closeIcon.onclick = onclickFactoryClose(keyElement, valueElement);
+	closeIcon.onclick = onClick;
+	closeIcon.innerHTML = "X";
 	return closeIcon;
 }
 
-let createTab = function(orgName){
+let createTab = function(name, id) {
 	let newTab = document.createElement("div");
 	newTab.classList.add("tab");
-	newTab.innerHTML = orgName;
+	newTab.id = "tab-" + id;
+	newTab.innerHTML = name;
 	return newTab;
 };
 
 let init = function () {
 	addResults();
-	addTabAndChart("LAWBINDERS","LAWBINDERS");
-	addTabAndChart("00000000", "ENEMY CONTACT");
-	addTabAndChart("HHCORP", "Horizons Hunters");
-	addTabAndChart("AOTW", "Angels of the Warp");
-	addTabAndChart("POI", "Person Of Interest");
-	addTabAndChart("TFTO", "The First Order");
-	addTabAndChart("PROT", "Protectors of Verum");
-	addTabAndChart("AMFR", "AMFR");
+	addDetails("LAWBINDERS","LAWBINDERS");
+	addDetails("00000000", "ENEMY CONTACT");
+	addDetails("HHCORP", "Horizons Hunters");
+	addDetails("AOTW", "Angels of the Warp");
+	addDetails("POI", "Person Of Interest");
+	addDetails("TFTO", "The First Order");
+	addDetails("PROT", "Protectors of Verum");
+	addDetails("AMFR", "AMFR");
 };
 
-let loadList = function(resultsContainer, data){
+let loadList = function(resultsContainer, data) {
 	resultsContainer.addRow = addRow;
 	
 	resultsContainer.addRow({
@@ -120,11 +127,23 @@ let loadList = function(resultsContainer, data){
 	data.forEach(dataRow => resultsContainer.addRow(dataRow));
 };
 
-let onclickFactoryClose = function(keyElement, valueElement){
-	return function(){
-		keyElement.remove();
-		valueElement.remove();
+let onClickCloseFactory = function(tab, elements) {
+	let aliveIds = elements.map(e => e.id);
+	
+	let getNewAliveIds = function(kill) {
+		if(kill.id === tab.id) { return []; }
+		
+		return aliveIds.filter(alive => alive !== kill.id);
 	};
 	
+	return function(event) {
+		aliveIds = getNewAliveIds(event.target.parentElement);
+		
+		elements
+			.filter(e => !aliveIds.includes(e.id))
+			.forEach(e => e.remove());
+		
+		if(aliveIds.length === 0) { tab.remove(); }
+	};
 };
 

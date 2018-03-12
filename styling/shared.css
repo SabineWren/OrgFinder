@@ -1,0 +1,21 @@
+/* add close tab icon */
+.close-icon {
+	position: absolute;
+	top: var(--size-border);
+	right: var(--size-border);
+	width: var(--size-close-icon);
+	height: var(--size-close-icon);
+	padding: var(--size-tab-padding-vert);
+	text-align: center;
+	font-size: var(--font-size-tab);
+	font-weight: bold;
+	color: var(--colour-orange-interactive);
+	z-index: 2;
+}
+.close-icon:hover {
+	color: var(--colour-orange-hovered);
+}
+
+body {
+	color: white;
+}

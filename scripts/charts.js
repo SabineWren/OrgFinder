@@ -28,7 +28,7 @@ let drawChartLine = function (parent, data, orgSID) {
 	//add labels
     let squareSize = 20;
     let whitespace = 5;
-    let heightOffset = function(d, i){
+    let heightOffset = function(d, i) {
             let spacing = squareSize + whitespace;
             let offset = (spacing * 4 - whitespace)/2;
             return height/2 + i*spacing - offset;
@@ -71,7 +71,7 @@ let drawChartLine = function (parent, data, orgSID) {
 		.call(d3.axisBottom(x));
 	
 	//make x-axis date
-	let daysToDate = function(node){
+	let daysToDate = function(node) {
 		let date = new Date();
 		return date.setDate(date.getDate() - node.DaysAgo);
 	};
@@ -79,7 +79,7 @@ let drawChartLine = function (parent, data, orgSID) {
 		.domain(d3.extent(data, daysToDate))
 		.range([0, width]);
 	let xAxisDate = d3.axisBottom(xScaleDate)
-	.tickFormat(function(date){
+	.tickFormat(function(date) {
 		if (d3.timeYear(date) < date) {
 			return d3.timeFormat('%b')(date);
 		} else {
