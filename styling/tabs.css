@@ -13,7 +13,6 @@ body div.tabs {
 	min-width: 500px;
 	padding: var(--size-tab-padding-vert);
 	margin: 0 auto;
-	--tab-holder-background: var(--colour-brand-turquoise-20);
 	background-color: var(--tab-holder-background);
 }
 

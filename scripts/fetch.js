@@ -1,3 +1,4 @@
+"use strict";
 let success = function(r) {
 	return { success: true, data: r.json() };
 };

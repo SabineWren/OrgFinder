@@ -19,3 +19,16 @@
 body {
 	color: white;
 }
+
+#data-holder {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.data-container {
+	display: inline-block;
+	position: relative;
+	min-width: 500px;
+	max-width: 100em;
+	width: 50%;
+}

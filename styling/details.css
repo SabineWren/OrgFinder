@@ -1,0 +1,95 @@
+.table {
+	display: grid;
+	position: relative;
+	box-sizing: border-box;
+	border-collapse: collapse;
+}
+
+.row {
+	display: block;
+	position: relative;
+	box-sizing: border-box;
+	width: 100%;
+	border: solid 0.2em var(--tab-holder-background);
+}
+
+.cell {
+	display: inline-block;
+	position: relative;
+	box-sizing: border-box;
+	height: calc(2em + var(--size-cell-padding));
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+	padding: var(--size-cell-padding);
+}
+
+.cell-commitment {
+	width: 8em;
+}
+.cell-size {
+	width: 4em;
+}
+.cell-sid {
+	width: 7em;
+}
+
+.cell-image {
+	width: 3em;
+}
+.focuses-header {
+	width: 6em;
+}
+
+.bounty-hunting {
+	background-image: url("/images/activities/Bounty_hunting.png");
+}
+
+.engineering {
+	background-image: url("/images/activities/Engineering.png");
+}
+
+.exploration {
+	background-image: url("/images/activities/Exploration.png");
+}
+
+.freelancing {
+	background-image: url("/images/activities/Freelancing.png");
+}
+
+.infiltration {
+	background-image: url("/images/activities/Infiltration.png");
+}
+
+.piracy {
+	background-image: url("/images/activities/Piracy.png");
+}
+
+.resources {
+	background-image: url("/images/activities/Resources.png");
+}
+
+.scouting {
+	background-image: url("/images/activities/Scouting.png");
+}
+
+.security {
+	background-image: url("/images/activities/Security.png");
+}
+
+.smuggling {
+	background-image: url("/images/activities/Smuggling.png");
+}
+
+.social {
+	background-image: url("/images/activities/Social.png");
+}
+
+.trading {
+	background-image: url("/images/activities/Trade.png");
+}
+
+.transport {
+	background-image: url("/images/activities/Transport.png");
+}
+

@@ -22,6 +22,9 @@
 	--colour-hidden: rgb(200,   0,   0);
 	--colour-size:   rgb(205, 205, 205);
 	
+	--tab-holder-background: var(--colour-brand-turquoise-20);
+	--colour-table-secondary: var(--colour-orange-static);
+	
 	/* Sizing */
 	--size-border: 1px;
 	--size-close-icon: 1.5em;
@@ -29,6 +32,8 @@
 	--size-tab-padding-vert: 0.3em;
 	--size-tab-padding-horiz: 0.6em;
 	--size-width-min: 500px;
+	
+	--size-cell-padding: var(--size-tab-padding-vert);
 	
 	/* Fonts */
 	--font-size-tab: 1em;

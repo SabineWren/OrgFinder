@@ -1,4 +1,4 @@
-let chartHolder = d3.select("#chart-holder").node();
+let chartHolder = d3.select("#data-holder").node();
 
 let drawChartLine = function (parent, data, orgSID) {
 	//must set canvas size before building svg

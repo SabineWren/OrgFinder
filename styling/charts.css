@@ -37,20 +37,8 @@
 	text-anchor: start;
 }
 
-#chart-holder {
-	display: flex;
-	flex-wrap: wrap;
-}
 
-.chart-container {
-	display: inline-block;
-	position: relative;
-	min-width: 500px;
-	max-width: 100em;
-	width: 50%;
-}
-
-.chart-container svg {
+.data-container svg {
 	width: 100%;
 }
 
