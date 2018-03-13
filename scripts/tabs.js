@@ -2,51 +2,54 @@
 
 window.onload = () => init();
 
-let DATA_TYPES = Object.freeze({
-	CHART: 1,
-	DETAILS: 2,
-	LISTING: 3
-});
-
-let COLUMNS = Object.freeze({
-	COMMITMENT: 4,
-	GROWTH: 8,
-	NAME: 5,
-	SID: 1,
-	SIZE: 6,
-});
-
-let addCell = function(col, line1, line2) {
-	let cell = document.createElement("div");
-	cell.classList.add("cell");
-	
-	if(line2 !== undefined) {
-		line1 += "<br>" + "<span style='color: var(--colour-table-secondary)'>" + line2 + "</span>";
-	}
-	cell.innerHTML = line1;
-	
-	switch(col) {
-		case COLUMNS.COMMITMENT:
-			cell.classList.add("cell-commitment");
-			break;
-		case COLUMNS.GROWTH:
-		case COLUMNS.SIZE:
-			cell.classList.add("cell-size");
-			break;
-		case COLUMNS.SID:
-			cell.classList.add("cell-sid");
-			break;
-	}
-	
-	this.appendChild(cell);
-	return this;
+let addActivityImage = function(cell, activity){
+	cell.classList.add(activity.toLowerCase().replace(' ', '-'));
+	cell.innerHTML = "";
+	cell.title = activity;
 };
 
-let addCellImage = function(activity) {
+let addCell = function(cellType, text) {
 	let cell = document.createElement("div");
-	cell.classList.add(activity.toLowerCase().replace(' ', '-'));
-	cell.classList.add("cell", "cell-image");
-	cell.title = activity;
+	cell.innerHTML = text;
+	
+	switch(cellType) {
+		case COLUMNS.ARCHETYPE:
+			cell.classList.add("archetype");
+			break;
+		case COLUMNS.COMMITMENT:
+			cell.classList.add("commitment");
+			break;
+		case COLUMNS.FOCUSES:
+			cell.classList.add("focuses-header");
+			break;
+		case COLUMNS.FOCUS_PRIMARY:
+			cell.classList.add("focus-primary");
+			addActivityImage(cell, text);
+			break;
+		case COLUMNS.FOCUS_SECONDARY:
+			cell.classList.add("focus-secondary");
+			addActivityImage(cell, text);
+			break;
+		case COLUMNS.GROWTH:
+			cell.classList.add("growth");
+			break;
+		case COLUMNS.LANGUAGE:
+			cell.classList.add("language");
+			break;
+		case COLUMNS.MAIN:
+			cell.classList.add("main");
+			break;
+		case COLUMNS.NAME:
+			cell.classList.add("name");
+			break;
+		case COLUMNS.SIZE:
+			cell.classList.add("size");
+			break;
+		case COLUMNS.SID:
+			cell.classList.add("sid");
+			break;
+	}
+	
 	this.appendChild(cell);
 	return this;
 };
@@ -80,15 +83,17 @@ let addRow = function(data) {
 	let row = document.createElement("div");
 	row.classList.add("row");
 	row.addCell = addCell;
-	row.addCellImage = addCellImage;
 	
 	row
-		.addCell(COLUMNS.SID, data.SID, data.Archetype)
-		.addCellImage(data.PrimaryFocus)
-		.addCellImage(data.SecondaryFocus)
-		.addCell(COLUMNS.COMMITMENT, data.Commitment, data.Language)
+		.addCell(COLUMNS.SID, data.SID)
+		.addCell(COLUMNS.ARCHETYPE, data.Archetype)
+		.addCell(COLUMNS.FOCUS_PRIMARY, data.PrimaryFocus)
+		.addCell(COLUMNS.FOCUS_SECONDARY, data.SecondaryFocus)
+		.addCell(COLUMNS.COMMITMENT, data.Commitment)
+		.addCell(COLUMNS.LANGUAGE, data.Language)
 		.addCell(COLUMNS.NAME, data.Name)
-		.addCell(COLUMNS.SIZE,data.Size, data.Main)
+		.addCell(COLUMNS.SIZE, data.Size)
+		.addCell(COLUMNS.MAIN, data.Main)
 		.addCell(COLUMNS.GROWTH, data.GrowthRate);
 	
 	this.appendChild(row);
@@ -168,37 +173,27 @@ let init = function () {
 
 let loadList = function(resultsContainer, data) {
 	resultsContainer.addRow = addRow;
-	
-	headers = {
-		Archetype: "Archetype",
-		Commitment: "Commitment",
-		GrowthRate: "Growth",
-		Language: "Language",
-		Main: "Main",
-		Name: "Name",
-		SID: "SID",
-		Size: "Size",
-	};
-	
+	resultsContainer.appendChild(makeTitleRow());
+	data.forEach(dataRow => resultsContainer.addRow(dataRow));
+};
+
+let makeTitleRow = function (){
 	let row = document.createElement("div");
 	row.classList.add("row");
 	row.addCell = addCell;
 	
-	row.addCell(COLUMNS.SID, headers.SID, headers.Archetype);
-	
-	let focuses = document.createElement("cell");
-	focuses.innerHTML = "Focuses";
-	focuses.classList.add("focuses-header", "cell");
-	row.appendChild(focuses);
-	
 	row
-		.addCell(COLUMNS.COMMITMENT, headers.Commitment, headers.Language)
-		.addCell(COLUMNS.NAME, headers.Name)
-		.addCell(COLUMNS.SIZE, headers.Size, headers.Main)
-		.addCell(COLUMNS.GROWTH, headers.GrowthRate);
+		.addCell(COLUMNS.SID, "SID")
+		.addCell(COLUMNS.ARCHETYPE, "Archetype")
+		.addCell(COLUMNS.FOCUSES, "Focuses")
+		.addCell(COLUMNS.COMMITMENT, "Commitment")
+		.addCell(COLUMNS.LANGUAGE, "Language")
+		.addCell(COLUMNS.NAME, "Name")
+		.addCell(COLUMNS.SIZE, "Size")
+		.addCell(COLUMNS.MAIN, "Main")
+		.addCell(COLUMNS.GROWTH, "Weekly Growth");
 	
-	resultsContainer.appendChild(row);
-	data.forEach(dataRow => resultsContainer.addRow(dataRow));
+	return row;
 };
 
 let onClickCloseFactory = function(tab, elements) {

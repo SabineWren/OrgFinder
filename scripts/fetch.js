@@ -1,4 +1,5 @@
 "use strict";
+/* REPLACE SUCCESS FAIL WITH THEN -> RETURN, CATCH -> WARNING */
 let success = function(r) {
 	return { success: true, data: r.json() };
 };

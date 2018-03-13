@@ -1,0 +1,19 @@
+let DATA_TYPES = Object.freeze({
+	CHART: 1,
+	DETAILS: 2,
+	LISTING: 3
+});
+
+let COLUMNS = Object.freeze({
+	ARCHETYPE: 8,
+	COMMITMENT: 1,
+	FOCUSES: 11,
+	FOCUS_PRIMARY: 2,
+	FOCUS_SECONDARY: 3,
+	GROWTH: 4,
+	LANGUAGE: 9,
+	MAIN: 10,
+	NAME: 5,
+	SID: 6,
+	SIZE: 7,
+});

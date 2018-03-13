@@ -1,45 +1,82 @@
 .table {
-	display: grid;
+	display: block;
 	position: relative;
 	box-sizing: border-box;
 	border-collapse: collapse;
 }
+.table .row:first-child {
+	text-align: center;
+}
 
 .row {
-	display: block;
+	display: grid;
 	position: relative;
 	box-sizing: border-box;
 	width: 100%;
 	border: solid 0.2em var(--tab-holder-background);
+	grid-gap: var(--size-cell-padding);
+	grid-template-columns: 7em 3em 3em 8em minmax(8.5em, 1fr) 4em 4em;
 }
 
-.cell {
-	display: inline-block;
-	position: relative;
-	box-sizing: border-box;
-	height: calc(2em + var(--size-cell-padding));
-	background-repeat: no-repeat;
-	background-size: contain;
-	background-position: center;
-	padding: var(--size-cell-padding);
+.archetype {
+	grid-column: 1;
+	grid-row: 2;
+	color: var(--colour-table-secondary);
+	text-align: center;
 }
-
-.cell-commitment {
-	width: 8em;
-}
-.cell-size {
-	width: 4em;
-}
-.cell-sid {
-	width: 7em;
-}
-
-.cell-image {
-	width: 3em;
+.commitment {
+	grid-column: 4;
+	grid-row 1;
+	text-align: center;
 }
 .focuses-header {
-	width: 6em;
+	grid-column: 2 / span 2;
+	grid-row: 1 / span 2;
+	margin: auto;
 }
+.focus-primary {
+	grid-column: 2;
+	grid-row: 1 / span 2;
+}
+.focus-secondary {
+	grid-column: 3;
+	grid-row: 1 / span 2;
+}
+.growth {
+	grid-column: 7;
+	grid-row: 1 / span 2;
+	margin: auto;
+	text-align: center;
+}
+.language {
+	grid-column: 4;
+	grid-row: 2;
+	color: var(--colour-table-secondary);
+	text-align: center;
+}
+.main {
+	grid-column: 6;
+	grid-row: 2;
+	color: var(--colour-table-secondary);
+	text-align: center;
+}
+.name {
+	grid-column: 5;
+	grid-row: 1 / span 2;
+	margin: auto;
+	text-align: center;
+}
+.sid {
+	grid-column: 1;
+	grid-row: 1;
+	text-align: center;
+}
+.size {
+	grid-column: 6;
+	grid-row: 1;
+	text-align: center;
+}
+
 
 .bounty-hunting {
 	background-image: url("/images/activities/Bounty_hunting.png");
