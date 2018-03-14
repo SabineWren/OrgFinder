@@ -23,6 +23,7 @@
 	--colour-size:   rgb(205, 205, 205);
 	
 	--tab-holder-background: var(--colour-brand-turquoise-20);
+	--colour-table-primary: white;
 	--colour-table-secondary: var(--colour-orange-static);
 	
 	/* Sizing */

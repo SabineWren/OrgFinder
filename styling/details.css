@@ -5,6 +5,7 @@
 	border-collapse: collapse;
 }
 .table .row:first-child {
+	font-weight: bold;
 	text-align: center;
 }
 
@@ -15,68 +16,163 @@
 	width: 100%;
 	border: solid 0.2em var(--tab-holder-background);
 	grid-gap: var(--size-cell-padding);
-	grid-template-columns: 7em 3em 3em 8em minmax(8.5em, 1fr) 4em 4em;
 }
 
-.archetype {
-	grid-column: 1;
-	grid-row: 2;
-	color: var(--colour-table-secondary);
-	text-align: center;
-}
-.commitment {
-	grid-column: 4;
-	grid-row 1;
-	text-align: center;
-}
-.focuses-header {
-	grid-column: 2 / span 2;
-	grid-row: 1 / span 2;
-	margin: auto;
-}
-.focus-primary {
-	grid-column: 2;
-	grid-row: 1 / span 2;
-}
-.focus-secondary {
-	grid-column: 3;
-	grid-row: 1 / span 2;
-}
-.growth {
-	grid-column: 7;
-	grid-row: 1 / span 2;
-	margin: auto;
-	text-align: center;
-}
-.language {
-	grid-column: 4;
-	grid-row: 2;
-	color: var(--colour-table-secondary);
-	text-align: center;
-}
-.main {
-	grid-column: 6;
-	grid-row: 2;
-	color: var(--colour-table-secondary);
-	text-align: center;
-}
-.name {
-	grid-column: 5;
-	grid-row: 1 / span 2;
-	margin: auto;
-	text-align: center;
-}
-.sid {
-	grid-column: 1;
-	grid-row: 1;
-	text-align: center;
-}
-.size {
-	grid-column: 6;
-	grid-row: 1;
-	text-align: center;
+@media only screen and (min-width: 5em){
+	.row {
+		grid-template-columns: 7em 3em 3em 4em 4em minmax(8.5em, 1fr);
+	}
+	
+	.archetype {
+		color: var(--colour-table-secondary);
+		grid-column: 2 / span 2;
+		grid-row: 3;
+		text-align: center;
+	}
+	.commitment {
+		grid-column: 1;
+		grid-row 3;
+		text-align: center;
+	}
+	.focuses-header {
+		grid-column: 2 / span 2;
+		grid-row: 1 / span 2;
+		margin: auto;
+	}
+	.focus-primary {
+		grid-column: 2;
+		grid-row: 1 / span 2;
+	}
+	.focus-secondary {
+		grid-column: 3;
+		grid-row: 1 / span 2;
+	}
+	.growth {
+		font-weight: bold;
+		grid-column: 5;
+		grid-row: 1 / span 2;
+		margin: auto;
+		text-align: center;
+	}
+	.language {
+		color: var(--colour-table-secondary);
+		grid-column: 1;
+		grid-row: 2;
+		text-align: center;
+	}
+	.main {
+		color: var(--colour-table-secondary);
+		font-weight: bold;
+		grid-column: 4;
+		grid-row: 2 / span 2;
+		text-align: center;
+	}
+	.name {
+		grid-column: 6;
+		grid-row: 2 / span 2;
+		margin: auto;
+		text-align: center;
+	}
+	.sid {
+		font-weight: bold;
+		grid-column: 1;
+		grid-row: 1;
+		text-align: center;
+	}
+	.size {
+		font-weight: bold;
+		grid-column: 4;
+		grid-row: 1;
+		text-align: center;
+	}
 }
 
+@media only screen and (min-width: 83em){
+	.row {
+		grid-template-columns: 7em 3em 3em 8em 4em 4em minmax(8.5em, 1fr);
+	}
+	
+	.archetype {
+		grid-column: 1;
+		grid-row: 2;
+	}
+	.commitment {
+		grid-column: 4;
+		grid-row 1;
+	}
+	.growth {
+		grid-column: 6;
+		grid-row: 1 / span 2;
+		margin: auto;
+	}
+	.language {
+		color: var(--colour-table-secondary);
+		grid-column: 4;
+		grid-row: 2;
+	}
+	.main {
+		color: var(--colour-table-secondary);
+		grid-column: 5;
+		grid-row: 2;
+	}
+	.name {
+		grid-column: 7;
+	}
+	.size {
+		grid-column: 5;
+		grid-row: 1;
+	}
+}
+
+@media only screen and (min-width: 92em){
+	.row {
+		grid-template-columns: 7em 3em 3em 8em 4em 4em 4em minmax(9em, 1fr);
+	}
+	.growth {
+		grid-column: 7;
+		grid-row: 1 / span 2;
+		margin: auto;
+	}
+	.main {
+		color: var(--colour-table-secondary);
+		grid-column: 6;
+		grid-row: 1 / span 2;
+		margin: auto;
+	}
+	.name {
+		grid-column: 8;
+	}
+	.size {
+		color: var(--colour-table-primary);
+		margin: auto;
+		grid-column: 5;
+		grid-row: 1 / span 2;
+	}
+}
+
+@media only screen and (min-width: 108em){
+	.row {
+		grid-template-columns: 7em 3em 3em 8em 4em 4em 4em 7em minmax(8.5em, 1fr);
+	}
+	.archetype {
+		color: var(--colour-table-primary);
+		grid-column: 1;
+		grid-row: 1 / span 2;
+		margin: auto;
+	}
+	.name {
+		grid-column: 9;
+	}
+	.sid {
+		color: var(--colour-table-secondary);
+		grid-column: 8;
+		grid-row: 1 / span 2;
+		margin: auto;
+	}
+}
+
+@media only screen and (min-width: 140em){
+}
 
 .bounty-hunting {
 	background-image: url("/images/activities/Bounty_hunting.png");

@@ -77,6 +77,14 @@ let addListing = async function(name, id) {
 	table.classList.add("table");
 	loadList(table, data);
 	listingContainer.appendChild(table);
+	
+	let onclick = onclickCloseFactory(tab, [listingContainer]);
+	
+	let iconCloseListing = createCloseIcon(onclick);
+	let iconCloseTab = createCloseIcon(onclick);
+	
+	listingContainer.appendChild(iconCloseListing);
+	tab.appendChild(iconCloseTab);
 };
 
 let addRow = function(data) {
@@ -113,11 +121,11 @@ let addDetails = async function (orgSID, orgName) {
 	let detailsContainer = createDataContainer(orgSID, DATA_TYPES.DETAILS);
 	dataHolder.appendChild(detailsContainer);
 	
-	let onClick = onClickCloseFactory(tab, [chartContainer, detailsContainer]);
+	let onclick = onclickCloseFactory(tab, [chartContainer, detailsContainer]);
 	
-	let iconCloseChart = createCloseIcon(onClick);
-	let iconCloseDetails = createCloseIcon(onClick);
-	let iconCloseTab = createCloseIcon(onClick);
+	let iconCloseChart = createCloseIcon(onclick);
+	let iconCloseDetails = createCloseIcon(onclick);
+	let iconCloseTab = createCloseIcon(onclick);
 	
 	chartContainer.appendChild(iconCloseChart);
 	detailsContainer.appendChild(iconCloseDetails);
@@ -143,10 +151,10 @@ let createDataContainer = function(id, type) {
 	return dataContainer;
 };
 
-let createCloseIcon = function(onClick) {
+let createCloseIcon = function(onclick) {
 	let closeIcon = document.createElement("div");
 	closeIcon.classList.add("close-icon");
-	closeIcon.onclick = onClick;
+	closeIcon.onclick = onclick;
 	closeIcon.innerHTML = "X";
 	return closeIcon;
 }
@@ -196,7 +204,7 @@ let makeTitleRow = function (){
 	return row;
 };
 
-let onClickCloseFactory = function(tab, elements) {
+let onclickCloseFactory = function(tab, elements) {
 	let aliveIds = elements.map(e => e.id);
 	
 	let getNewAliveIds = function(kill) {
