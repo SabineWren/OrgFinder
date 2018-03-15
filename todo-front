@@ -1,7 +1,9 @@
 priority:
-0) reduce grid bloat
-1) implement listing using grid
-2) add warning tab and use it for fetch catch
+0) refactor listing code into separate file
+1) change grid resize from screen size to container size
+2) stub out details
+3) add warning tab
+4) stub out controls
 
 charts:
 - add zoom using mousewheel

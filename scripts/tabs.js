@@ -8,48 +8,13 @@ let addActivityImage = function(cell, activity){
 	cell.title = activity;
 };
 
-let addCell = function(cellType, text) {
+
+let addCell = function(classCSS, text) {
 	let cell = document.createElement("div");
 	cell.innerHTML = text;
-	
-	switch(cellType) {
-		case COLUMNS.ARCHETYPE:
-			cell.classList.add("archetype");
-			break;
-		case COLUMNS.COMMITMENT:
-			cell.classList.add("commitment");
-			break;
-		case COLUMNS.FOCUSES:
-			cell.classList.add("focuses-header");
-			break;
-		case COLUMNS.FOCUS_PRIMARY:
-			cell.classList.add("focus-primary");
-			addActivityImage(cell, text);
-			break;
-		case COLUMNS.FOCUS_SECONDARY:
-			cell.classList.add("focus-secondary");
-			addActivityImage(cell, text);
-			break;
-		case COLUMNS.GROWTH:
-			cell.classList.add("growth");
-			break;
-		case COLUMNS.LANGUAGE:
-			cell.classList.add("language");
-			break;
-		case COLUMNS.MAIN:
-			cell.classList.add("main");
-			break;
-		case COLUMNS.NAME:
-			cell.classList.add("name");
-			break;
-		case COLUMNS.SIZE:
-			cell.classList.add("size");
-			break;
-		case COLUMNS.SID:
-			cell.classList.add("sid");
-			break;
-	}
-	
+	cell.classList.add(classCSS);
+	let isImage = classCSS === "focus-primary" || classCSS === "focus-secondary";
+	if(isImage){ addActivityImage(cell, text); }
 	this.appendChild(cell);
 	return this;
 };
@@ -91,16 +56,16 @@ let addRow = function(data) {
 	row.addCell = addCell;
 	
 	row
-		.addCell(COLUMNS.SID, data.SID)
-		.addCell(COLUMNS.ARCHETYPE, data.Archetype)
-		.addCell(COLUMNS.FOCUS_PRIMARY, data.PrimaryFocus)
-		.addCell(COLUMNS.FOCUS_SECONDARY, data.SecondaryFocus)
-		.addCell(COLUMNS.COMMITMENT, data.Commitment)
-		.addCell(COLUMNS.LANGUAGE, data.Language)
-		.addCell(COLUMNS.NAME, data.Name)
-		.addCell(COLUMNS.SIZE, data.Size)
-		.addCell(COLUMNS.MAIN, data.Main)
-		.addCell(COLUMNS.GROWTH, data.GrowthRate);
+		.addCell("sid", data.SID)
+		.addCell("archetype", data.Archetype)
+		.addCell("focus-primary", data.PrimaryFocus)
+		.addCell("focus-secondary", data.SecondaryFocus)
+		.addCell("commitment", data.Commitment)
+		.addCell("language", data.Language)
+		.addCell("name", data.Name)
+		.addCell("size", data.Size)
+		.addCell("main", data.Main)
+		.addCell("growth", data.GrowthRate);
 	
 	this.appendChild(row);
 };
@@ -169,7 +134,7 @@ let init = async function () {
 	var success = addListing("Default Listing", "DEFAULT_ID");
 	addDetails("LAWBINDERS","LAWBINDERS");
 	addDetails("00000000", "ENEMY CONTACT");
-	await success;
+	await success;//required to prevent r.json() aborting
 	addDetails("HHCORP", "Horizons Hunters");
 	addDetails("AOTW", "Angels of the Warp");
 	addDetails("POI", "Person Of Interest");
@@ -190,15 +155,15 @@ let makeTitleRow = function (){
 	row.addCell = addCell;
 	
 	row
-		.addCell(COLUMNS.SID, "SID")
-		.addCell(COLUMNS.ARCHETYPE, "Archetype")
-		.addCell(COLUMNS.FOCUSES, "Focuses")
-		.addCell(COLUMNS.COMMITMENT, "Commitment")
-		.addCell(COLUMNS.LANGUAGE, "Language")
-		.addCell(COLUMNS.NAME, "Name")
-		.addCell(COLUMNS.SIZE, "Size")
-		.addCell(COLUMNS.MAIN, "Main")
-		.addCell(COLUMNS.GROWTH, "Weekly Growth");
+		.addCell("sid", "SID")
+		.addCell("archetype", "Archetype")
+		.addCell("focuses-header", "Focuses")
+		.addCell("commitment", "Commitment")
+		.addCell("language", "Language")
+		.addCell("name", "Name")
+		.addCell("size", "Size")
+		.addCell("main", "Main")
+		.addCell("growth", "Weekly Growth");
 	
 	return row;
 };
