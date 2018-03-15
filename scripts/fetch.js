@@ -1,30 +1,17 @@
-"use strict";
-/* REPLACE SUCCESS FAIL WITH THEN -> RETURN, CATCH -> WARNING */
-let success = function(r) {
-	return { success: true, data: r.json() };
+let warning = function(err) {
+	console.log("request failed: " + err);
+	return [];
 };
 
-let fail = function(err) {
-	return { success: false, error: err };
+let fetchSizeHistory = function(sid) {
+	return fetch("/backEnd/org_history.php?SID=" + sid)
+		.then(r => r.json())
+		.catch(err => warning(err));
 };
 
-let fetchSizeHistory = async function(sid) {
-	return await fetch("/backEnd/org_history.php?SID=" + sid)
-		.then(r => success(r))
-		.catch(err => fail(err));
+let fetchOrgsListing = function() {
+	return fetch("/backEnd/selects.php?Activity=&Archetype=&Cog=0&Commitment=&Growth=down&Lang=Any&Manifesto=&NameOrSID=&OPPF=0&Recruiting=&Reddit=0&Roleplay=&STAR=0&pagenum=0&primary=0")
+		.then(r => r.json())
+		.catch(warning);
 };
 
-let fetchOrgsListing = async function() {
-	return await fetch("/backEnd/selects.php?Activity=&Archetype=&Cog=0&Commitment=&Growth=down&Lang=Any&Manifesto=&NameOrSID=&OPPF=0&Recruiting=&Reddit=0&Roleplay=&STAR=0&pagenum=0&primary=0")
-		.then(r => success(r))
-		.catch(err => fail(err));
-};
-
-let parseResponse = function(response) {
-	let data = response.data;
-	if(!response.success) {
-		data = [];
-		console.log("request failed: " + response.error);
-	}
-	return data;
-};

@@ -55,8 +55,7 @@ let addCell = function(cellType, text) {
 };
 
 let addChart = async function(chartContainer, orgSID) {
-	let response = await fetchSizeHistory(orgSID);
-	let data = await parseResponse(response);
+	let data = await fetchSizeHistory(orgSID);
 	
 	let newChart = drawChartLine(chartContainer, data, orgSID);
 	newChart.classList.add("chart");
@@ -70,8 +69,7 @@ let addListing = async function(name, id) {
 	let listingContainer = createDataContainer(id, DATA_TYPES.LISTING);
 	document.getElementById("data-holder").appendChild(listingContainer);
 	
-	let response = await fetchOrgsListing();
-	let data = await parseResponse(response);
+	let data = await fetchOrgsListing();
 	
 	let table = document.createElement("div");
 	table.classList.add("table");
@@ -167,10 +165,11 @@ let createTab = function(name, id) {
 	return newTab;
 };
 
-let init = function () {
-	addListing("Default Listing", "DEFAULT_ID");
+let init = async function () {
+	var success = addListing("Default Listing", "DEFAULT_ID");
 	addDetails("LAWBINDERS","LAWBINDERS");
 	addDetails("00000000", "ENEMY CONTACT");
+	await success;
 	addDetails("HHCORP", "Horizons Hunters");
 	addDetails("AOTW", "Angels of the Warp");
 	addDetails("POI", "Person Of Interest");

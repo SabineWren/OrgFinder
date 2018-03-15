@@ -1,4 +1,5 @@
 priority:
+0) reduce grid bloat
 1) implement listing using grid
 2) add warning tab and use it for fetch catch
 
