@@ -33,6 +33,7 @@
 	--size-tab-padding-vert: 0.3em;
 	--size-tab-padding-horiz: 0.6em;
 	--size-width-min: 500px;
+	--size-width-ideal: 800px;
 	
 	--size-cell-padding: var(--size-tab-padding-vert);
 	

@@ -66,6 +66,57 @@ let makeTitleRow = function (){
 	return row;
 };
 
+let getNumCols = function(){
+	let style = getComputedStyle(document.body);
+	let minWidth = parseInt(style.getPropertyValue("--size-width-min"));
+	let idealWidth = parseInt(style.getPropertyValue("--size-width-ideal"));
+	if(minWidth > idealWidth){ idealWidth = minWidth; }
+	
+	let numCols = Math.floor(window.innerWidth / idealWidth);
+	if(numCols >= 2){ return numCols; }
+	
+	numCols = Math.floor(window.innerWidth / minWidth);
+	if(numCols >= 1){ return numCols; }
+	
+	return 1;
+};
+
+let redefineGrid = function(){
+	let numCols = getNumCols();
+	blockHolder.style.setProperty("--num-cols", numCols);
+	
+	let colWidth = window.innerWidth / numCols;
+	
+	var listings = Array.from(document.getElementsByClassName("listing"));
+	
+	if(colWidth <= 500){
+		listings.forEach(listing => listing.classList.remove("grid7", "grid8", "grid9"))
+	} else if(colWidth <= 600){
+		listings.forEach(function(listing) {
+			listing.classList.remove("grid8", "grid9");
+			listing.classList.add("grid7");
+		})
+	} else if(colWidth <= 700){
+		listings.forEach(function(listing) {
+			listing.classList.remove("grid9");
+			listing.classList.add("grid8");
+		})
+	} else {
+		listings.forEach(function(listing) {
+			listing.classList.add("grid9");
+		})
+	}
+};
+
+let resizePage = function(event){
+	if (window.requestAnimationFrame) {
+        window.requestAnimationFrame(redefineGrid);
+    } else {
+    	console.log(event);
+        setTimeout(redefineGrid, 66);
+    }
+};
+
 let queryListingTable = async function(){
 	let data = await fetchOrgsListing();
 	
@@ -75,3 +126,5 @@ let queryListingTable = async function(){
 	
 	return table;
 }
+
+let blockHolder = document.getElementById("block-holder");

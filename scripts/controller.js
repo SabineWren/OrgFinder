@@ -5,7 +5,7 @@ let addListing = async function(name, id) {
 	document.getElementById("tab-holder-results").appendChild(tab);
 	
 	let listingContainer = createBlock(id, BLOCKS.LISTING);
-	document.getElementById("data-holder").appendChild(listingContainer);
+	document.getElementById("block-holder").appendChild(listingContainer);
 	
 	let tableLoading = queryListingTable();
 	
@@ -24,7 +24,7 @@ let addOrg = async function (orgSID, orgName) {
 	let tab = createTab(orgName, orgSID);
 	document.getElementById("tab-holder-data").appendChild(tab);
 	
-	let dataHolder = document.getElementById("data-holder");
+	let dataHolder = document.getElementById("block-holder");
 	
 	let blockChart = createBlock(orgSID, BLOCKS.CHART);
 	dataHolder.appendChild(blockChart);
@@ -46,6 +46,9 @@ let addOrg = async function (orgSID, orgName) {
 };
 
 let createBlock = function(id, type) {
+	let block = document.createElement("div");
+	block.classList.add("block");
+	
 	switch(type){
 		case BLOCKS.CHART:
 			id = "chart-" + id;
@@ -55,16 +58,18 @@ let createBlock = function(id, type) {
 			break;
 		case BLOCKS.LISTING:
 			id = "listing-" + id;
+			block.classList.add("listing");
+			redefineGrid();//ensure new block conforms to current col size
 			break;
 	}
 	
-	let block = document.createElement("div");
-	block.classList.add("data-container");
 	block.id = id;
 	return block;
 };
 
 let init = async function () {
+	window.addEventListener('resize', resizePage);
+	
 	var success = addListing("Default Listing", "DEFAULT_ID");
 	addOrg("LAWBINDERS","LAWBINDERS");
 	addOrg("00000000", "ENEMY CONTACT");
