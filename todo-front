@@ -1,9 +1,9 @@
 priority:
-0) refactor listing code into separate file
 1) change grid resize from screen size to container size
 2) stub out details
 3) add warning tab
 4) stub out controls
+5) add sorting controls
 
 charts:
 - add zoom using mousewheel

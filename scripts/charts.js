@@ -1,3 +1,11 @@
+let addChart = async function(blockChart, orgSID) {
+	let data = await fetchSizeHistory(orgSID);
+	
+	let newChart = drawChartLine(blockChart, data, orgSID);
+	newChart.classList.add("chart");
+	return blockChart;
+};
+
 let chartHolder = d3.select("#data-holder").node();
 
 let drawChartLine = function (parent, data, orgSID) {
@@ -133,4 +141,11 @@ let drawChartLine = function (parent, data, orgSID) {
 	
 	return svg.node();
 };
+
+let fetchSizeHistory = function(sid) {
+	return fetch("/backEnd/org_history.php?SID=" + sid)
+		.then(r => r.json())
+		.catch(err => warning(err));
+};
+
 
