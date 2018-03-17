@@ -64,14 +64,6 @@ let createBlock = function(id, type) {
 	return block;
 };
 
-let createCloseIcon = function(onclick) {
-	let closeIcon = document.createElement("div");
-	closeIcon.classList.add("close-icon");
-	closeIcon.onclick = onclick;
-	closeIcon.innerHTML = "X";
-	return closeIcon;
-}
-
 let init = async function () {
 	var success = addListing("Default Listing", "DEFAULT_ID");
 	addOrg("LAWBINDERS","LAWBINDERS");
@@ -83,25 +75,5 @@ let init = async function () {
 	addOrg("TFTO", "The First Order");
 	addOrg("PROT", "Protectors of Verum");
 	addOrg("AMFR", "AMFR");
-};
-
-let onclickCloseFactory = function(tab, elements) {
-	let aliveIds = elements.map(e => e.id);
-	
-	let getNewAliveIds = function(kill) {
-		if(kill.id === tab.id) { return []; }
-		
-		return aliveIds.filter(alive => alive !== kill.id);
-	};
-	
-	return function(event) {
-		aliveIds = getNewAliveIds(event.target.parentElement);
-		
-		elements
-			.filter(e => !aliveIds.includes(e.id))
-			.forEach(e => e.remove());
-		
-		if(aliveIds.length === 0) { tab.remove(); }
-	};
 };
 
