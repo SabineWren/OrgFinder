@@ -78,9 +78,9 @@ let init = async function () {
 	addOrg("AMFR", "AMFR");
 };
 
-let resizable = false;//prevent firing before page loads
+//strangely, this fires twice on initial load
+//more strangely, it actually needs to fire twice on page load, so let it!
 let resizePage = function(event){
-    if(resizable){ window.requestAnimationFrame(redefineGrid); }
-    resizable = true;
+    window.requestAnimationFrame(redefineGrid);
 };
 

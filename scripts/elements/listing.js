@@ -78,7 +78,7 @@ let getNumCols = function() {
 };
 
 let getVariables = function() {
-	let style = getComputedStyle(document.body);
+	let style = getComputedStyle(document.getElementById("block-holder"));
 	
 	let sizeRowBase = parseFloat(style.getPropertyValue("--size-commitment"))
 		+ parseFloat(style.getPropertyValue("--size-focus")) * 2
@@ -87,14 +87,17 @@ let getVariables = function() {
 		+ parseFloat(style.getPropertyValue("--size-name"))
 		+ parseFloat(style.getPropertyValue("--size-grid-border")) * 2;
 	
-	let sizeGap = parseFloat(em.clientWidth) * parseFloat(style.getPropertyValue("--size-grid-gap"));
+	let sizeGap = parseFloat(style.getPropertyValue("--size-grid-gap"));
+	
+	let widthRow6 = sizeRowBase + sizeGap * 5;
+	let widthRow7 = widthRow6 + sizeGap + parseFloat(style.getPropertyValue("--size-archetype"));
+	let widthRow8 = widthRow7 + sizeGap + parseFloat(style.getPropertyValue("--size-size"))
+	let widthRow9 = widthRow8 + sizeGap + parseFloat(style.getPropertyValue("--size-sid"))
 	
 	return {
-		sizeArch   : parseFloat(em.clientWidth) * parseFloat(style.getPropertyValue("--size-archetype")),
-		sizeGap:     sizeGap,
-		sizeRowBase: parseFloat(em.clientWidth) * sizeRowBase + sizeGap * 5,
-		sizeSid:     parseFloat(em.clientWidth) * parseFloat(style.getPropertyValue("--size-sid")),
-		sizeSize:    parseFloat(em.clientWidth) * parseFloat(style.getPropertyValue("--size-size")),
+		widthRow7: widthRow7 * parseFloat(em.clientWidth),
+		widthRow8: widthRow8 * parseFloat(em.clientWidth),
+		widthRow9: widthRow9 * parseFloat(em.clientWidth),
 	};
 };
 
@@ -103,23 +106,19 @@ let redefineGrid = function() {
 	blockHolder.style.setProperty("--num-cols", numCols);
 	let colWidth = window.innerWidth / numCols;
 	
+	var listings = Array.from(document.getElementsByClassName("listing"));
 	let vars = getVariables();
 	
-	var listings = Array.from(document.getElementsByClassName("listing"));
-	let widthRow7 = vars.sizeRowBase + vars.sizeGap + vars.sizeArch;
-	let widthRow8 = widthRow7        + vars.sizeGap + vars.sizeSize;
-	let widthRow9 = widthRow8        + vars.sizeGap + vars.sizeSid;
-	
-	if(colWidth < widthRow7) {
+	if(colWidth < vars.widthRow7) {
 		listings.forEach(function(listing) {
 			listing.classList.remove("grid7", "grid8", "grid9");
 		})
-	} else if(colWidth < widthRow8) {
+	} else if(colWidth < vars.widthRow8) {
 		listings.forEach(function(listing) {
 			listing.classList.remove("grid8", "grid9");
 			listing.classList.add("grid7");
 		})
-	} else if(colWidth < widthRow9) {
+	} else if(colWidth < vars.widthRow9) {
 		listings.forEach(function(listing) {
 			listing.classList.remove("grid9");
 			listing.classList.add("grid7", "grid8");
