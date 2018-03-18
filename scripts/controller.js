@@ -24,25 +24,20 @@ let addOrg = async function (orgSID, orgName) {
 	let tab = createTab(orgName, orgSID);
 	document.getElementById("tab-holder-data").appendChild(tab);
 	
-	let dataHolder = document.getElementById("block-holder");
+	let blockHolder = document.getElementById("block-holder");
 	
 	let blockChart = createBlock(orgSID, BLOCKS.CHART);
-	dataHolder.appendChild(blockChart);
+	blockHolder.appendChild(blockChart);
 	//the container MUST first be loaded in the DOM for its size to be non-zero
 	addChart(blockChart, orgSID);
 	
 	let blockDetails = createBlock(orgSID, BLOCKS.DETAILS);
-	dataHolder.appendChild(blockDetails);
+	blockHolder.appendChild(blockDetails);
 	
 	let onclick = onclickCloseFactory(tab, [blockChart, blockDetails]);
-	
-	let iconCloseChart = createCloseIcon(onclick);
-	let iconCloseDetails = createCloseIcon(onclick);
-	let iconCloseTab = createCloseIcon(onclick);
-	
-	blockChart.appendChild(iconCloseChart);
-	blockDetails.appendChild(iconCloseDetails);
-	tab.appendChild(iconCloseTab);
+	blockChart.appendChild(createCloseIcon(onclick));
+	blockDetails.appendChild(createCloseIcon(onclick));
+	tab.appendChild(createCloseIcon(onclick));
 };
 
 let createBlock = function(id, type) {
@@ -69,6 +64,7 @@ let createBlock = function(id, type) {
 
 let init = async function () {
 	window.addEventListener('resize', resizePage);
+	resizePage();
 	
 	var success = addListing("Default Listing", "DEFAULT_ID");
 	addOrg("LAWBINDERS","LAWBINDERS");
@@ -80,5 +76,11 @@ let init = async function () {
 	addOrg("TFTO", "The First Order");
 	addOrg("PROT", "Protectors of Verum");
 	addOrg("AMFR", "AMFR");
+};
+
+let resizable = false;//prevent firing before page loads
+let resizePage = function(event){
+    if(resizable){ window.requestAnimationFrame(redefineGrid); }
+    resizable = true;
 };
 

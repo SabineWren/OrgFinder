@@ -18,15 +18,24 @@
 	position: relative;
 	box-sizing: border-box;
 	width: 100%;
-	border: solid 0.2em var(--tab-holder-background);
-	grid-gap: var(--size-cell-padding);
-	grid-template-columns: 7em 3em 3em 4em 4em minmax(8.5em, 1fr);
+	border: solid var(--size-grid-border) var(--tab-holder-background);
+	grid-gap: var(--size-grid-gap);
+	grid-template-columns:
+		var(--size-commitment)
+		var(--size-focus)
+		var(--size-focus)
+		var(--size-main)
+		var(--size-growth)
+		minmax(var(--size-name), 1fr);
 }
 .archetype {
 	color: var(--colour-table-secondary);
 	grid-column: 2 / span 2;
-	grid-row: 3;
+	grid-row: 2;
 	text-align: center;
+}
+.row:not(:first-child) .archetype {
+	grid-row: 3;
 }
 .commitment {
 	grid-column: 1;
@@ -35,16 +44,17 @@
 }
 .focuses-header {
 	grid-column: 2 / span 2;
-	grid-row: 1 / span 2;
 	margin: auto;
 }
 .focus-primary {
 	grid-column: 2;
 	grid-row: 1 / span 2;
+	height: 3em;
 }
 .focus-secondary {
 	grid-column: 3;
 	grid-row: 1 / span 2;
+	height: 3em;
 }
 .growth {
 	font-weight: bold;
@@ -71,12 +81,15 @@
 	grid-row: 1 / span 2;
 	margin: auto;
 	text-align: center;
+	width: 100%;
 }
 .sid {
+	box-sizing: border-box;
 	font-weight: bold;
 	grid-column: 1;
 	grid-row: 1;
 	text-align: center;
+	width: 100%;
 }
 .size {
 	font-weight: bold;
@@ -86,11 +99,18 @@
 }
 
 .grid7 .row {
-	grid-template-columns: 7em 3em 3em 8em 4em 4em minmax(8.5em, 1fr);
+	grid-template-columns:
+		var(--size-archetype)
+		var(--size-focus)
+		var(--size-focus)
+		var(--size-commitment)
+		var(--size-main)
+		var(--size-growth)
+		minmax(var(--size-name), 1fr);
 }
 .grid7 .archetype {
 	grid-column: 1;
-	grid-row: 2;
+	grid-row: 2 !important;
 }
 .grid7 .commitment {
 	grid-column: 4;
@@ -114,7 +134,15 @@
 }
 
 .grid8 .row {
-	grid-template-columns: 7em 3em 3em 8em 4em 4em 4em minmax(9em, 1fr);
+	grid-template-columns:
+		var(--size-archetype)
+		var(--size-focus)
+		var(--size-focus)
+		var(--size-commitment)
+		var(--size-size)
+		var(--size-main)
+		var(--size-growth)
+		minmax(var(--size-name), 1fr);
 }
 .grid8 .growth {
 	grid-column: 7;
@@ -135,12 +163,21 @@
 }
 
 .grid9 .row {
-	grid-template-columns: 7em 3em 3em 8em 4em 4em 4em 7em minmax(8.5em, 1fr);
+	grid-template-columns:
+		var(--size-archetype)
+		var(--size-focus)
+		var(--size-focus)
+		var(--size-commitment)
+		var(--size-size)
+		var(--size-main)
+		var(--size-growth)
+		var(--size-sid)
+		minmax(var(--size-name), 1fr);
 }
 .grid9 .archetype {
 	color: var(--colour-table-primary);
 	grid-column: 1;
-	grid-row: 1 / span 2;
+	grid-row: 1 / span 2 !important;
 	margin: auto;
 }
 .grid9 .name {
@@ -151,6 +188,8 @@
 	grid-column: 8;
 	grid-row: 1 / span 2;
 	margin: auto;
+	padding-left: 1em;
+	text-align: left;
 }
 
 .bounty-hunting {

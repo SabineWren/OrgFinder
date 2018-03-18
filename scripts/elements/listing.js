@@ -1,4 +1,4 @@
-let addActivityImage = function(cell, activity){
+let addActivityImage = function(cell, activity) {
 	cell.classList.add(activity.toLowerCase().replace(' ', '-'));
 	cell.innerHTML = "";
 	cell.title = activity;
@@ -10,7 +10,7 @@ let addCell = function(classCSS, text) {
 	cell.innerHTML = text;
 	cell.classList.add(classCSS);
 	let isImage = classCSS === "focus-primary" || classCSS === "focus-secondary";
-	if(isImage){ addActivityImage(cell, text); }
+	if(isImage) { addActivityImage(cell, text); }
 	this.appendChild(cell);
 	return this;
 };
@@ -47,7 +47,7 @@ let loadList = function(resultsContainer, data) {
 	data.forEach(dataRow => resultsContainer.addRow(dataRow));
 };
 
-let makeTitleRow = function (){
+let makeTitleRow = function () {
 	let row = document.createElement("div");
 	row.classList.add("row");
 	row.addCell = addCell;
@@ -66,58 +66,72 @@ let makeTitleRow = function (){
 	return row;
 };
 
-let getNumCols = function(){
+let getNumCols = function() {
 	let style = getComputedStyle(document.body);
 	let minWidth = parseInt(style.getPropertyValue("--size-width-min"));
 	let idealWidth = parseInt(style.getPropertyValue("--size-width-ideal"));
-	if(minWidth > idealWidth){ idealWidth = minWidth; }
+	if(minWidth > idealWidth) { idealWidth = minWidth; }
 	
 	let numCols = Math.floor(window.innerWidth / idealWidth);
-	if(numCols >= 2){ return numCols; }
-	
-	numCols = Math.floor(window.innerWidth / minWidth);
-	if(numCols >= 1){ return numCols; }
-	
+	if(numCols >= 1) { return numCols; }
 	return 1;
 };
 
-let redefineGrid = function(){
+let getVariables = function() {
+	let style = getComputedStyle(document.body);
+	
+	let sizeRowBase = parseFloat(style.getPropertyValue("--size-commitment"))
+		+ parseFloat(style.getPropertyValue("--size-focus")) * 2
+		+ parseFloat(style.getPropertyValue("--size-main"))
+		+ parseFloat(style.getPropertyValue("--size-growth"))
+		+ parseFloat(style.getPropertyValue("--size-name"))
+		+ parseFloat(style.getPropertyValue("--size-grid-border")) * 2;
+	
+	let sizeGap = parseFloat(em.clientWidth) * parseFloat(style.getPropertyValue("--size-grid-gap"));
+	
+	return {
+		sizeArch   : parseFloat(em.clientWidth) * parseFloat(style.getPropertyValue("--size-archetype")),
+		sizeGap:     sizeGap,
+		sizeRowBase: parseFloat(em.clientWidth) * sizeRowBase + sizeGap * 5,
+		sizeSid:     parseFloat(em.clientWidth) * parseFloat(style.getPropertyValue("--size-sid")),
+		sizeSize:    parseFloat(em.clientWidth) * parseFloat(style.getPropertyValue("--size-size")),
+	};
+};
+
+let redefineGrid = function() {
 	let numCols = getNumCols();
 	blockHolder.style.setProperty("--num-cols", numCols);
-	
 	let colWidth = window.innerWidth / numCols;
 	
-	var listings = Array.from(document.getElementsByClassName("listing"));
+	let vars = getVariables();
 	
-	if(colWidth <= 500){
-		listings.forEach(listing => listing.classList.remove("grid7", "grid8", "grid9"))
-	} else if(colWidth <= 600){
+	var listings = Array.from(document.getElementsByClassName("listing"));
+	let widthRow7 = vars.sizeRowBase + vars.sizeGap + vars.sizeArch;
+	let widthRow8 = widthRow7        + vars.sizeGap + vars.sizeSize;
+	let widthRow9 = widthRow8        + vars.sizeGap + vars.sizeSid;
+	
+	if(colWidth < widthRow7) {
+		listings.forEach(function(listing) {
+			listing.classList.remove("grid7", "grid8", "grid9");
+		})
+	} else if(colWidth < widthRow8) {
 		listings.forEach(function(listing) {
 			listing.classList.remove("grid8", "grid9");
 			listing.classList.add("grid7");
 		})
-	} else if(colWidth <= 700){
+	} else if(colWidth < widthRow9) {
 		listings.forEach(function(listing) {
 			listing.classList.remove("grid9");
-			listing.classList.add("grid8");
+			listing.classList.add("grid7", "grid8");
 		})
 	} else {
 		listings.forEach(function(listing) {
-			listing.classList.add("grid9");
+			listing.classList.add("grid7", "grid8", "grid9");
 		})
 	}
 };
 
-let resizePage = function(event){
-	if (window.requestAnimationFrame) {
-        window.requestAnimationFrame(redefineGrid);
-    } else {
-    	console.log(event);
-        setTimeout(redefineGrid, 66);
-    }
-};
-
-let queryListingTable = async function(){
+let queryListingTable = async function() {
 	let data = await fetchOrgsListing();
 	
 	let table = document.createElement("div");
@@ -128,3 +142,5 @@ let queryListingTable = async function(){
 }
 
 let blockHolder = document.getElementById("block-holder");
+let em = document.getElementById("em");
+

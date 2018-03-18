@@ -33,10 +33,27 @@
 	--size-tab-padding-vert: 0.3em;
 	--size-tab-padding-horiz: 0.6em;
 	--size-width-min: 500px;
-	--size-width-ideal: 800px;
+	--size-width-ideal: 650px;
 	
-	--size-cell-padding: var(--size-tab-padding-vert);
+	
+	/* Size List */
+	--size-grid-border: 0.2em;
+	--size-grid-gap: var(--size-tab-padding-vert);
+	--size-archetype: 7em;
+	--size-commitment: 8em;
+	--size-focus: 3em;
+	--size-growth: 4em;
+	--size-language: 7em;
+	--size-main: 4em;
+	--size-name: 10em;
+	--size-sid: 8em;
+	--size-size: 4em;
 	
 	/* Fonts */
 	--font-size-tab: 1em;
 }
+
+#em {/* scripts read width of 1em in px */
+		display: hidden;
+		width: 1em;
+	}
