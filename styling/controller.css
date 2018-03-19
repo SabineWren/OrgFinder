@@ -1,0 +1,25 @@
+#block-holder {
+	display: grid;
+	position: relative;
+	box-sizing: border-box;
+	--num-cols: 1;/* SET BY JAVSCRIPT */
+	grid-auto-rows: auto;
+	grid-gap: var(--size-tab-padding-horiz);
+	grid-template-columns: repeat(var(--num-cols), minmax(500px, 1fr));
+	width: 100%;
+}
+
+.block {
+	display: inline-block;
+	position: relative;
+	width: 100%;
+}
+
+#controls-holder {
+	display: grid;
+	position: relative;
+	box-sizing: border-box;
+	grid-auto-rows: auto;
+	grid-gap: var(--size-controls-spacing);
+	grid-template-columns: auto auto auto auto auto auto auto;
+}

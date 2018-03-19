@@ -26,20 +26,22 @@
 	--colour-table-primary: white;
 	--colour-table-secondary: var(--colour-orange-static);
 	
+	/* Fonts */
+	--font-size-tab: 1em;
+	
 	/* Sizing */
 	--size-border: 1px;
 	--size-close-icon: 1.5em;
+	--size-controls-spacing: 1em;
 	--size-tab-height: 1.5em;
 	--size-tab-padding-vert: 0.3em;
 	--size-tab-padding-horiz: 0.6em;
 	--size-width-min: 500px;
 	--size-width-ideal: 670px;
-	
-	/* Fonts */
-	--font-size-tab: 1em;
 }
 
-#em {/* scripts read width of 1em in px */
-		display: hidden;
-		width: 1em;
-	}
+body {
+	color: white;
+}
+
+

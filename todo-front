@@ -1,11 +1,12 @@
 priority before focus group:
-1) stub out controls
+- improve tab styling
+
 2) stub out details
 3) add warning tab
-4) add block width control
 5) add sorting controls
 6) add license
 7) add build process
+8) add org icons
 
 charts:
 - add zoom using mousewheel

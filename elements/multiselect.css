@@ -1,0 +1,31 @@
+.multiselect {
+	display: inline-block;
+	position: relative;
+	box-sizing: border-box;
+}
+
+.multiselect .anchor {
+	display: block;
+	position: relative;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.multiselect .anchor + .ul {
+	display: block;
+	position: relative;
+	box-sizing: border-box;
+	max-height: 0;
+	overflow-y: auto;
+	visibility: hidden;
+}
+.multiselect .anchor.active + .ul {
+	max-height: 10em;
+	visibility: visible;
+}
+
+.multiselect .ul .li {
+	display: block;
+	position: relative;
+	box-sizing: border-box;
+}

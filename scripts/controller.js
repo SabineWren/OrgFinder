@@ -1,28 +1,21 @@
 window.onload = () => init();
 
 let addListing = async function(name, id) {
-	let tab = createTab(name, id);
-	document.getElementById("tab-holder-results").appendChild(tab);
-	
-	let listingContainer = createBlock(id, BLOCKS.LISTING);
-	document.getElementById("block-holder").appendChild(listingContainer);
+	let blockListing = createBlock(id, BLOCKS.LISTING);
+	document.getElementById("block-holder").appendChild(blockListing);
 	
 	let tableLoading = queryListingTable();
 	
-	let onclick = onclickCloseFactory(tab, [listingContainer]);
-	let iconCloseListing = createCloseIcon(onclick);
-	let iconCloseTab = createCloseIcon(onclick);
-	
-	listingContainer.appendChild(iconCloseListing);
-	tab.appendChild(iconCloseTab);
+	let iconCloseListing = createCloseIcon(onclickCloseFactory());
+	blockListing.appendChild(iconCloseListing);
 	
 	await tableLoading;
-	tableLoading.then(table => listingContainer.appendChild(table));
+	tableLoading.then(table => blockListing.appendChild(table));
 };
 
 let addOrg = async function (orgSID, orgName) {
 	let tab = createTab(orgName, orgSID);
-	document.getElementById("tab-holder-data").appendChild(tab);
+	document.getElementById("tab-holder").appendChild(tab);
 	
 	let blockHolder = document.getElementById("block-holder");
 	
@@ -65,6 +58,8 @@ let createBlock = function(id, type) {
 let init = async function () {
 	window.addEventListener('resize', resizePage);
 	resizePage();
+	
+	addControls();
 	
 	var success = addListing("Default Listing", "DEFAULT_ID");
 	addOrg("LAWBINDERS","LAWBINDERS");

@@ -7,6 +7,10 @@ let createCloseIcon = function(onclick) {
 }
 
 let onclickCloseFactory = function(tab, elements) {
+	if(elements === undefined) {
+		return event => event.target.parentElement.remove();
+	}
+	
 	let aliveIds = elements.map(e => e.id);
 	
 	let getNewAliveIds = function(kill) {
@@ -25,3 +29,4 @@ let onclickCloseFactory = function(tab, elements) {
 		if(aliveIds.length === 0) { tab.remove(); }
 	};
 };
+
