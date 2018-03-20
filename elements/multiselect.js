@@ -49,8 +49,7 @@ let addControls = function() {
 	];
 	
 	options.forEach(element => holder.appendChild(element));
-	let multiselects = Array.from(document.getElementsByClassName("multiselect"));
-	multiselects.forEach(widenIfScrollbar);
+	return options;
 };
 
 let removeActive = function(element){
@@ -70,16 +69,6 @@ let setActive = function(event) {
 	
 	event.target.classList.add("active");
 }
-
-let widenIfScrollbar = function(multiselect){
-	let anchor = multiselect.getElementsByClassName("anchor")[0];
-	
-	anchor.classList.add("active");
-	if(multiselect.scrollHeight > multiselect.clientHeight){
-		multiselect.style.width = parseFloat(multiselect.clientWidth) + 17 + "px";
-	}
-	anchor.classList.remove("active");
-};
 
 let holder = document.getElementById("controls-holder");
 

@@ -10,8 +10,8 @@
 	--colour-brand-turquoise-10:        rgb(  0,  18,  22);
 	--colour-brand-turquoise-20:        rgb( 16,  40,  48);
 	--colour-orange-static:             rgb(229, 138,   5);
-	--colour-orange-interactive:        rgb(198, 176, 137);
-	--colour-orange-interactive-glow:   rgb(255, 118,  17);
+	--colour-orange-interactive:        rgb(208, 186, 147);
+	--colour-orange-interactive-glow:   rgba(255, 118,  17, 0.5);
 	--colour-orange-hovered:            rgb(254, 250, 231);
 	
 	/* Other colours */

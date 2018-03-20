@@ -59,7 +59,9 @@ let init = async function () {
 	window.addEventListener('resize', resizePage);
 	resizePage();
 	
-	addControls();
+	let multiselects = addControls();
+	multiselects[0].style.width = parseFloat(multiselects[0].clientWidth) + 17 + "px";
+	multiselects[3].style.width = parseFloat(multiselects[3].clientWidth) + 17 + "px";
 	
 	var success = addListing("Default Listing", "DEFAULT_ID");
 	addOrg("LAWBINDERS","LAWBINDERS");

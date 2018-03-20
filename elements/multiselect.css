@@ -2,12 +2,26 @@
 	display: inline-block;
 	position: relative;
 	box-sizing: border-box;
+	border: 1px solid var(--colour-orange-interactive);
+	border-radius: 3px;
+	box-shadow: 0 0 3px 3px var(--colour-orange-interactive-glow),
+	      inset 0 0 3px 3px var(--colour-orange-interactive-glow);
+	color: var(--colour-orange-interactive);
+	text-shadow: 0 0 3px 3px var(--colour-orange-interactive-glow),
+	             0 0 1px 1px black;
+	margin: 0 0 auto 0;
+	padding: 0.2em 0.4em;
+}
+.multiselect:hover {
+	color: var(--colour-orange-hovered);
+	cursor: pointer;
 }
 
 .multiselect .anchor {
 	display: block;
 	position: relative;
 	box-sizing: border-box;
+	font-weight: bold;
 	width: 100%;
 }
 
