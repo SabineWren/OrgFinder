@@ -39,7 +39,7 @@ let createMultiselect = function(name, values) {
 };
 
 let addControls = function() {
-	let multiselects = [
+	let options = [
 		createMultiselect("Activities", activities),
 		createMultiselect("Archetype",  archetype),
 		createMultiselect("Commitment", commitment),
@@ -48,34 +48,38 @@ let addControls = function() {
 		createMultiselect("Recruiting", recruiting)
 	];
 	
-	multiselects.forEach(element => holder.appendChild(element));
+	options.forEach(element => holder.appendChild(element));
+	let multiselects = Array.from(document.getElementsByClassName("multiselect"));
+	multiselects.forEach(widenIfScrollbar);
 };
 
 let removeActive = function(element){
 	element.classList.remove("active");
-	if(element.classList.contains("scrollbar")){
-		element.classList.remove("scrollbar");
-		element.style.width = parseFloat(element.clientWidth) - 17 + "px";
-	}
 };
 
 let setActive = function(event) {
+	//clicked to close an open multiselect
 	if(event.target.classList.contains("active")){
 		removeActive(event.target);
 		return;
 	}
 	
+	//clicked other multiselect
 	let current = document.getElementsByClassName("active");
 	[].forEach.call(current, removeActive);
 	
 	event.target.classList.add("active");
-	
-	let ul = event.target.nextSibling;
-	if(ul.scrollHeight > ul.clientHeight){
-		event.target.classList.add("scrollbar");
-		event.target.style.width = parseFloat(event.target.clientWidth) + 17 + "px";
-	}
 }
+
+let widenIfScrollbar = function(multiselect){
+	let anchor = multiselect.getElementsByClassName("anchor")[0];
+	
+	anchor.classList.add("active");
+	if(multiselect.scrollHeight > multiselect.clientHeight){
+		multiselect.style.width = parseFloat(multiselect.clientWidth) + 17 + "px";
+	}
+	anchor.classList.remove("active");
+};
 
 let holder = document.getElementById("controls-holder");
 
