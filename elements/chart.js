@@ -144,7 +144,7 @@ let drawChartLine = function (parent, data, orgSID) {
 
 let fetchSizeHistory = function(sid) {
 	const err = new Error();
-	return fetchGlobal(err, "/backEnd/org_history.php?SID=" + sid);
+	return fetchGlobal(err, "/OrgFinder/backEnd/org_history.php?SID=" + sid);
 };
 
 

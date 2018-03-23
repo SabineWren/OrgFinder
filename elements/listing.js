@@ -37,7 +37,7 @@ let addRow = function(data) {
 
 let fetchOrgsListing = function() {
 	const err = new Error();
-	return fetchGlobal(err, "/backEnd/selects.php?Activity=&Archetype=&Cog=0&Commitment=&Growth=down&Lang=Any&Manifesto=&NameOrSID=&OPPF=0&Recruiting=&Reddit=0&Roleplay=&STAR=0&pagenum=0&primary=0");
+	return fetchGlobal(err, "/OrgFinder/backEnd/selects.php?Activity=&Archetype=&Cog=0&Commitment=&Growth=down&Lang=Any&Manifesto=&NameOrSID=&OPPF=0&Recruiting=&Reddit=0&Roleplay=&STAR=0&pagenum=0&primary=0");
 };
 
 let loadList = function(resultsContainer, data) {
