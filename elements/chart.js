@@ -143,9 +143,8 @@ let drawChartLine = function (parent, data, orgSID) {
 };
 
 let fetchSizeHistory = function(sid) {
-	return fetch("/backEnd/org_history.php?SID=" + sid)
-		.then(r => r.json())
-		.catch(err => warning(err));
+	const err = new Error();
+	return fetchGlobal(err, "/backEnd/org_history.php?SID=" + sid);
 };
 
 

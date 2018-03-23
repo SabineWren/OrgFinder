@@ -63,10 +63,9 @@ let init = async function () {
 	multiselects[0].style.width = parseFloat(multiselects[0].clientWidth) + 17 + "px";
 	multiselects[3].style.width = parseFloat(multiselects[3].clientWidth) + 17 + "px";
 	
-	var success = addListing("Default Listing", "DEFAULT_ID");
+	addListing("Default Listing", "DEFAULT_ID");
 	addOrg("LAWBINDERS","LAWBINDERS");
 	addOrg("00000000", "ENEMY CONTACT");
-	await success;//required to prevent r.json() aborting
 	addOrg("HHCORP", "Horizons Hunters");
 	addOrg("AOTW", "Angels of the Warp");
 	addOrg("POI", "Person Of Interest");
