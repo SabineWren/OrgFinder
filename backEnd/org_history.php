@@ -13,7 +13,7 @@
 	
 	mb_internal_encoding("UTF-8");
 	
-	$connection = new mysqli("localhost","publicselect","public", "orgfinderdb");
+	$connection = new mysqli("localhost","publicselect","public", "cognitiondb");
 	if( mysqli_connect_errno() ){
 		die( "Connection failed: " . mysqli_connect_error() );
 	}
