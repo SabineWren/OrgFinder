@@ -1,40 +1,40 @@
 window.onload = () => init();
 
-let addListing = async function(name, id) {
-	let blockListing = createBlock(id, BLOCKS.LISTING);
+const addListing = async function(name, id) {
+	const blockListing = createBlock(id, BLOCKS.LISTING);
 	document.getElementById("block-holder").appendChild(blockListing);
 	
-	let tableLoading = queryListingTable();
+	const tableLoading = queryListingTable();
 	
-	let iconCloseListing = createCloseIcon(onclickCloseFactory());
+	const iconCloseListing = createCloseIcon(onclickCloseFactory());
 	blockListing.appendChild(iconCloseListing);
 	
-	await tableLoading;
-	tableLoading.then(table => blockListing.appendChild(table));
+	tableLoading.then(table => blockListing.appendChild(table))
+		.catch(warning);
 };
 
-let addOrg = async function (orgSID, orgName) {
-	let tab = createTab(orgName, orgSID);
+const addOrg = async function (orgSID, orgName) {
+	const tab = createTab(orgName, orgSID);
 	document.getElementById("tab-holder").appendChild(tab);
 	
-	let blockHolder = document.getElementById("block-holder");
+	const blockHolder = document.getElementById("block-holder");
 	
-	let blockChart = createBlock(orgSID, BLOCKS.CHART);
+	const blockChart = createBlock(orgSID, BLOCKS.CHART);
 	blockHolder.appendChild(blockChart);
 	//the container MUST first be loaded in the DOM for its size to be non-zero
 	addChart(blockChart, orgSID);
 	
-	let blockDetails = createBlock(orgSID, BLOCKS.DETAILS);
+	const blockDetails = createBlock(orgSID, BLOCKS.DETAILS);
 	blockHolder.appendChild(blockDetails);
 	
-	let onclick = onclickCloseFactory(tab, [blockChart, blockDetails]);
+	const onclick = onclickCloseFactory(tab, [blockChart, blockDetails]);
 	blockChart.appendChild(createCloseIcon(onclick));
 	blockDetails.appendChild(createCloseIcon(onclick));
 	tab.appendChild(createCloseIcon(onclick));
 };
 
-let createBlock = function(id, type) {
-	let block = document.createElement("div");
+const createBlock = function(id, type) {
+	const block = document.createElement("div");
 	block.classList.add("block");
 	
 	switch(type){
@@ -55,11 +55,11 @@ let createBlock = function(id, type) {
 	return block;
 };
 
-let init = async function () {
+const init = async function () {
 	window.addEventListener('resize', resizePage);
 	resizePage();
 	
-	let multiselects = addControls();
+	const multiselects = addControls();
 	multiselects[0].style.width = parseFloat(multiselects[0].clientWidth) + 17 + "px";
 	multiselects[3].style.width = parseFloat(multiselects[3].clientWidth) + 17 + "px";
 	
@@ -76,7 +76,7 @@ let init = async function () {
 
 //strangely, this fires twice on initial load
 //more strangely, it actually needs to fire twice on page load, so let it!
-let resizePage = function(event){
+const resizePage = function(event){
     window.requestAnimationFrame(redefineGrid);
 };
 
