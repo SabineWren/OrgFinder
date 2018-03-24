@@ -1,5 +1,5 @@
-let createTab = function(name, id) {
-	let newTab = document.createElement("div");
+const createTab = function(name, id) {
+	const newTab = document.createElement("div");
 	newTab.classList.add("tab");
 	newTab.id = "tab-" + id;
 	newTab.innerHTML = name;

@@ -3,7 +3,7 @@ const logError = function(reason) {
 };
 
 let queueSize = 3;//list fetching aborts on intial load if queueSize > 3
-const fetchGlobal = async function(err, url) {
+export const fetchGlobal = async function(err, url) {
 	while(queueSize < 1) { await sleep(50); }
 	queueSize--;
 	

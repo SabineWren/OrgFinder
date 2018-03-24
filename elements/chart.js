@@ -1,49 +1,49 @@
-let addChart = async function(blockChart, orgSID) {
-	let data = await fetchSizeHistory(orgSID);
+const addChart = async function(blockChart, orgSID) {
+	const data = await fetchSizeHistory(orgSID);
 	
-	let newChart = drawChartLine(blockChart, data, orgSID);
+	const newChart = drawChartLine(blockChart, data, orgSID);
 	newChart.classList.add("chart");
 	return blockChart;
 };
 
-let chartHolder = d3.select("#data-holder").node();
+const chartHolder = d3.select("#data-holder").node();
 
-let drawChartLine = function (parent, data, orgSID) {
+const drawChartLine = function (parent, data, orgSID) {
 	//must set canvas size before building svg
-	let margin = { top: 25, right: 160, bottom: 50, left: 50 };
-	let width = parent.offsetWidth - margin.left - margin.right;
-	let height = parent.offsetWidth/2.0 - margin.top - margin.bottom;
-	let labelOffset = 70;
+	const margin = Object.freeze({ top: 25, right: 160, bottom: 50, left: 50 });
+	const width = parent.offsetWidth - margin.left - margin.right;
+	const height = parent.offsetWidth/2.0 - margin.top - margin.bottom;
+	const labelOffset = 70;
 
 	//define accessor functions for retrieving line data
-	let lineSize = d3.line()
+	const lineSize = d3.line()
 		.x(d => x(d.DaysAgo))
 		.y(d => y(d.Size));
-	let lineMain = d3.line()
+	const lineMain = d3.line()
 		.x(d => x(d.DaysAgo))
 		.y(d => y(d.Main));
-	let lineAffil = d3.line()
+	const lineAffil = d3.line()
 		.x(d => x(d.DaysAgo))
 		.y(d => y(d.Affiliate));
-	let lineHidden = d3.line()
+	const lineHidden = d3.line()
 		.x(d => x(d.DaysAgo))
 		.y(d => y(d.Hidden));
 
 	//build canvas
-	let svg = d3.select(parent).append("svg")
+	const svg = d3.select(parent).append("svg")
 		.attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`);
 	
 	//add labels
-    let squareSize = 20;
-    let whitespace = 5;
-    let heightOffset = function(d, i) {
-            let spacing = squareSize + whitespace;
-            let offset = (spacing * 4 - whitespace)/2;
+    const squareSize = 20;
+    const whitespace = 5;
+    const heightOffset = function(d, i) {
+            const spacing = squareSize + whitespace;
+            const offset = (spacing * 4 - whitespace)/2;
             return height/2 + i*spacing - offset;
     };
 	
-	let labelsClass = ["line-size", "line-main", "line-affil", "line-hidden"];
-	let getClass = (d, i) => "chart-label " + labelsClass[i];
+	const labelsClass = Object.freeze(["line-size", "line-main", "line-affil", "line-hidden"]);
+	const getClass = (d, i) => "chart-label " + labelsClass[i];
 	
 	svg.selectAll("rect")
 		.data(labelsClass)
@@ -55,8 +55,8 @@ let drawChartLine = function (parent, data, orgSID) {
 		.attr("height", squareSize)
 		.attr("class", getClass);
 	
-	let labelsText = ["Size", "Main", "Affiliate", "Hidden"];
-	//let fontSize = 
+	const labelsText = Object.freeze(["Size", "Main", "Affiliate", "Hidden"]);
+	//fontsize will go here if needed (select from css variable)
 	svg.selectAll("text")
 		.data(labelsText)
 		.enter()
@@ -67,11 +67,11 @@ let drawChartLine = function (parent, data, orgSID) {
 		.text(d => d);
 	
 	//append group element to canvas and place at top left margin
-	let g = svg.append("g")
+	const g = svg.append("g")
 		.attr("transform", `translate(${margin.left}, ${margin.top})`);
 	
 	//make x-axis daysAgo
-	let x = d3.scaleLinear().range([width, 0]);
+	const x = d3.scaleLinear().range([width, 0]);
 	x.domain(d3.extent(data, d => d.DaysAgo));
 	//append x-axis daysAgo
 	g.append("g")
@@ -79,14 +79,14 @@ let drawChartLine = function (parent, data, orgSID) {
 		.call(d3.axisBottom(x));
 	
 	//make x-axis date
-	let daysToDate = function(node) {
-		let date = new Date();
+	const daysToDate = function(node) {
+		const date = Object.freeze(new Date());
 		return date.setDate(date.getDate() - node.DaysAgo);
 	};
-	let xScaleDate = d3.scaleTime()
+	const xScaleDate = d3.scaleTime()
 		.domain(d3.extent(data, daysToDate))
 		.range([0, width]);
-	let xAxisDate = d3.axisBottom(xScaleDate)
+	const xAxisDate = d3.axisBottom(xScaleDate)
 	.tickFormat(function(date) {
 		if (d3.timeYear(date) < date) {
 			return d3.timeFormat('%b')(date);
@@ -101,9 +101,9 @@ let drawChartLine = function (parent, data, orgSID) {
 	.call(xAxisDate);
 	
 	//make y-axis size
-	let y = d3.scaleLinear().range([height, 0]);
-	let minPointY = d3.min(data, d => Math.min(d.Main, d.Affiliate, d.Hidden));
-	let maxPointY = d3.max(data, d => d.Size);
+	const y = d3.scaleLinear().range([height, 0]);
+	const minPointY = d3.min(data, d => Math.min(d.Main, d.Affiliate, d.Hidden));
+	const maxPointY = d3.max(data, d => d.Size);
 	y.domain([minPointY, maxPointY]);
 	//append y-axis size
 	g.append("g")
@@ -142,7 +142,7 @@ let drawChartLine = function (parent, data, orgSID) {
 	return svg.node();
 };
 
-let fetchSizeHistory = function(sid) {
+const fetchSizeHistory = function(sid) {
 	const err = new Error();
 	return fetchGlobal(err, "/OrgFinder/backEnd/org_history.php?SID=" + sid);
 };

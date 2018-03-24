@@ -7,6 +7,7 @@ THEN
 2) stub out details
 3) add warning tab
 6) add license
+7) add webhook
 
 Then:
 - improve tab styling

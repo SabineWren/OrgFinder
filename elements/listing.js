@@ -1,22 +1,22 @@
-let addActivityImage = function(cell, activity) {
+const addActivityImage = function(cell, activity) {
 	cell.classList.add(activity.toLowerCase().replace(' ', '-'));
 	cell.innerHTML = "";
 	cell.title = activity;
 };
 
 
-let addCell = function(classCSS, text) {
-	let cell = document.createElement("div");
+const addCell = function(classCSS, text) {
+	const cell = document.createElement("div");
 	cell.innerHTML = text;
 	cell.classList.add(classCSS);
-	let isImage = classCSS === "focus-primary" || classCSS === "focus-secondary";
+	const isImage = classCSS === "focus-primary" || classCSS === "focus-secondary";
 	if(isImage) { addActivityImage(cell, text); }
 	this.appendChild(cell);
 	return this;
 };
 
-let addRow = function(data) {
-	let row = document.createElement("div");
+const addRow = function(data) {
+	const row = document.createElement("div");
 	row.classList.add("row");
 	row.addCell = addCell;
 	
@@ -35,19 +35,19 @@ let addRow = function(data) {
 	this.appendChild(row);
 };
 
-let fetchOrgsListing = function() {
+const fetchOrgsListing = function() {
 	const err = new Error();
 	return fetchGlobal(err, "/OrgFinder/backEnd/selects.php?Activity=&Archetype=&Cog=0&Commitment=&Growth=down&Lang=Any&Manifesto=&NameOrSID=&OPPF=0&Recruiting=&Reddit=0&Roleplay=&STAR=0&pagenum=0&primary=0");
 };
 
-let loadList = function(resultsContainer, data) {
+const loadList = function(resultsContainer, data) {
 	resultsContainer.addRow = addRow;
 	resultsContainer.appendChild(makeTitleRow());
 	data.forEach(dataRow => resultsContainer.addRow(dataRow));
 };
 
-let makeTitleRow = function () {
-	let row = document.createElement("div");
+const makeTitleRow = function () {
+	const row = document.createElement("div");
 	row.classList.add("row");
 	row.addCell = addCell;
 	
@@ -65,33 +65,33 @@ let makeTitleRow = function () {
 	return row;
 };
 
-let getNumCols = function() {
-	let style = getComputedStyle(document.body);
-	let minWidth = parseInt(style.getPropertyValue("--size-width-min"));
-	let idealWidth = parseInt(style.getPropertyValue("--size-width-ideal"));
+const getNumCols = function() {
+	const style = getComputedStyle(document.body);
+	const minWidth = parseInt(style.getPropertyValue("--size-width-min"));
+	const idealWidth = parseInt(style.getPropertyValue("--size-width-ideal"));
 	if(minWidth > idealWidth) { idealWidth = minWidth; }
 	
-	let numCols = Math.floor(window.innerWidth / idealWidth);
+	const numCols = Math.floor(window.innerWidth / idealWidth);
 	if(numCols >= 1) { return numCols; }
 	return 1;
 };
 
-let getVariables = function() {
-	let style = getComputedStyle(document.getElementById("block-holder"));
+const getVariables = function() {
+	const style = getComputedStyle(document.getElementById("block-holder"));
 	
-	let sizeRowBase = parseFloat(style.getPropertyValue("--size-commitment"))
+	const sizeRowBase = parseFloat(style.getPropertyValue("--size-commitment"))
 		+ parseFloat(style.getPropertyValue("--size-focus")) * 2
 		+ parseFloat(style.getPropertyValue("--size-main"))
 		+ parseFloat(style.getPropertyValue("--size-growth"))
 		+ parseFloat(style.getPropertyValue("--size-name"))
 		+ parseFloat(style.getPropertyValue("--size-grid-border")) * 2;
 	
-	let sizeGap = parseFloat(style.getPropertyValue("--size-grid-gap"));
+	const sizeGap = parseFloat(style.getPropertyValue("--size-grid-gap"));
 	
-	let widthRow6 = sizeRowBase + sizeGap * 5;
-	let widthRow7 = widthRow6 + sizeGap + parseFloat(style.getPropertyValue("--size-archetype"));
-	let widthRow8 = widthRow7 + sizeGap + parseFloat(style.getPropertyValue("--size-size"))
-	let widthRow9 = widthRow8 + sizeGap + parseFloat(style.getPropertyValue("--size-sid"))
+	const widthRow6 = sizeRowBase + sizeGap * 5;
+	const widthRow7 = widthRow6 + sizeGap + parseFloat(style.getPropertyValue("--size-archetype"));
+	const widthRow8 = widthRow7 + sizeGap + parseFloat(style.getPropertyValue("--size-size"))
+	const widthRow9 = widthRow8 + sizeGap + parseFloat(style.getPropertyValue("--size-sid"))
 	
 	return {
 		widthRow7: widthRow7 * parseFloat(em.clientWidth),
@@ -100,13 +100,13 @@ let getVariables = function() {
 	};
 };
 
-let redefineGrid = function() {
-	let numCols = getNumCols();
+const redefineGrid = function() {
+	const numCols = getNumCols();
 	blockHolder.style.setProperty("--num-cols", numCols);
-	let colWidth = window.innerWidth / numCols;
+	const colWidth = window.innerWidth / numCols;
 	
-	var listings = Array.from(document.getElementsByClassName("listing"));
-	let vars = getVariables();
+	const listings = Array.from(document.getElementsByClassName("listing"));
+	const vars = getVariables();
 	
 	if(colWidth < vars.widthRow7) {
 		listings.forEach(function(listing) {
@@ -129,16 +129,16 @@ let redefineGrid = function() {
 	}
 };
 
-let queryListingTable = async function() {
-	let data = await fetchOrgsListing();
+const queryListingTable = async function() {
+	const data = await fetchOrgsListing();
 	
-	let table = document.createElement("div");
+	const table = document.createElement("div");
 	table.classList.add("table");
 	loadList(table, data);
 	
 	return table;
 }
 
-let blockHolder = document.getElementById("block-holder");
-let em = document.getElementById("em");
+const blockHolder = document.getElementById("block-holder");
+const em = document.getElementById("em");
 

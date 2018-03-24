@@ -1,10 +1,10 @@
-let createListItem = function(val) {
-	let li = document.createElement("DIV");
+const createListItem = function(val) {
+	const li = document.createElement("DIV");
 	li.classList.add("li");
 	
-	let label = document.createElement("LABEL");
+	const label = document.createElement("LABEL");
 	
-	let checkbox = document.createElement("INPUT");
+	const checkbox = document.createElement("INPUT");
 	checkbox.setAttribute("type", "checkbox");
 	checkbox.value = val;
 	
@@ -15,17 +15,17 @@ let createListItem = function(val) {
 	return li;
 };
 
-let createMultiselect = function(name, values) {
-	let container = document.createElement("DIV");
+const createMultiselect = function(name, values) {
+	const container = document.createElement("DIV");
 	container.id = name.toLowerCase();
 	container.classList.add("multiselect");
 	
-	let anchor = document.createElement("SPAN");
+	const anchor = document.createElement("SPAN");
 	anchor.classList.add("anchor");
 	anchor.innerHTML = name;
 	container.appendChild(anchor);
 	
-	let ul = document.createElement("DIV");
+	const ul = document.createElement("DIV");
 	ul.classList.add("ul");
 	
 	values
@@ -38,25 +38,25 @@ let createMultiselect = function(name, values) {
 	return container;
 };
 
-let addControls = function() {
-	let options = [
+const addControls = function() {
+	const options = Object.freeze([
 		createMultiselect("Activities", activities),
 		createMultiselect("Archetype",  archetype),
 		createMultiselect("Commitment", commitment),
 		createMultiselect("Languages", languages),
 		createMultiselect("Roleplay",   roleplay),
 		createMultiselect("Recruiting", recruiting)
-	];
+	]);
 	
 	options.forEach(element => holder.appendChild(element));
 	return options;
 };
 
-let removeActive = function(element){
+const removeActive = function(element){
 	element.classList.remove("active");
 };
 
-let setActive = function(event) {
+const setActive = function(event) {
 	//clicked to close an open multiselect
 	if(event.target.classList.contains("active")){
 		removeActive(event.target);
@@ -64,15 +64,15 @@ let setActive = function(event) {
 	}
 	
 	//clicked other multiselect
-	let current = document.getElementsByClassName("active");
+	const current = document.getElementsByClassName("active");
 	[].forEach.call(current, removeActive);
 	
 	event.target.classList.add("active");
 }
 
-let holder = document.getElementById("controls-holder");
+const holder = document.getElementById("controls-holder");
 
-let activities = [
+const activities = [
 	"Bounty Hunting",
 	"Engineering",
 	"Exploration",
@@ -88,7 +88,7 @@ let activities = [
 	"Transport"
 ];
 
-let archetype = [
+const archetype = [
 	"Corporation",
 	"Faith",
 	"Organization",
@@ -96,13 +96,13 @@ let archetype = [
 	"Syndicate"
 ];
 
-let commitment = [
+const commitment = [
 	"Casual",
 	"Hardcore",
 	"Regular"
 ];
 
-let languages = [
+const languages = Object.freeze([
 	"Abkhazian",
 	"Amharic",
 	"Afar",
@@ -287,15 +287,15 @@ let languages = [
 	"Yoruba",
 	"Zhuang",
 	"Zulu"
-];
+]);
 
-let recruiting = [
+const recruiting = Object.freeze([
 	"Yes",
 	"No"
-];
+]);
 
-let roleplay = [
+const roleplay = Object.freeze([
 	"Yes",
 	"No"
-];
+]);
 
