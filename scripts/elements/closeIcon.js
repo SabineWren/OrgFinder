@@ -24,16 +24,15 @@ const OnclickFactory = function(tab, elements) {
 		return event => event.target.parentElement.remove();
 	}
 	
-	const aliveIds = elements.map(e => e.id);
+	let aliveIds = Object.freeze(elements.map(e => e.id));
 	
 	const getNewAliveIds = function(kill) {
-		if(kill.id === tab.id) { return []; }
-		
-		return aliveIds.filter(alive => alive !== kill.id);
+		if(kill.id === tab.id) { return Object.freeze([]); }
+		return Object.freeze(aliveIds.filter(alive => alive !== kill.id));
 	};
 	
 	return function(event) {
-		aliveIds = getNewAliveIds(event.target.parentElement);
+		aliveIds = Object.freeze(getNewAliveIds(event.target.parentElement));
 		
 		elements
 			.filter(e => !aliveIds.includes(e.id))
