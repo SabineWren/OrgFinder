@@ -15,15 +15,15 @@ const logError = function(reason) {
 	setTimeout(() => { throw new Error(reason)});
 };
 
-let queueSize = 3;//list fetching aborts on intial load if queueSize > 3
+let semaphore = 3;
 const Fetch = async function(err, url) {
-	while(queueSize < 1) { await sleep(50); }
-	queueSize--;
+	while(semaphore < 1) { await sleep(50); }
+	semaphore--;
 	
 	const throwError = function(reason){
 		err.message = reason;
 		window.setTimeout(function() {
-			queueSize++;
+			semaphore++;
 			throw err;
 		});
 	};
@@ -32,7 +32,7 @@ const Fetch = async function(err, url) {
 		.then(function(resp) {
 			if(resp.ok){
 				const result = resp.json();
-				queueSize++;
+				semaphore++;
 				return result;
 			}
 			throwError("error retrieving json from url: " + url);
