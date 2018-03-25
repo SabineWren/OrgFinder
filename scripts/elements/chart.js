@@ -1,4 +1,7 @@
-const addChart = async function(blockChart, orgSID) {
+export { AddChart };
+import * as _fetch from "../fetch.js";
+
+const AddChart = async function(blockChart, orgSID) {
 	const data = await fetchSizeHistory(orgSID);
 	
 	const newChart = drawChartLine(blockChart, data, orgSID);
@@ -144,7 +147,7 @@ const drawChartLine = function (parent, data, orgSID) {
 
 const fetchSizeHistory = function(sid) {
 	const err = new Error();
-	return fetchGlobal(err, "/OrgFinder/backEnd/org_history.php?SID=" + sid);
+	return _fetch.Fetch(err, "/OrgFinder/backEnd/org_history.php?SID=" + sid);
 };
 
 

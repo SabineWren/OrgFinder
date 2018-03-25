@@ -1,9 +1,11 @@
+export { Fetch, Warning };
+
 const logError = function(reason) {
 	setTimeout(() => { throw new Error(reason)});
 };
 
 let queueSize = 3;//list fetching aborts on intial load if queueSize > 3
-export const fetchGlobal = async function(err, url) {
+const Fetch = async function(err, url) {
 	while(queueSize < 1) { await sleep(50); }
 	queueSize--;
 	
@@ -31,7 +33,7 @@ const sleep = function(ms){
 	return new Promise(resolve => setTimeout(resolve, ms));
 };
 
-const warning = function(err) {
+const Warning = function(err) {
 	console.log("placeholder until user-visible error block: " + err);
 	return [];
 };

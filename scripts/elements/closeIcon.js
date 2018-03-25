@@ -1,4 +1,6 @@
-const createCloseIcon = function(onclick) {
+export { Create, OnclickFactory };
+
+const Create = function(onclick) {
 	const closeIcon = document.createElement("div");
 	closeIcon.classList.add("close-icon");
 	closeIcon.onclick = onclick;
@@ -6,7 +8,7 @@ const createCloseIcon = function(onclick) {
 	return closeIcon;
 }
 
-const onclickCloseFactory = function(tab, elements) {
+const OnclickFactory = function(tab, elements) {
 	if(elements === undefined) {
 		return event => event.target.parentElement.remove();
 	}

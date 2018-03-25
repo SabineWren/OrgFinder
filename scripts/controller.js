@@ -1,36 +1,59 @@
+import * as _chart       from "./elements/chart.js";
+import * as _close       from "./elements/closeIcon.js";
+import * as _enums       from "./enums.js";
+import * as _fetch       from "./fetch.js";
+import * as _ls          from "./elements/ls.js";
+import * as _multiselect from "./elements/multiselect.js";
+import * as _tab         from "./elements/tab.js";
+
 window.onload = () => init();
 
+const addControls = function() {
+	const holder = document.getElementById("controls-holder");
+	const options = Object.freeze([
+		_multiselect.Create("Activities", _enums.Activities),
+		_multiselect.Create("Archetype",  _enums.Archetype),
+		_multiselect.Create("Commitment", _enums.Commitment),
+		_multiselect.Create("Languages",  _enums.Language),
+		_multiselect.Create("Roleplay",   _enums.Roleplay),
+		_multiselect.Create("Recruiting", _enums.Recruiting)
+	]);
+	
+	options.forEach(element => holder.appendChild(element));
+	return options;
+};
+
 const addListing = async function(name, id) {
-	const blockListing = createBlock(id, BLOCKS.LISTING);
+	const blockListing = createBlock(id, _enums.BLOCKS.LISTING);
 	document.getElementById("block-holder").appendChild(blockListing);
 	
-	const tableLoading = queryListingTable();
+	const tableLoading = _ls.QueryListingTable();
 	
-	const iconCloseListing = createCloseIcon(onclickCloseFactory());
+	const iconCloseListing = _close.Create(_close.OnclickFactory());
 	blockListing.appendChild(iconCloseListing);
 	
 	tableLoading.then(table => blockListing.appendChild(table))
-		.catch(warning);
+		.catch(_fetch.Warning);
 };
 
 const addOrg = async function (orgSID, orgName) {
-	const tab = createTab(orgName, orgSID);
+	const tab = _tab.Create(orgName, orgSID);
 	document.getElementById("tab-holder").appendChild(tab);
 	
 	const blockHolder = document.getElementById("block-holder");
 	
-	const blockChart = createBlock(orgSID, BLOCKS.CHART);
+	const blockChart = createBlock(orgSID, _enums.BLOCKS.CHART);
 	blockHolder.appendChild(blockChart);
 	//the container MUST first be loaded in the DOM for its size to be non-zero
-	addChart(blockChart, orgSID);
+	_chart.AddChart(blockChart, orgSID);
 	
-	const blockDetails = createBlock(orgSID, BLOCKS.DETAILS);
+	const blockDetails = createBlock(orgSID, _enums.BLOCKS.DETAILS);
 	blockHolder.appendChild(blockDetails);
 	
-	const onclick = onclickCloseFactory(tab, [blockChart, blockDetails]);
-	blockChart.appendChild(createCloseIcon(onclick));
-	blockDetails.appendChild(createCloseIcon(onclick));
-	tab.appendChild(createCloseIcon(onclick));
+	const onclick = _close.OnclickFactory(tab, [blockChart, blockDetails]);
+	blockChart.appendChild(_close.Create(onclick));
+	blockDetails.appendChild(_close.Create(onclick));
+	tab.appendChild(_close.Create(onclick));
 };
 
 const createBlock = function(id, type) {
@@ -38,16 +61,16 @@ const createBlock = function(id, type) {
 	block.classList.add("block");
 	
 	switch(type){
-		case BLOCKS.CHART:
+		case _enums.BLOCKS.CHART:
 			id = "chart-" + id;
 			break;
-		case BLOCKS.DETAILS:
+		case _enums.BLOCKS.DETAILS:
 			id = "details-" + id;
 			break;
-		case BLOCKS.LISTING:
+		case _enums.BLOCKS.LISTING:
 			id = "listing-" + id;
 			block.classList.add("listing");
-			redefineGrid();//ensure new block conforms to current col size
+			_ls.RedefineGrid();//ensure new block conforms to current col size
 			break;
 	}
 	
@@ -77,6 +100,6 @@ const init = async function () {
 //strangely, this fires twice on initial load
 //more strangely, it actually needs to fire twice on page load, so let it!
 const resizePage = function(event){
-    window.requestAnimationFrame(redefineGrid);
+    window.requestAnimationFrame(_ls.RedefineGrid);
 };
 

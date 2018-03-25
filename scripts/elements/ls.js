@@ -1,3 +1,6 @@
+export { QueryListingTable, RedefineGrid };
+import * as _fetch from "../fetch.js";
+
 const addActivityImage = function(cell, activity) {
 	cell.classList.add(activity.toLowerCase().replace(' ', '-'));
 	cell.innerHTML = "";
@@ -37,7 +40,7 @@ const addRow = function(data) {
 
 const fetchOrgsListing = function() {
 	const err = new Error();
-	return fetchGlobal(err, "/OrgFinder/backEnd/selects.php?Activity=&Archetype=&Cog=0&Commitment=&Growth=down&Lang=Any&Manifesto=&NameOrSID=&OPPF=0&Recruiting=&Reddit=0&Roleplay=&STAR=0&pagenum=0&primary=0");
+	return _fetch.Fetch(err, "/OrgFinder/backEnd/selects.php?Activity=&Archetype=&Cog=0&Commitment=&Growth=down&Lang=Any&Manifesto=&NameOrSID=&OPPF=0&Recruiting=&Reddit=0&Roleplay=&STAR=0&pagenum=0&primary=0");
 };
 
 const loadList = function(resultsContainer, data) {
@@ -100,7 +103,7 @@ const getVariables = function() {
 	};
 };
 
-const redefineGrid = function() {
+const RedefineGrid = function() {
 	const numCols = getNumCols();
 	blockHolder.style.setProperty("--num-cols", numCols);
 	const colWidth = window.innerWidth / numCols;
@@ -129,7 +132,7 @@ const redefineGrid = function() {
 	}
 };
 
-const queryListingTable = async function() {
+const QueryListingTable = async function() {
 	const data = await fetchOrgsListing();
 	
 	const table = document.createElement("div");

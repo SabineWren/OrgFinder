@@ -1,4 +1,6 @@
-const createTab = function(name, id) {
+export { Create };
+
+const Create = function(name, id) {
 	const newTab = document.createElement("div");
 	newTab.classList.add("tab");
 	newTab.id = "tab-" + id;
