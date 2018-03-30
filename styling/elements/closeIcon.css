@@ -13,5 +13,6 @@
 }
 .close-icon:hover {
 	color: var(--colour-orange-hovered);
+	transform: scale(1.15);
 }
 

@@ -12,10 +12,11 @@
 export { Create, OnclickFactory };
 
 const Create = function(onclick) {
-	const closeIcon = document.createElement("div");
+	const closeIcon = document.createElement("img");
 	closeIcon.classList.add("close-icon");
 	closeIcon.onclick = onclick;
-	closeIcon.innerHTML = "X";
+	//closeIcon.src = "images/icons.svg#icon-x";
+	closeIcon.src = "/OrgFinder/images/icons.svg#icon-x";
 	return closeIcon;
 }
 
