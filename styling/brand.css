@@ -33,15 +33,22 @@
 	--size-border: 1px;
 	--size-close-icon: 1.5em;
 	--size-controls-spacing: 0.4em;
-	--size-tab-height: 1.5em;
 	--size-tab-padding-vert: 0.3em;
 	--size-tab-padding-horiz: 0.6em;
+	--size-tab-height-base: 1.5em;
+	--size-tab-height: calc(var(--size-tab-padding-vert) * 4 + var(--size-tab-height-base));
+	--size-close-icon-padding: 0.2em;
+	--size-close-icon: calc(var(--size-tab-height) - var(--size-close-icon-padding) * 2);
 	--size-width-min: 500px;
 	--size-width-ideal: 670px;
 }
 
 body {
 	color: white;
+}
+
+svg {
+	--colour-circle: red;
 }
 
 

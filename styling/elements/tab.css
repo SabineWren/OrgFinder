@@ -17,13 +17,14 @@ body div.tabs {
 }
 
 body div.tabs .tab {
+	box-sizing: border-box;
 	display: inline-block;
 	position: relative;
 	overflow: hidden;
-	line-height: var(--size-tab-height);
+	line-height: var(--size-tab-height-base);
 	height: var(--size-tab-height);
 	padding: var(--size-tab-padding-vert) var(--size-tab-padding-horiz);
-	padding-right: calc(var(--size-close-icon) + var(--size-tab-padding-horiz));
+	padding-right: calc(var(--size-close-icon) + 1px);
 	/* ADHOC MARGIN by using border to create flexbox item spacing */
 	border: solid var(--size-tab-padding-vert) var(--tab-holder-background);
 	background: var(--colour-brand-turquoise-10);

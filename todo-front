@@ -1,12 +1,13 @@
 priority before focus group:
-1) style and fit controls
-7) bundle css
-8) add org icons
+- style and fit controls
+- bundle css
+- add org icons
+- add webhook
+- stub out details
 
 THEN
-2) stub out details
 3) add warning tab
-7) add webhook
+
 
 Then:
 - improve tab styling
