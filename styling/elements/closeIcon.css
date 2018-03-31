@@ -13,6 +13,10 @@
 	z-index: 2;
 }
 .close-icon:hover {
-	transform: scale(1.15);
+	transform: scale(1.1);
+}
+
+.close-icon .stack#icon-x .ambient {
+	fill: red;
 }
 
