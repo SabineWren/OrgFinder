@@ -13,27 +13,24 @@
 	z-index: 2;
 }
 
-svg.icon-x:hover .ambient {
-	fill: rgb( 190, 0,   0);
+svg.icon-x {
+	--colour-ambient: rgb( 196,  98, 0);
+	--colour-diffuse: rgb( 240, 145, 5);
 }
-svg.icon-x:hover .diffuse {
-	fill: rgb( 255, 0,  0);
-}
-
 .hide {
 	display: none !important;
 }
-.stack {
+.icon-x {
 	display: block;
 	fill: black;
 }
-.stack .ambient {
-	fill: rgb( 196, 98,   0);
+.icon-x .ambient {
+	fill: var(--colour-ambient);
 }
-.stack .diffuse {
-	fill: rgb( 240, 145,  5);
+.icon-x .diffuse {
+	fill: var(--colour-diffuse); 
 }
-.stack line {
+.icon-x line {
 	stroke: black;
 	stroke-width: 5;
 }

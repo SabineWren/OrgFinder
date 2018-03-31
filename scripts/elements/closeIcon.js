@@ -12,16 +12,26 @@
 export { Create, OnclickFactory };
 
 const Create = function(onclick) {
-	const stack = MASTER.cloneNode(true);
-	stack.classList.add("close-icon");
-	stack.onclick = onclick;
-	//const closeIcon = stack.getElementsByClassName("icon-x")[0];
-	//closeIcon.classList.remove("hide");
-	stack.classList.remove("hide");
-	return stack;
+	const applyHover = function(e) {
+		closeIcon.style.setProperty("--colour-ambient", "rgb( 190, 0, 0)");
+		closeIcon.style.setProperty("--colour-diffuse", "rgb( 255, 0, 0)");
+	};
+	const removeHover = function(e){
+		closeIcon.style.setProperty("--colour-ambient", "rgb( 196,  98, 0)");
+		closeIcon.style.setProperty("--colour-diffuse", "rgb( 240, 145, 5)");
+	};
+	
+	const closeIcon = MASTER.cloneNode(true);
+	closeIcon.classList.add("close-icon");
+	const top = closeIcon.getElementsByClassName("top")[0];
+	top.onclick     = onclick;
+	top.onmouseover = applyHover;
+	top.onmouseout  = removeHover;
+	closeIcon.classList.remove("hide");
+	return closeIcon;
 }
 
-const getRealParent = function(child){
+const getRealParent = function(child) {
 	//SVGs delegate onclick to their child components
 	if(child.tagName === "circle"){
 		return child.parentElement.parentElement;
@@ -52,5 +62,5 @@ const OnclickFactory = function(tab, elements) {
 	};
 };
 
-const MASTER = Object.freeze(document.getElementsByClassName("stack")[0]);
+const MASTER = Object.freeze(document.getElementsByClassName("icon-x")[0]);
 
