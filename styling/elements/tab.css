@@ -1,11 +1,5 @@
-body {
-	display: block;
-	position: relative;
-	height: 1000px;
-	background-color: var(--colour-brand-turquoise-10);
-}
 
-body div.tabs {
+div.tabs {
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: center;
@@ -16,7 +10,7 @@ body div.tabs {
 	background-color: var(--tab-holder-background);
 }
 
-body div.tabs .tab {
+div.tabs .tab {
 	box-sizing: border-box;
 	display: inline-block;
 	position: relative;
@@ -32,7 +26,7 @@ body div.tabs .tab {
 	font-size: var(--font-size-tab);
 }
 /* ADHOC BORDER because we're already using border for spacing */
-body div.tabs .tab::before {
+div.tabs .tab::before {
 	box-sizing: border-box;
 	position: absolute;
 	content: "";

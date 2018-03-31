@@ -12,28 +12,37 @@
 export { Create, OnclickFactory };
 
 const Create = function(onclick) {
-	const closeIcon = document.createElement("img");
-	closeIcon.classList.add("close-icon");
-	closeIcon.onclick = onclick;
-	//closeIcon.src = "images/icons.svg#icon-x";
-	closeIcon.src = "/OrgFinder/images/icons.svg#icon-x";
-	return closeIcon;
+	const stack = MASTER.cloneNode(true);
+	stack.classList.add("close-icon");
+	stack.onclick = onclick;
+	//const closeIcon = stack.getElementsByClassName("icon-x")[0];
+	//closeIcon.classList.remove("hide");
+	stack.classList.remove("hide");
+	return stack;
 }
+
+const getRealParent = function(child){
+	//SVGs delegate onclick to their child components
+	if(child.tagName === "circle"){
+		return child.parentElement.parentElement;
+	}
+	return child.parentElement;
+};
 
 const OnclickFactory = function(tab, elements) {
 	if(elements === undefined) {
-		return event => event.target.parentElement.remove();
+		return event => getRealParent(event.target).remove();
 	}
 	
 	let aliveIds = Object.freeze(elements.map(e => e.id));
 	
 	const getNewAliveIds = function(kill) {
-		if(kill.id === tab.id) { return Object.freeze([]); }
-		return Object.freeze(aliveIds.filter(alive => alive !== kill.id));
+		if(kill.id === tab.id) { return []; }
+		return aliveIds.filter(alive => alive !== kill.id);
 	};
 	
 	return function(event) {
-		aliveIds = Object.freeze(getNewAliveIds(event.target.parentElement));
+		aliveIds = Object.freeze(getNewAliveIds(getRealParent(event.target)));
 		
 		elements
 			.filter(e => !aliveIds.includes(e.id))
@@ -42,4 +51,6 @@ const OnclickFactory = function(tab, elements) {
 		if(aliveIds.length === 0) { tab.remove(); }
 	};
 };
+
+const MASTER = Object.freeze(document.getElementsByClassName("stack")[0]);
 

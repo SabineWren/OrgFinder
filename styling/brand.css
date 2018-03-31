@@ -43,12 +43,10 @@
 	--size-width-ideal: 670px;
 }
 
-body {
-	color: white;
+@font-face {
+	font-family: 'Prototype';
+	src: url(../assets/Prototype.ttf) format('truetype');
+	font-weight: normal;
+	font-style: normal;
 }
-
-svg {
-	--colour-circle: red;
-}
-
 

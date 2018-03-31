@@ -1,3 +1,11 @@
+body {
+	display: block;
+	position: relative;
+	height: 1000px;
+	background-color: var(--colour-brand-turquoise-10);
+	color: white;
+}
+
 #block-holder {
 	display: grid;
 	position: relative;

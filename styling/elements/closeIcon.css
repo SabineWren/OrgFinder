@@ -12,11 +12,28 @@
 	color: var(--colour-orange-interactive);
 	z-index: 2;
 }
-.close-icon:hover {
-	transform: scale(1.1);
+
+svg.icon-x:hover .ambient {
+	fill: rgb( 190, 0,   0);
+}
+svg.icon-x:hover .diffuse {
+	fill: rgb( 255, 0,  0);
 }
 
-.close-icon .stack#icon-x .ambient {
-	fill: red;
+.hide {
+	display: none !important;
 }
-
+.stack {
+	display: block;
+	fill: black;
+}
+.stack .ambient {
+	fill: rgb( 196, 98,   0);
+}
+.stack .diffuse {
+	fill: rgb( 240, 145,  5);
+}
+.stack line {
+	stroke: black;
+	stroke-width: 5;
+}
