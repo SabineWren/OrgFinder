@@ -51,9 +51,11 @@
 	color: var(--colour-orange-hovered);
 	cursor: pointer;
 }
-.multiselect .ul .li.selected,
+.multiselect .ul .li.selected {
+	color: rgb(0, 220, 80);
+}
 .multiselect .ul .li.selected:hover {
-	color: rgb(0, 255, 100);
+	color: rgb( 255, 60, 0);
 }
 
 /* shadow list for selection */
