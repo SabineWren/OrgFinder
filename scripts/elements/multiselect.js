@@ -14,17 +14,8 @@ export { Create };
 const createListItem = function(val) {
 	const li = document.createElement("DIV");
 	li.classList.add("li");
-	
-	const label = document.createElement("LABEL");
-	
-	const checkbox = document.createElement("INPUT");
-	checkbox.setAttribute("type", "checkbox");
-	checkbox.value = val;
-	
-	label.appendChild(checkbox);
-	label.innerHTML += val;
-	
-	li.appendChild(label);
+	li.innerHTML = val;
+	li.dataset.value = val;
 	return li;
 };
 

@@ -11,8 +11,10 @@
 	             0 0 1px 1px black;
 	margin: 0 0 auto 0;
 	padding: 0.2em 0.4em;
+	font-weight: bold;
+	font-size: var(--font-size-tab);
 }
-.multiselect:hover {
+.multiselect .anchor:hover {
 	color: var(--colour-orange-hovered);
 	cursor: pointer;
 }
@@ -21,7 +23,6 @@
 	display: block;
 	position: relative;
 	box-sizing: border-box;
-	font-weight: bold;
 	width: 100%;
 }
 
@@ -36,10 +37,17 @@
 .multiselect .anchor.active + .ul {
 	max-height: 10em;
 	visibility: visible;
+	margin-top: 0.3em;
+	padding-top: 0.3em;
+	border-top: 0.1em solid var(--colour-orange-interactive);
 }
 
 .multiselect .ul .li {
 	display: block;
 	position: relative;
 	box-sizing: border-box;
+}
+.multiselect .ul .li:hover {
+	color: var(--colour-orange-hovered);
+	cursor: pointer;
 }

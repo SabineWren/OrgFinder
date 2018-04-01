@@ -94,8 +94,9 @@ const init = async function () {
 	resizePage();
 	
 	const multiselects = addControls();
-	multiselects[0].style.width = parseFloat(multiselects[0].clientWidth) + 17 + "px";
-	multiselects[3].style.width = parseFloat(multiselects[3].clientWidth) + 17 + "px";
+	//account for scrollbar. 17px isn't enough, and using CSS breaks the border
+	multiselects[0].style.width = parseFloat(multiselects[0].clientWidth) + 19 + "px";
+	multiselects[3].style.width = parseFloat(multiselects[3].clientWidth) + 19 + "px";
 	
 	addListing("Default Listing", "DEFAULT_ID");
 	addOrg("LAWBINDERS","LAWBINDERS");
