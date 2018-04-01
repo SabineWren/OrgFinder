@@ -13,8 +13,8 @@ export { Create, OnclickFactory };
 
 const Create = function(onclick) {
 	const applyHover = function(e) {
-		closeIcon.style.setProperty("--colour-ambient", "rgb( 190, 0, 0)");
-		closeIcon.style.setProperty("--colour-diffuse", "rgb( 255, 0, 0)");
+		closeIcon.style.setProperty("--colour-ambient", "rgb( 205, 30, 0)");
+		closeIcon.style.setProperty("--colour-diffuse", "rgb( 255, 60, 0)");
 	};
 	const removeHover = function(e){
 		closeIcon.style.setProperty("--colour-ambient", "rgb( 196,  98, 0)");

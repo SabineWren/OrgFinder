@@ -1,5 +1,6 @@
 .close-icon {
 	box-sizing: border-box;
+	display: block;
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -11,6 +12,10 @@
 	font-weight: bold;
 	color: var(--colour-orange-interactive);
 	z-index: 2;
+}
+.tab .close-icon {
+	top: 50%;
+	transform: translateY(-50%);
 }
 
 svg.icon-x {
