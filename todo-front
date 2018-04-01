@@ -1,29 +1,27 @@
 priority before focus group:
-- style and fit controls
-- bundle css
 - add org icons
 - add webhook
 - stub out details
 
-THEN
-3) add warning tab
-
-
-Then:
-- improve tab styling
-- add sorting controls
+soon:
+- add warning tab
+- build run/go icon
 
 charts:
 - add zoom using mousewheel
 - add org name
 - hyperlink name+sid
 - style hyperlinks to be obvious
-
-- add close option + icon
-
-- make charts more responsive for screen width
-
-- add size detail on mouseover
-
+- rebuild charts when screen resizes
+- add size tooltip when mousing over lines
 - fix date labelling for recent orgs (maybe use days of week)
-- make chart domain dynamic
+- make chart domain user-adjustable
+
+before focus group:
+- make org listing interactive (click to show charts, etc.)
+- add link to source code
+- bundle css
+
+before full release:
+- build back-end
+- minify javascript

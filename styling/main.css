@@ -24,10 +24,57 @@ body {
 }
 
 #controls-holder {
+	box-sizing: border-box;
 	display: grid;
 	position: relative;
-	box-sizing: border-box;
-	grid-auto-rows: auto;
+	
+	justify-content: center;
+	width: 100%;
+	min-width: 500px;
+	padding: var(--size-tab-padding-vert);
+	margin: 0 auto;
+	background-color: var(--tab-holder-background);
+	
 	grid-gap: var(--size-controls-spacing);
-	grid-template-columns: auto auto auto auto auto auto auto;
+	grid-template-columns: auto auto auto auto auto auto auto auto;
+}
+
+@media only screen and (max-width: 1100px) {
+	#controls-holder #recruiting {
+		grid-row: 2;
+		grid-column: 5;
+	}
+}
+@media only screen and (max-width: 1000px) {
+	#controls-holder #commitment {
+		grid-row: 2;
+		grid-column: 2;
+	}
+	#controls-holder #recruiting {
+		grid-row: 2;
+		grid-column: 4;
+	}
+}
+@media only screen and (max-width: 800px) {
+	#controls-holder #languages {
+		grid-row: 2;
+		grid-column: 1;
+	}
+	#controls-holder #commitment {
+		grid-row: 2;
+		grid-column: 2;
+	}
+	#controls-holder #recruiting {
+		grid-row: 2;
+		grid-column: 3;
+	}
+}
+
+#controls-holder #run {
+	width: 4em;
+	height: 2em;
+	line-height: 2em;
+	text-align: center;
+	border-radius: 0.5em;
+	background-color: green;
 }

@@ -29,8 +29,13 @@ const addControls = function() {
 		_multiselect.Create("Roleplay",   _enums.Roleplay),
 		_multiselect.Create("Recruiting", _enums.Recruiting)
 	]);
-	
 	options.forEach(element => holder.appendChild(element));
+	
+	const runButton = document.createElement("DIV");
+	runButton.id = "run";
+	runButton.innerHTML = "Go";
+	holder.appendChild(runButton);
+	
 	return options;
 };
 

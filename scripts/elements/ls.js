@@ -29,22 +29,33 @@ const addCell = function(classCSS, text) {
 	return this;
 };
 
+const addLogo = function(sid, isCustom) {
+	const cell = document.createElement("img");
+	cell.classList.add("logo");
+	cell.title = "logo";
+	cell.src = "/OrgFinder/images/org_icons/AOTW";
+	this.appendChild(cell);
+	return this;
+};
+
 const addRow = function(data) {
 	const row = document.createElement("div");
 	row.classList.add("row");
 	row.addCell = addCell;
+	row.addLogo = addLogo;
 	
 	row
-		.addCell("sid", data.SID)
 		.addCell("archetype", data.Archetype)
+		.addCell("commitment", data.Commitment)
 		.addCell("focus-primary", data.PrimaryFocus)
 		.addCell("focus-secondary", data.SecondaryFocus)
-		.addCell("commitment", data.Commitment)
+		.addCell("growth", data.GrowthRate)
 		.addCell("language", data.Language)
-		.addCell("name", data.Name)
-		.addCell("size", data.Size)
+		.addLogo(data.SID, data.CustomIcon)
 		.addCell("main", data.Main)
-		.addCell("growth", data.GrowthRate);
+		.addCell("name", data.Name)
+		.addCell("sid", data.SID)
+		.addCell("size", data.Size);
 	
 	this.appendChild(row);
 };
@@ -66,15 +77,16 @@ const makeTitleRow = function () {
 	row.addCell = addCell;
 	
 	row
-		.addCell("sid", "SID")
 		.addCell("archetype", "Archetype")
-		.addCell("focuses-header", "Focuses")
 		.addCell("commitment", "Commitment")
+		.addCell("focuses-header", "Focuses")
+		.addCell("growth", "Weekly Growth")
 		.addCell("language", "Language")
-		.addCell("name", "Name")
-		.addCell("size", "Size")
+		.addCell("logo", "Logo")
 		.addCell("main", "Main")
-		.addCell("growth", "Weekly Growth");
+		.addCell("name", "Name")
+		.addCell("sid", "SID")
+		.addCell("size", "Size");
 	
 	return row;
 };
@@ -103,14 +115,16 @@ const getVariables = function() {
 	const sizeGap = parseFloat(style.getPropertyValue("--size-grid-gap"));
 	
 	const widthRow6 = sizeRowBase + sizeGap * 5;
-	const widthRow7 = widthRow6 + sizeGap + parseFloat(style.getPropertyValue("--size-archetype"));
-	const widthRow8 = widthRow7 + sizeGap + parseFloat(style.getPropertyValue("--size-size"))
-	const widthRow9 = widthRow8 + sizeGap + parseFloat(style.getPropertyValue("--size-sid"))
+	const widthRow8 = widthRow6 + sizeGap * 2
+		+ parseFloat(style.getPropertyValue("--size-archetype"))
+		+ parseFloat(style.getPropertyValue("--size-focus"));
+	const widthRow9 = widthRow8 + sizeGap + parseFloat(style.getPropertyValue("--size-size"))
+	const widthRow10 = widthRow9 + sizeGap + parseFloat(style.getPropertyValue("--size-sid"))
 	
 	return {
-		widthRow7: widthRow7 * parseFloat(em.clientWidth),
 		widthRow8: widthRow8 * parseFloat(em.clientWidth),
 		widthRow9: widthRow9 * parseFloat(em.clientWidth),
+		widthRow10: widthRow10 * parseFloat(em.clientWidth),
 	};
 };
 
@@ -122,23 +136,23 @@ const RedefineGrid = function() {
 	const listings = Array.from(document.getElementsByClassName("listing"));
 	const vars = getVariables();
 	
-	if(colWidth < vars.widthRow7) {
+	if(colWidth < vars.widthRow8) {
 		listings.forEach(function(listing) {
-			listing.classList.remove("grid7", "grid8", "grid9");
-		})
-	} else if(colWidth < vars.widthRow8) {
-		listings.forEach(function(listing) {
-			listing.classList.remove("grid8", "grid9");
-			listing.classList.add("grid7");
+			listing.classList.remove("grid8", "grid9", "grid10");
 		})
 	} else if(colWidth < vars.widthRow9) {
 		listings.forEach(function(listing) {
-			listing.classList.remove("grid9");
-			listing.classList.add("grid7", "grid8");
+			listing.classList.remove("grid9", "grid10");
+			listing.classList.add("grid8");
+		})
+	} else if(colWidth < vars.widthRow10) {
+		listings.forEach(function(listing) {
+			listing.classList.remove("grid10");
+			listing.classList.add("grid8", "grid9");
 		})
 	} else {
 		listings.forEach(function(listing) {
-			listing.classList.add("grid7", "grid8", "grid9");
+			listing.classList.add("grid8", "grid9", "grid10");
 		})
 	}
 };
