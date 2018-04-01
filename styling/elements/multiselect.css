@@ -51,3 +51,30 @@
 	color: var(--colour-orange-hovered);
 	cursor: pointer;
 }
+.multiselect .ul .li.selected,
+.multiselect .ul .li.selected:hover {
+	color: rgb(0, 255, 100);
+}
+
+/* shadow list for selection */
+.multiselect .anchor + .ul.doppelganger {
+	visibility: show;
+	display: block;
+}
+.multiselect .anchor.active + .ul.doppelganger {
+	display: none;
+}
+
+.multiselect .ul.doppelganger .li {
+	display: none;
+}
+.multiselect .ul.doppelganger .li.selected {
+	display: block;
+}
+
+.multiselect .ul.doppelganger {
+	margin-top: 0.3em;
+	padding-top: 0.3em;
+	border-top: 0.1em solid var(--colour-orange-interactive);
+}
+

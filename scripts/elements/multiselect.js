@@ -29,26 +29,42 @@ const Create = function(name, values) {
 	anchor.innerHTML = name;
 	container.appendChild(anchor);
 	
-	const ul = document.createElement("DIV");
-	ul.classList.add("ul");
+	const ulMaster = document.createElement("DIV");
+	ulMaster.classList.add("ul");
+	ulMaster.classList.add("master");
+	
+	const ulShadow = document.createElement("DIV");
+	ulShadow.classList.add("ul");
+	ulShadow.classList.add("doppelganger");
 	
 	values
 		.map(val => createListItem(val))
-		.forEach(item => ul.appendChild(item));
+		.forEach(function(item) {
+			item.onclick = toggleSelectMaster;
+			ulMaster.appendChild(item);
+		});
+	
+	values
+		.map(val => createListItem(val))
+		.forEach(function(item) {
+			item.onclick = toggleSelectShadow;
+			ulShadow.appendChild(item);
+		});
 	
 	anchor.onclick = setActive;
 	
-	container.appendChild(ul);
+	container.appendChild(ulMaster);
+	container.appendChild(ulShadow);
 	return container;
 };
 
-const removeActive = function(element){
+const removeActive = function(element) {
 	element.classList.remove("active");
 };
 
 const setActive = function(event) {
 	//clicked to close an open multiselect
-	if(event.target.classList.contains("active")){
+	if(event.target.classList.contains("active")) {
 		removeActive(event.target);
 		return;
 	}
@@ -59,4 +75,35 @@ const setActive = function(event) {
 	
 	event.target.classList.add("active");
 }
+
+const toggleSelect = function(master, doppelganger) {
+	if(master.classList.contains("selected")) {
+		master.classList.remove("selected");
+		doppelganger.classList.remove("selected");
+	}
+	else {
+		master.classList.add("selected");
+		doppelganger.classList.add("selected");
+	}
+};
+
+const toggleSelectMaster = function(event) {
+	const master = event.target;
+	const doppelganger = Array.from(master
+			.parentElement.parentElement
+			.getElementsByClassName("doppelganger")[0]
+			.getElementsByClassName("li"))
+			.filter(doppel => doppel.dataset.value === master.dataset.value)[0];
+	toggleSelect(master, doppelganger);
+};
+
+const toggleSelectShadow = function(event) {
+	const doppelganger = event.target;
+	const master = Array.from(doppelganger
+			.parentElement.parentElement
+			.getElementsByClassName("master")[0]
+			.getElementsByClassName("li"))
+			.filter(master => master.dataset.value === doppelganger.dataset.value)[0];
+	toggleSelect(master, doppelganger);
+};
 
