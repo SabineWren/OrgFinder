@@ -40,7 +40,7 @@
 	--size-close-icon-padding: 0.4em;
 	--size-close-icon: calc(var(--size-tab-height));
 	--size-width-min: 500px;
-	--size-width-ideal: 670px;
+	--size-width-ideal: 660px;
 }
 
 @font-face {

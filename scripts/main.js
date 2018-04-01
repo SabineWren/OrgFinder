@@ -11,6 +11,7 @@
 */
 import * as _chart       from "./elements/chart.js";
 import * as _close       from "./elements/closeIcon.js";
+import * as _details     from "./elements/details.js";
 import * as _enums       from "./enums.js";
 import * as _fetch       from "./fetch.js";
 import * as _ls          from "./elements/ls.js";
@@ -43,12 +44,11 @@ const addListing = async function(name, id) {
 	const blockListing = createBlock(id, _enums.BLOCKS.LISTING);
 	document.getElementById("block-holder").appendChild(blockListing);
 	
-	const tableLoading = _ls.QueryListingTable();
-	
 	const iconCloseListing = _close.Create(_close.OnclickFactory());
 	blockListing.appendChild(iconCloseListing);
 	
-	tableLoading.then(table => blockListing.appendChild(table))
+	_ls.QueryListingTable()
+		.then(table => blockListing.appendChild(table))
 		.catch(_fetch.Warning);
 };
 
@@ -65,6 +65,10 @@ const addOrg = async function (orgSID, orgName) {
 	
 	const blockDetails = createBlock(orgSID, _enums.BLOCKS.DETAILS);
 	blockHolder.appendChild(blockDetails);
+	
+	_details.QueryDetails(orgSID)
+		.then(element => blockDetails.appendChild(element))
+		.catch(_fetch.Warning);
 	
 	const onclick = _close.OnclickFactory(tab, [blockChart, blockDetails]);
 	blockChart.appendChild(_close.Create(onclick));

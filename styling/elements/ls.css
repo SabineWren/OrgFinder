@@ -30,7 +30,6 @@
 .table .row:first-child .focuses-header {
 	height: 1em;
 	margin: auto;
-	grid-row: 1 / span 2;
 }
 
 .row {
@@ -65,7 +64,6 @@
 .table .row:first-child .focuses-header {
 	grid-column: 2 / span 2;
 	grid-row: 1;
-	margin: auto;
 }
 .focus-primary {
 	grid-column: 2;
@@ -153,8 +151,6 @@
 	grid-row 1;
 }
 .grid8 .table .row:first-child .focuses-header {
-	height: 1em;
-	margin: auto;
 	grid-row: 1 / span 2;
 }
 .grid8 .growth {
@@ -237,12 +233,6 @@
 	grid-column: 1;
 	grid-row: 1 / span 2 !important;
 	margin: auto;
-}
-.grid9 .table .row:first-child .logo {
-	grid-column: 8;
-}
-.grid10 .logo {
-	grid-column: 8;
 }
 .grid10 .name {
 	grid-column: 10;
