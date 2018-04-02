@@ -1,0 +1,7 @@
+.details .details-content {
+	box-sizing: border-box;
+	display: block;
+	position: relative;
+	border: 0.2em solid var(--tab-holder-background);
+	padding: 0 0.7em;
+}

@@ -1,6 +1,10 @@
-soon:
+before focus group:
 - add warning tab
 - build run/go icon
+- add styling to org details
+- make org listing interactive (click to show charts, etc.)
+- add link to source code
+- bundle css
 
 charts:
 - add zoom using mousewheel
@@ -12,11 +16,7 @@ charts:
 - fix date labelling for recent orgs (maybe use days of week)
 - make chart domain user-adjustable
 
-before focus group:
-- make org listing interactive (click to show charts, etc.)
-- add link to source code
-- bundle css
-
 before full release:
+- combine favicon, brand css, and other shared files as dependencies
 - build back-end
 - minify javascript

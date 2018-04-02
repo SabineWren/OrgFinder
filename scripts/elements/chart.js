@@ -13,7 +13,7 @@ export { AddChart };
 import * as _fetch from "../fetch.js";
 
 const AddChart = async function(blockChart, orgSID) {
-	const data = await fetchSizeHistory(orgSID);
+	const data = await fetchSizeHistory(orgSID).catch(_fetch.Warning);
 	
 	const newChart = drawChartLine(blockChart, data, orgSID);
 	newChart.classList.add("chart");

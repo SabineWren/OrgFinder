@@ -7,14 +7,23 @@ body {
 }
 
 #block-holder {
+	box-sizing: border-box;
 	display: grid;
 	position: relative;
-	box-sizing: border-box;
-	--num-cols: 1;/* SET BY JAVSCRIPT */
-	grid-auto-rows: auto;
-	grid-gap: var(--size-tab-padding-horiz);
+	grid-auto-rows: 1px;
+	grid-column-gap: var(--size-tab-padding-horiz);
 	grid-template-columns: repeat(var(--num-cols), minmax(500px, 1fr));
 	width: 100%;
+	--size-height-chart: 410;
+	/* SET BY JAVSCRIPT */
+	--num-cols: 1;
+	--size-height-table: 697;
+}
+#block-holder .chart {
+	grid-row: span var(--size-height-chart);
+}
+#block-holder .listing {
+	grid-row: span var(--size-height-table);
 }
 
 .block {

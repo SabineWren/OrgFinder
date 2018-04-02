@@ -58,17 +58,16 @@ const addOrg = async function (orgSID, orgName) {
 	
 	const blockHolder = document.getElementById("block-holder");
 	
+	//the container MUST first be loaded in the DOM for its size to be non-zero
 	const blockChart = createBlock(orgSID, _enums.BLOCKS.CHART);
 	blockHolder.appendChild(blockChart);
-	//the container MUST first be loaded in the DOM for its size to be non-zero
 	_chart.AddChart(blockChart, orgSID);
 	
+	//the container MUST first be loaded in the DOM for its size to be non-zero
 	const blockDetails = createBlock(orgSID, _enums.BLOCKS.DETAILS);
 	blockHolder.appendChild(blockDetails);
+	_details.AddDetails(blockDetails, orgSID)
 	
-	_details.QueryDetails(orgSID)
-		.then(element => blockDetails.appendChild(element))
-		.catch(_fetch.Warning);
 	
 	const onclick = _close.OnclickFactory(tab, [blockChart, blockDetails]);
 	blockChart.appendChild(_close.Create(onclick));
@@ -83,9 +82,11 @@ const createBlock = function(id, type) {
 	switch(type){
 		case _enums.BLOCKS.CHART:
 			id = "chart-" + id;
+			block.classList.add("chart");
 			break;
 		case _enums.BLOCKS.DETAILS:
 			id = "details-" + id;
+			block.classList.add("details");
 			break;
 		case _enums.BLOCKS.LISTING:
 			id = "listing-" + id;
@@ -118,9 +119,16 @@ const init = async function () {
 	addOrg("AMFR", "AMFR");
 };
 
+const resizeCallbacks = function() {
+	_ls.RedefineGrid();
+	Array.prototype.forEach.call(
+		document.getElementsByClassName("details-content"),
+		_details.ResizeDetails);
+};
+
 //strangely, this fires twice on initial load
 //more strangely, it actually needs to fire twice on page load, so let it!
 const resizePage = function(event){
-    window.requestAnimationFrame(_ls.RedefineGrid);
+    window.requestAnimationFrame(resizeCallbacks);
 };
 
