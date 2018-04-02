@@ -11,7 +11,6 @@ body {
 	display: grid;
 	position: relative;
 	grid-auto-rows: 1px;
-	grid-column-gap: var(--size-tab-padding-horiz);
 	grid-template-columns: repeat(var(--num-cols), minmax(500px, 1fr));
 	width: 100%;
 	--size-height-chart: 410;
@@ -27,6 +26,7 @@ body {
 }
 
 .block {
+	box-sizing: border-box;
 	display: inline-block;
 	position: relative;
 	width: 100%;

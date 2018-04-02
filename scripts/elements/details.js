@@ -9,13 +9,13 @@
 	
 	@license-end
 */
-export { AddDetails, ResizeDetails };
+export { AddDetails, Resize };
 import * as _fetch from "../fetch.js";
 
 const AddDetails = async function(block, sid) {
 	const details = await queryDetails(sid).catch(_fetch.Warning);
 	block.appendChild(details);
-	ResizeDetails(details);
+	Resize(details);
 };
 
 const fetchDetails = function(sid) {
@@ -49,7 +49,7 @@ const queryDetails = async function(sid) {
 	return details;
 };
 
-const ResizeDetails = function(content) {
+const Resize = function(content) {
 	content.parentElement.style.gridRow = "span " + content.offsetHeight;
 };
 

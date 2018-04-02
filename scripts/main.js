@@ -123,7 +123,7 @@ const resizeCallbacks = function() {
 	_ls.RedefineGrid();
 	Array.prototype.forEach.call(
 		document.getElementsByClassName("details-content"),
-		_details.ResizeDetails);
+		_details.Resize);
 };
 
 //strangely, this fires twice on initial load

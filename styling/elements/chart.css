@@ -1,3 +1,7 @@
+.block.chart {
+	border: 0.2em solid var(--tab-holder-background);
+}
+
 .line {
 	fill: none;
 }
@@ -31,7 +35,7 @@
 	fill: var(--colour-size);
 }
 	
-.chart text {
+.chart-content text {
 	fill: white;
 	font: 16px sans-serif;
 	text-anchor: start;

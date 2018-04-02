@@ -13,7 +13,7 @@ charts:
 - style hyperlinks to be obvious
 - rebuild charts when screen resizes
 - add size tooltip when mousing over lines
-- fix date labelling for recent orgs (maybe use days of week)
+- fix date labeling for recent orgs (maybe use days of week)
 - make chart domain user-adjustable
 
 before full release:
