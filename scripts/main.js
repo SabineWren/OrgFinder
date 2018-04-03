@@ -58,10 +58,11 @@ const addOrg = async function (orgSID, orgName) {
 	
 	const blockHolder = document.getElementById("block-holder");
 	
-	//the container MUST first be loaded in the DOM for its size to be non-zero
 	const blockChart = createBlock(orgSID, _enums.BLOCKS.CHART);
 	blockHolder.appendChild(blockChart);
-	_chart.AddChart(blockChart, orgSID);
+	_chart.CreateChart(orgSID)
+		.then(chart => blockChart.appendChild(chart))
+		.catch(_fetch.Warning);
 	
 	//the container MUST first be loaded in the DOM for its size to be non-zero
 	const blockDetails = createBlock(orgSID, _enums.BLOCKS.DETAILS);
@@ -108,12 +109,12 @@ const init = async function () {
 	multiselects[0].style.width = parseFloat(multiselects[0].clientWidth) + 19 + "px";
 	multiselects[3].style.width = parseFloat(multiselects[3].clientWidth) + 19 + "px";
 	
-	addListing("Default Listing", "DEFAULT_ID");
-	addOrg("LAWBINDERS","LAWBINDERS");
-	addOrg("00000000", "ENEMY CONTACT");
-	addOrg("HHCORP", "Horizons Hunters");
-	addOrg("AOTW", "Angels of the Warp");
-	addOrg("POI", "Person Of Interest");
+	await addListing("Default Listing", "DEFAULT_ID");
+	await addOrg("LAWBINDERS","LAWBINDERS");
+	await addOrg("00000000", "ENEMY CONTACT");
+	await addOrg("HHCORP", "Horizons Hunters");
+	await addOrg("AOTW", "Angels of the Warp");
+	await addOrg("POI", "Person Of Interest");
 	addOrg("TFTO", "The First Order");
 	addOrg("PROT", "Protectors of Verum");
 	addOrg("AMFR", "AMFR");

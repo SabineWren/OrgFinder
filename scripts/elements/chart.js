@@ -9,24 +9,25 @@
 	
 	@license-end
 */
-export { AddChart };
+export { CreateChart };
 import * as _fetch from "../fetch.js";
 
-const AddChart = async function(blockChart, orgSID) {
+const CreateChart = async function(orgSID) {
 	const data = await fetchSizeHistory(orgSID).catch(_fetch.Warning);
 	
-	const newChart = drawChartLine(blockChart, data, orgSID);
+	const newChart = drawChartLine(data, orgSID);
 	newChart.classList.add("chart-content");
-	return blockChart;
+	return newChart;
 };
 
 const chartHolder = d3.select("#data-holder").node();
 
-const drawChartLine = function (parent, data, orgSID) {
-	//must set canvas size before building svg
+const drawChartLine = function (data, orgSID) {
+	const colWidth = window.innerWidth / blockHolder.style.getPropertyValue("--num-cols");
+	
 	const margin = Object.freeze({ top: 25, right: 160, bottom: 50, left: 50 });
-	const width = parent.offsetWidth - margin.left - margin.right;
-	const height = parent.offsetWidth/2.0 - margin.top - margin.bottom;
+	const width = colWidth - margin.left - margin.right;
+	const height = colWidth/2.0 - margin.top - margin.bottom;
 	const labelOffset = 70;
 
 	//define accessor functions for retrieving line data
@@ -44,7 +45,8 @@ const drawChartLine = function (parent, data, orgSID) {
 		.y(d => y(d.Hidden));
 
 	//build canvas
-	const svg = d3.select(parent).append("svg")
+	//how does this append even work? TODO figure it out
+	const svg = d3.select(blockHolder).append("svg")
 		.attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`);
 	
 	//add labels
@@ -161,4 +163,5 @@ const fetchSizeHistory = function(sid) {
 	return _fetch.Fetch(err, "/OrgFinder/backEnd/org_history.php?SID=" + sid);
 };
 
+const blockHolder = document.getElementById("block-holder");
 

@@ -6,6 +6,8 @@ before focus group:
 - add link to source code
 - bundle css
 
+* learn how d3 append works and refactor chart
+
 charts:
 - add zoom using mousewheel
 - add org name

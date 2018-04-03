@@ -30,6 +30,7 @@ body {
 	display: inline-block;
 	position: relative;
 	width: 100%;
+	height: initial;
 }
 
 #controls-holder {
