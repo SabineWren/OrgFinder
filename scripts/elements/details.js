@@ -11,10 +11,12 @@
 */
 export { AddDetails, Resize };
 import * as _fetch from "../fetch.js";
+import * as _min from "./minimizeIcon.js";
 
 const AddDetails = async function(block, sid) {
 	const details = await queryDetails(sid).catch(_fetch.Warning);
 	block.appendChild(details);
+	block.appendChild(_min.Create());
 	Resize(details);
 };
 

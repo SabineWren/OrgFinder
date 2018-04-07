@@ -1,9 +1,13 @@
-.close-icon {
+:root {
+	--size-close-icon-padding: 0.2em;
+	--size-close-icon: calc(var(--size-tab-height) - 2 * var(--size-close-icon-padding));
+}
+
+.stack {
 	box-sizing: border-box;
 	display: block;
 	position: absolute;
 	top: 0;
-	right: 0;
 	width: var(--size-close-icon);
 	height: var(--size-close-icon);
 	padding: var(--size-close-icon-padding);
@@ -11,31 +15,34 @@
 	font-size: var(--font-size-tab);
 	font-weight: bold;
 	color: var(--colour-orange-interactive);
+	fill: black;
 	z-index: 2;
 }
-.tab .close-icon {
+.tab .stack {
 	top: 50%;
 	transform: translateY(-50%);
 }
+.close-icon {
+	right: 0;
+}
+.min-icon {
+	right: var(--size-close-icon);
+}
 
-svg.icon-x {
+svg.stack {
 	--colour-ambient: rgb( 196,  98, 0);
 	--colour-diffuse: rgb( 240, 145, 5);
 }
 .hide {
 	display: none !important;
 }
-.icon-x {
-	display: block;
-	fill: black;
-}
-.icon-x .ambient {
+.stack .ambient {
 	fill: var(--colour-ambient);
 }
-.icon-x .diffuse {
+.stack .diffuse {
 	fill: var(--colour-diffuse); 
 }
-.icon-x line {
+.stack line {
 	stroke: black;
 	stroke-width: 5;
 }
