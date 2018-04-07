@@ -4,4 +4,5 @@
 	position: relative;
 	border: 0.2em solid var(--tab-holder-background);
 	padding: 0 0.7em;
+	background-color: var(--colour-brand-turquoise-10);
 }

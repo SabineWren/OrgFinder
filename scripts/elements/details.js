@@ -49,7 +49,8 @@ const queryDetails = async function(sid) {
 	return details;
 };
 
+const rowHeight = parseFloat(getComputedStyle(document.body).getPropertyValue("--grid-row-height"));
 const Resize = function(content) {
-	content.parentElement.style.gridRow = "span " + content.offsetHeight;
+	content.parentElement.style.gridRow = "span " + Math.ceil(content.offsetHeight / rowHeight);
 };
 

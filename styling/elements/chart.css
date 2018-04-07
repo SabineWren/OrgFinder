@@ -1,5 +1,6 @@
 .block.chart {
 	border: 0.2em solid var(--tab-holder-background);
+	background-color: var(--colour-brand-turquoise-10);
 }
 
 .line {

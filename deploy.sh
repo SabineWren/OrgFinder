@@ -8,4 +8,4 @@ chmod 775 deploy.php &&
 chmod 775 deploy.sh &&
 chmod 775 build.sh
 echo "running build"
-./build.sh
+./build.sh 1>> /var/www/html/logs/deploy 2>&1

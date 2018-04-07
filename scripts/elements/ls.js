@@ -9,7 +9,7 @@
 	
 	@license-end
 */
-export { QueryListingTable, RedefineGrid };
+export { QueryListingTable, RedefineGrid, ResizeHeight };
 import * as _fetch from "../fetch.js";
 
 const addActivityImage = function(cell, activity) {
@@ -154,6 +154,17 @@ const RedefineGrid = function() {
 		listings.forEach(function(listing) {
 			listing.classList.add("grid8", "grid9", "grid10");
 		})
+	}
+	
+	ResizeHeight();
+};
+
+const rowHeight = parseFloat(getComputedStyle(document.body).getPropertyValue("--grid-row-height"));
+const ResizeHeight = function() {
+	const lists = document.getElementsByClassName("table");
+	if(lists.length > 0) {
+		const height = parseFloat(getComputedStyle(lists[0]).height);
+		lists[0].parentElement.style.gridRow = "span " + Math.ceil(height / rowHeight);
 	}
 };
 

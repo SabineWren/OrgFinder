@@ -49,6 +49,7 @@ const addListing = async function(name, id) {
 	
 	_ls.QueryListingTable()
 		.then(table => blockListing.appendChild(table))
+		.then(() => _ls.ResizeHeight())
 		.catch(_fetch.Warning);
 };
 
@@ -102,22 +103,23 @@ const createBlock = function(id, type) {
 
 const init = async function () {
 	window.addEventListener('resize', resizePage);
-	resizePage();
 	
 	const multiselects = addControls();
 	//account for scrollbar. 17px isn't enough, and using CSS breaks the border
 	multiselects[0].style.width = parseFloat(multiselects[0].clientWidth) + 19 + "px";
 	multiselects[3].style.width = parseFloat(multiselects[3].clientWidth) + 19 + "px";
 	
-	await addListing("Default Listing", "DEFAULT_ID");
-	await addOrg("LAWBINDERS","LAWBINDERS");
-	await addOrg("00000000", "ENEMY CONTACT");
-	await addOrg("HHCORP", "Horizons Hunters");
-	await addOrg("AOTW", "Angels of the Warp");
-	await addOrg("POI", "Person Of Interest");
+	addListing("Default Listing", "DEFAULT_ID");
+	addOrg("LAWBINDERS","LAWBINDERS");
+	addOrg("00000000", "ENEMY CONTACT");
+	addOrg("HHCORP", "Horizons Hunters");
+	addOrg("AOTW", "Angels of the Warp");
+	addOrg("POI", "Person Of Interest");
 	addOrg("TFTO", "The First Order");
 	addOrg("PROT", "Protectors of Verum");
 	addOrg("AMFR", "AMFR");
+	
+	resizePage();
 };
 
 const resizeCallbacks = function() {

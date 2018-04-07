@@ -1,26 +1,9 @@
-#block-holder {
-	--size-grid-border: 0.2em;
-	--size-grid-gap: var(--size-tab-padding-vert);
-	--size-archetype: 7em;
-	--size-commitment: 8em;
-	--size-focus: 3em;
-	--size-growth: 4em;
-	--size-language: 7em;
-	--size-main: 4em;
-	--size-name: 10em;
-	--size-sid: 8em;
-	--size-size: 4em;
-}
-
-.listing {
-	grid-row: span 2;
-}
-
 .table {
 	display: block;
 	position: relative;
 	box-sizing: border-box;
 	border-collapse: collapse;
+	background-color: var(--colour-brand-turquoise-10);
 }
 .table .row:first-child {
 	font-weight: bold;
