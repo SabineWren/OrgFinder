@@ -11,7 +11,7 @@
 */
 export { Create };
 
-const Create = function() {
+const Create = function(extraOnclick, affectedDiv) {
 	const applyHover = function(e) {
 		minIcon.style.setProperty("--colour-ambient", "rgb( 20, 140, 20)");
 		minIcon.style.setProperty("--colour-diffuse", "rgb( 50, 210, 20)");
@@ -24,12 +24,26 @@ const Create = function() {
 	const minIcon = MASTER.cloneNode(true);
 	minIcon.classList.add("min-icon");
 	const top = minIcon.getElementsByClassName("top")[0];
-	top.onclick     = onclick;
 	top.onmouseover = applyHover;
 	top.onmouseout  = removeHover;
 	minIcon.classList.remove("hide");
+	
+	if(extraOnclick === undefined){
+		top.onclick = onclick;
+	}
+	else {
+		top.onclick = extendOnclick(extraOnclick, affectedDiv);
+	}
+	
 	return minIcon;
 }
+
+const extendOnclick = function(extendOnclick, affectedDiv) {
+	return function(event){
+		onclick(event);
+		extendOnclick(affectedDiv);
+	};
+};
 
 const onclick = function(event) {
 	const container = event.target.parentElement.parentElement;

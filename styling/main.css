@@ -10,6 +10,10 @@ body {
 	--grid-row-height: 10px;/* affects browser compatibility */
 }
 
+.hide {
+	display: none !important;
+}
+
 #block-holder {
 	--size-grid-border: 0.2em;
 	--size-grid-gap: var(--size-tab-padding-vert);

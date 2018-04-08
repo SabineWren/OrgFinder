@@ -1,11 +1,13 @@
 before focus group:
-- add warning tab
-- build run/go icon
-- add styling to org details
+- fix tab holder width
+- reduce tab size
+- style details
 - make org listing interactive (click to show charts, etc.)
-- add link to source code
 - bundle css
 
+before release:
+- build back-end
+- minify javascript
 * learn how d3 append works and refactor chart
 
 charts:
@@ -18,7 +20,8 @@ charts:
 - fix date labeling for recent orgs (maybe use days of week)
 - make chart domain user-adjustable
 
-before full release:
+after release:
+- add link to source code
+- build run button
+- add warning tab and analytics
 - combine favicon, brand css, and other shared files as dependencies
-- build back-end
-- minify javascript

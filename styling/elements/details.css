@@ -5,4 +5,56 @@
 	border: 0.2em solid var(--tab-holder-background);
 	padding: 0 0.7em;
 	background-color: var(--colour-brand-turquoise-10);
+	overflow-x: hidden;
+}
+
+.details .details-content .details-title {
+	font-size: 1.1em;
+	color: var(--colour-orange-static);
+	text-align: center;
+	padding: 0.3em;
+}
+
+.details.minimized .details-content .headline,
+.details.minimized .details-content .radio,
+.details.minimized .details-content .details-item {
+	display: none;
+}
+
+.details .radio {
+	display: flex;
+	position: relative;
+	box-sizing: border-box;
+	justify-content: center;
+}
+
+.details .radio .details-button {
+	display: inline-block;
+	position: relative;
+	box-sizing: border-box;
+	border: 1px solid var(--colour-orange-interactive);
+	border-radius: 3px;
+	box-shadow: 0 0 3px 3px var(--colour-orange-interactive-glow),
+	      inset 0 0 3px 3px var(--colour-orange-interactive-glow);
+	color: var(--colour-orange-interactive);
+	text-shadow: 0 0 3px 3px var(--colour-orange-interactive-glow),
+	             0 0 1px 1px black;
+	margin: 0 0.6em;
+	padding: 0.2em 0.4em;
+	font-weight: bold;
+	font-size: var(--font-size-tab);
+}
+.details .radio .details-button:hover {
+	cursor: pointer;
+}
+
+.details .details-item:not(selected) {
+	display: none;
+}
+.details .details-item.selected {
+	display: block;
+}
+
+.details .radio .selected {
+	color: var(--colour-orange-static);
 }

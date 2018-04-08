@@ -33,16 +33,19 @@ svg.stack {
 	--colour-ambient: rgb( 196,  98, 0);
 	--colour-diffuse: rgb( 240, 145, 5);
 }
-.hide {
-	display: none !important;
-}
 .stack .ambient {
 	fill: var(--colour-ambient);
 }
 .stack .diffuse {
 	fill: var(--colour-diffuse); 
 }
-.stack line {
+.stack line.plus {
+	stroke: transparent;
+}
+.stack line,
+.minimized .stack line.plus
+ {
 	stroke: black;
 	stroke-width: 5;
 }
+
