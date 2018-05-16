@@ -124,9 +124,11 @@ const init = async function () {
 
 const resizeCallbacks = function() {
 	_ls.RedefineGrid();
+	_chart.ResizeHeight();
 	Array.prototype.forEach.call(
 		document.getElementsByClassName("details-content"),
-		_details.Resize);
+		_details.Resize
+	);
 };
 
 //strangely, this fires twice on initial load

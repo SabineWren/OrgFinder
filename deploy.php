@@ -33,6 +33,9 @@ if ($payload->ref === 'refs/heads/master') {
 	if($last_error !== NULL){
 		$log_file_error = fopen("/var/www/html/logs/error_github", "a+");
 		fwrite($log_file_error,"$last_error");
+		foreach ($last_error as $error_value) {
+			fwrite($log_file_error," $error_value");
+		}
 		fclose($log_file_error);
 	}
 }

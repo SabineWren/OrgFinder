@@ -9,8 +9,12 @@
 	
 	@license-end
 */
-export { CreateChart };
+export { CreateChart, ResizeHeight };
 import * as _fetch from "../fetch.js";
+
+const blockHolder = document.getElementById("block-holder");
+const chartHolder = d3.select("#data-holder").node();
+const ROW_HEIGHT = parseInt(getComputedStyle(document.body).getPropertyValue("--grid-row-height"));
 
 const CreateChart = async function(orgSID) {
 	const data = await fetchSizeHistory(orgSID).catch(_fetch.Warning);
@@ -20,14 +24,13 @@ const CreateChart = async function(orgSID) {
 	return newChart;
 };
 
-const chartHolder = d3.select("#data-holder").node();
-
 const drawChartLine = function (data, orgSID) {
 	const colWidth = window.innerWidth / blockHolder.style.getPropertyValue("--num-cols");
 	
 	const margin = Object.freeze({ top: 25, right: 160, bottom: 50, left: 50 });
 	const width = colWidth - margin.left - margin.right;
-	const height = colWidth/2.0 - margin.top - margin.bottom;
+	const svgHeightPixels = blockHolder.style.getPropertyValue("--size-height-chart") * ROW_HEIGHT;
+	const height = svgHeightPixels - margin.top - margin.bottom;
 	const labelOffset = 70;
 
 	//define accessor functions for retrieving line data
@@ -163,5 +166,13 @@ const fetchSizeHistory = function(sid) {
 	return _fetch.Fetch(err, "/OrgFinder/backEnd/org_history.php?SID=" + sid);
 };
 
-const blockHolder = document.getElementById("block-holder");
+const ResizeHeight = function() {
+	const blockStyle = getComputedStyle(blockHolder);
+	const colWidth = window.innerWidth / parseInt(blockStyle.getPropertyValue("--num-cols"));
+	const svgHeightPixels = colWidth / 2.0;
+	blockHolder.style.setProperty(
+		"--size-height-chart",
+		Math.floor(svgHeightPixels / ROW_HEIGHT)
+	);
+};
 
