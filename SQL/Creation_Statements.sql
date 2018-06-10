@@ -180,6 +180,8 @@ CREATE TABLE tbl_OrgMemberHistory(
 CREATE TABLE tbl_OrgDescription(
 	SID VARCHAR(10) UNIQUE NOT NULL, -- Clustered Index
 	Headline VARCHAR(512) NOT NULL,
+	Charter VARCHAR(4096) NOT NULL,
+	History VARCHAR(4096) NOT NULL,
 	Manifesto VARCHAR(4096) NOT NULL,
 	FOREIGN KEY FK_SID(SID) REFERENCES tbl_Organizations(SID)
 );

@@ -279,7 +279,8 @@ func prepareStatements( tx *sql.Tx ) ( map[string]*sql.Stmt ) {
 	stmts["InsLanguageMatView"], err = tx.Prepare("INSERT INTO tbl_FilterFluencies(Language, Organization) VALUES (?, ?) ON DUPLICATE KEY UPDATE Language = ?")
 	checkError(err)
 	
-	stmts["InsDescription"], err = tx.Prepare("INSERT INTO tbl_OrgDescription(SID, Headline, Manifesto) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE Headline = ?, Manifesto = ?")
+	stmts["InsDescription"], err = tx.Prepare(`INSERT INTO tbl_OrgDescription(SID, Headline, Charter, History, Manifesto)
+	VALUES(?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE Headline = ?, Charter = ?, History = ?, Manifesto = ?`)
 	checkError(err)
 	
 	return stmts

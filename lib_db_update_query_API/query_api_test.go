@@ -19,11 +19,18 @@ import   "testing"
 
 /******* All Orgs *******/
 
-func compareSlices(expectedSlice, resultSlice []OrgInGroup) bool {
-	if len(expectedSlice) != len(resultSlice) { return false }
+func compareSlices(expectedSlice, resultSlice []OrgInGroup, t * testing.T) bool {
+	if len(expectedSlice) != len(resultSlice) {
+		t.Error(strconv.Itoa(len(expectedSlice)) + " vs " + strconv.Itoa(len(resultSlice)))
+		return false
+	}
 	
 	for k, _ := range expectedSlice {
-		if expectedSlice[k] != resultSlice[k] { return false }
+		if expectedSlice[k] != resultSlice[k] {
+			t.Error(expectedSlice[k])
+			t.Error(resultSlice[k])
+			return false
+		}
 	}
 	return true
 }
@@ -62,7 +69,7 @@ func TestQueryOrgs(t * testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	if !compareSlices(expectedSlice, resultSlice) {
+	if !compareSlices(expectedSlice, resultSlice, t) {
 		t.Error("slices don't match")
 	}
 }
@@ -95,7 +102,7 @@ func TestQueryOrg(t * testing.T) {
 	var resOrg      ResultOrg
 	var expOrg      ResultOrg
 	
-	sids := []string{"OVNI", "SNSANGNIM"}//, "AVOCADO"
+	sids := []string{"SNSANGNIM"}//, "AVOCADO"
 	
 	for k, sid := range sids {
 		filename  = "testdata/" + sid + ".json"
