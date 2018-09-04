@@ -22,22 +22,19 @@ window.onload = () => init();
 
 const addControls = function() {
 	const holder = document.getElementById("controls-holder");
-	const options = Object.freeze([
+	[
 		_multiselect.Create("Activities", _enums.Activities),
 		_multiselect.Create("Archetype",  _enums.Archetype),
 		_multiselect.Create("Commitment", _enums.Commitment),
 		_multiselect.Create("Languages",  _enums.Language),
 		_multiselect.Create("Roleplay",   _enums.Roleplay),
 		_multiselect.Create("Recruiting", _enums.Recruiting)
-	]);
-	options.forEach(element => holder.appendChild(element));
+	].forEach(e => holder.appendChild(e) );
 	
 	const runButton = document.createElement("DIV");
 	runButton.id = "run";
 	runButton.innerHTML = "Go";
 	holder.appendChild(runButton);
-	
-	return options;
 };
 
 const addListing = async function(name, id) {
@@ -104,10 +101,7 @@ const createBlock = function(id, type) {
 const init = async function () {
 	window.addEventListener('resize', resizePage);
 	
-	const multiselects = addControls();
-	//account for scrollbar. 17px isn't enough, and using CSS breaks the border
-	multiselects[0].style.width = parseFloat(multiselects[0].clientWidth) + 19 + "px";
-	multiselects[3].style.width = parseFloat(multiselects[3].clientWidth) + 19 + "px";
+	addControls();
 	
 	addListing("Default Listing", "DEFAULT_ID");
 	addOrg("LAWBINDERS","LAWBINDERS");
